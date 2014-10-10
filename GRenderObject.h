@@ -6,7 +6,7 @@ class GRenderObject :
 public:
 	GRenderObject(void);
 	~GRenderObject(void);
-	virtual bool Render();
+	virtual bool render();
 public:
 	bool mVisible;
 	bool mLighting;

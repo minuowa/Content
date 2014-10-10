@@ -16,46 +16,44 @@ struct SeaVertex
 
 struct QuakePoint
 {
-        float mInitTime;	//初始时间
-        float mAmplitude;	//振幅
-        float mAngVelocity;	//角速度，=f*2*PI
-        float mfX, mfZ;		//振动源的位置
-    public:
-        float GetPointEffect( float _x, float _z, float _t );
-        void Init( float _x, float _z, float amplitude, float AngVelocity, float _t );
+    float mInitTime;	//初始时间
+    float mAmplitude;	//振幅
+    float mAngVelocity;	//角速度，=f*2*PI
+    float mfX, mfZ;		//振动源的位置
+public:
+    float GetPointEffect ( float _x, float _z, float _t );
+    void Init ( float _x, float _z, float amplitude, float AngVelocity, float _t );
 };
 
 #define FVFSea D3DFVF_XYZ | D3DFVF_TEX1|D3DFVF_NORMAL
 
 class CSea : public GMeshBaseObj
 {
-    public:
-        CSea( void );
-        ~CSea( void );
-
-
-
-		virtual bool Create( );
-
-        void Update( float fpass );
-
-        int AddQuakePoint( float _x, float _z, float fAmplitude, float fAngVelocity );
 public:
-	MeshPara* CreateParam() const;
-	void CreateParam(const MeshPara& val);
-    private:
-        float mfCellWidth;	    //地图中格子宽度
-        float mfMaxHeight;	    //地图的最大高度
-        int	  LnCellCount;	    //地图中每行格子数量
-        char* mstrFileName;    //纹理文件名字，X文件名字
-        char* mstrHeightMap;   //高度图文件名字
+    CSea ( void );
+    ~CSea ( void );
 
-		MeshPara*	mCreateParam;
+    virtual bool reCreate( );
 
-        LPDIRECT3DTEXTURE9 *mpFace;
+	void update ();
 
-        QuakePoint mQuakList[MAX_QUAKE_COUNT];
+    int AddQuakePoint ( float _x, float _z, float fAmplitude, float fAngVelocity );
+public:
+    MeshPara* getParam() const;
+    void setParam ( const MeshPara& val );
+private:
+    float mfCellWidth;	    //地图中格子宽度
+    float mfMaxHeight;	    //地图的最大高度
+    int	  mCellCount;	    //地图中每行格子数量
+    char* mstrFileName;    //纹理文件名字，X文件名字
+    char* mstrHeightMap;   //高度图文件名字
 
-        int LnQuakeCount;
+    MeshPara*	mCreateParam;
+
+    LPDIRECT3DTEXTURE9 *mpFace;
+
+    QuakePoint mQuakList[MAX_QUAKE_COUNT];
+
+    int mQuakeCount;
 
 };

@@ -10,22 +10,17 @@
 GMeshBaseObj::GMeshBaseObj ( void )
     : mMeshBufferNode ( 0 )
 {
+    mpMeshForVector = nullptr;
 }
 
 GMeshBaseObj::~GMeshBaseObj ( void )
 {
-
-}
-
-bool GMeshBaseObj::Create()
-{
-    return __super::Create();
 }
 
 
-bool GMeshBaseObj::Render()
+bool GMeshBaseObj::render()
 {
-    if ( !__super::Render() )
+    if ( !__super::render() )
         return false;
 
     if ( mMeshBufferNode )
@@ -322,9 +317,9 @@ bool GMeshBaseObj::Pick ( POINT pt )
 
 
 
-void GMeshBaseObj::RegisterAll()
+void GMeshBaseObj::registerAllProperty()
 {
-    __super::RegisterAll();
+    __super::registerAllProperty();
 }
 
 

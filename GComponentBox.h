@@ -7,7 +7,7 @@ public:
     GComponentBox ( void );
     ~GComponentBox ( void );
 
-    virtual void RegisterAll();
+    virtual void registerAllProperty();
 
 protected:
     int mXDim;

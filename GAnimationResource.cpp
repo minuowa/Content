@@ -79,10 +79,7 @@ HRESULT GAnimationResource::SetupBoneMatrixPointersOnMesh ( LPD3DXMESHCONTAINER 
 
     for ( DWORD i = 0; i < dwNumBone; i++ )
     {
-        char sBoneName[32];
-        ZeroMemory ( sBoneName, sizeof ( sBoneName ) );
-
-        strcpy ( sBoneName, pMeshContainerEx->pSkinInfo->GetBoneName ( i ) );
+        GString sBoneName = pMeshContainerEx->pSkinInfo->GetBoneName ( i );
 
         pFrameEx = ( D3DXFrameEX* ) D3DXFrameFind ( mFrameRoot, sBoneName );
 
@@ -120,13 +117,26 @@ void GAnimationResource::UpdateBones()
 {
     SetupBoneMatrixPointers ( mFrameRoot );
 }
-bool GAnimationResource::CreateFromFile ( const char* name )
+bool GAnimationResource::createFromFile ( const char* name )
 {
     CXASSERT ( name );
-    GAllocateHierarchy Alloc ( D9DEVICE->GetDvc() );
+    GAllocateHierarchy Alloc ( D9DEVICE->GetDvc(), name );
     HRESULT hr  = D3DXLoadMeshHierarchyFromXA ( name, D3DXMESH_MANAGED, D9DEVICE->GetDvc(), &Alloc, NULL,
                   &mFrameRoot, &mAnimationController );
     CXASSERT_RESULT_FALSE ( hr );
     UpdateBones();
     return true;
+}
+
+GAnimationResource::~GAnimationResource()
+{
+    GAllocateHierarchy alloctor;
+    D3DXFrameDestroy ( mFrameRoot, &alloctor );
+    dSafeRelease ( mAnimationController );
+    dSafeDeleteMap2 ( mBoneInfos );
+}
+
+D3DXMeshContainerEX::~D3DXMeshContainerEX()
+{
+    //dSafeDelete ( ppBoneMatrixPtrs );
 }

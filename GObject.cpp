@@ -13,24 +13,25 @@ GObject::GObject ( void )
 
 GObject::~GObject ( void )
 {
+    unRegisterAll();
 }
 
-void GObject::RegisterAll()
+void GObject::registerAllProperty()
 {
-    RegisterProperty ( "GObject", "mNodeName", mNodeName );
+    registerProperty ( "GObject", "mNodeName", mNodeName );
     //__RegisterProperty(mEObjectName);
 }
 
-void GObject::RegisterProperty ( GObject* obj )
+void GObject::registerProperty ( GObject* obj )
 {
     assert ( obj );
-    if ( !obj->IsRegisterAll() )
-    {
-        obj->RegisterAll();
-    }
-    const CategoryPropertyMap& otherPropMap = obj->GetPropertyMap();
+    obj->registerAll();
+
+    const CategoryPropertyMap& otherPropMap = obj->getPropertyMap();
+
     CategoryPropertyMap::const_iterator ibegin = otherPropMap.begin();
     CategoryPropertyMap::const_iterator iend = otherPropMap.end();
+
     for ( ; ibegin != iend; ++ibegin )
     {
         PropertyMap* myPropMap = 0;
@@ -48,51 +49,66 @@ void GObject::RegisterProperty ( GObject* obj )
                 walk != propMap->end(); ++walk )
         {
             EPropertyVar* evar = new EPropertyVar;
-            evar->Ptr = walk->second->Ptr;
-            evar->CategoryName = walk->second->CategoryName;
-            evar->QVar = walk->second->QVar;
+            evar->mPtr = walk->second->mPtr;
+            evar->mCategoryName = walk->second->mCategoryName;
+            evar->mProp = walk->second->mProp;
+            evar->mRefOther = true;
             myPropMap->Insert ( walk->first, evar );
         }
     }
     //mOption.insert ( ibegin, iend );
 }
 
-void GObject::UnRegisterAll()
+void GObject::unRegisterAll()
 {
     CategoryPropertyMap::iterator walk = mOption.begin();
     CategoryPropertyMap::iterator end = mOption.end();
     for ( ; walk != end; ++walk )
     {
         PropertyMap* propMap = walk->second;
-        CXSafeDeleteMap2 ( *propMap );
+        dSafeDeleteMap2 ( *propMap );
     }
-    mOption.clear();
+	dSafeDeleteMap2 ( mOption );
 }
 
-void GObject::OnPropertyChange( void* pre,void* changed )
+void GObject::onPropertyChange ( void* pre, void* changed )
 {
-	if ( pre == &mNodeName )
-	{
-		//String changeName(*((String*)changed));
-		//EditorEvent event;
-		//event.mType = eSceneToEditor_AlterName;
-		//event.mArgs.push_back ( mNodeName );
-		//event.mArgs.push_back ( changeName );
-		//Notify ( event );
-	}
+    if ( pre == &mNodeName )
+    {
+        GString changedName;
+        dCast ( changedName, changed );
+        mTargetName = changedName;
+        mOperatorObjectName = mNodeName;
+        mDelegateAlterName.trigger();
+    }
 }
+
+void GObject::registerAll()
+{
+    unRegisterAll();
+    registerAllProperty();
+}
+
+GString GObject::mTargetName;
+
+GString GObject::mOperatorObjectName;
+
+CXDelegate GObject::mDelegateAlterName;
 
 EPropertyVar::EPropertyVar()
-    : Ptr ( 0 )
+    : mPtr ( 0 )
+    , mRefOther ( false )
 {
 
 }
-static const int BufferSize = 1024;
-char gCharBuffer[BufferSize];
 void EPropertyVar::ToString ( std::string& str )
 {
-   if (QVar)
-   {
-	   QVar->toString(str);
-   }
+    if ( mProp )
+        mProp->toString ( str );
+}
+
+EPropertyVar::~EPropertyVar()
+{
+    if ( !mRefOther )
+        dSafeDelete ( mProp );
 }

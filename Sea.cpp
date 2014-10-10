@@ -2,29 +2,30 @@
 #include "Sea.h"
 #include "GMeshBuffer.h"
 #include "GD9Device.h"
+#include "GTimer.h"
 
-CSea::CSea( void )
-	:mCreateParam(0)
+CSea::CSea ( void )
+    : mCreateParam ( 0 )
 {
-    LnQuakeCount = 0;
+    mQuakeCount = 0;
 
     mpFace = NULL;
 
-    LnCellCount = 0;
+    mCellCount = 0;
     mfMaxHeight = 0;
     mfCellWidth = 0;
     mstrFileName = NULL;
-	CXSafeDelete(mCreateParam);
+    dSafeDelete ( mCreateParam );
 }
 
-CSea::~CSea( void )
+CSea::~CSea ( void )
 {
 }
 
-bool CSea::Create()
+bool CSea::reCreate()
 {
-    if(!__super::Create())
-		return false;
+    if ( !__super::reCreate() )
+        return false;
 
     HRESULT hr = S_FALSE;
 
@@ -34,57 +35,57 @@ bool CSea::Create()
 
 
     mMeshBufferNode = new GMeshBufferNode();
-    LnCellCount = mCreateParam->LnCellCount;
+    mCellCount = mCreateParam->LnCellCount;
     mfMaxHeight = mCreateParam->mfMaxHeight;
     mfCellWidth = mCreateParam->mfCellWidth;
     mstrFileName = mCreateParam->mstrFileName;
 
     //SAFERELEASE(mMeshBufferNode->mpRootMesh);
 
-	ID3DXMesh* mesh=0;
-    hr = D3DXCreateMeshFVF(
-             LnCellCount * LnCellCount * 2,
-             ( LnCellCount + 1 ) * ( LnCellCount + 1 ),
+    ID3DXMesh* mesh = 0;
+    hr = D3DXCreateMeshFVF (
+             mCellCount * mCellCount * 2,
+             ( mCellCount + 1 ) * ( mCellCount + 1 ),
              D3DXMESH_32BIT | D3DXMESH_MANAGED, FVFSea, D9DEVICE->GetDvc(),
-			 &mesh
+             &mesh
          );
-    DebugMsgBox( hr, "创建海面Mesh失败！" );
+    DebugMsgBox ( hr, "创建海面Mesh失败！" );
 
     DWORD dwIndex = 0;
 
-    mesh->LockVertexBuffer( D3DLOCK_DISCARD, ( void** )&pVertextBuffer );
+    mesh->LockVertexBuffer ( D3DLOCK_DISCARD, ( void** ) &pVertextBuffer );
 
-    for ( int i = 0; i < LnCellCount + 1; i++ )
+    for ( int i = 0; i < mCellCount + 1; i++ )
     {
-        for ( int j = 0; j < LnCellCount + 1; j++ )
+        for ( int j = 0; j < mCellCount + 1; j++ )
         {
-            dwIndex = i * ( LnCellCount + 1 ) + j;
+            dwIndex = i * ( mCellCount + 1 ) + j;
 
-            pVertextBuffer[dwIndex].vertex.x = ( j - LnCellCount / 2.0f ) * mfCellWidth;
+            pVertextBuffer[dwIndex].vertex.x = ( j - mCellCount / 2.0f ) * mfCellWidth;
             pVertextBuffer[dwIndex].vertex.y = 0;
-            pVertextBuffer[dwIndex].vertex.z = ( i - LnCellCount / 2.0f ) * mfCellWidth;
+            pVertextBuffer[dwIndex].vertex.z = ( i - mCellCount / 2.0f ) * mfCellWidth;
             pVertextBuffer[dwIndex].u = j / 10.0f;
-            pVertextBuffer[dwIndex].v = ( LnCellCount - i ) / 10.0f;
+            pVertextBuffer[dwIndex].v = ( mCellCount - i ) / 10.0f;
         }
     }
 
     mesh->UnlockVertexBuffer();
 
-    mesh->LockIndexBuffer( D3DLOCK_DISCARD, ( void** )&pIndexBuffer );
+    mesh->LockIndexBuffer ( D3DLOCK_DISCARD, ( void** ) &pIndexBuffer );
 
     DWORD dwBaseIndex = 0;
 
-    for ( int i = 0; i < LnCellCount; i++ )
+    for ( int i = 0; i < mCellCount; i++ )
     {
-        for ( int j = 0; j < LnCellCount; j++ )
+        for ( int j = 0; j < mCellCount; j++ )
         {
-            pIndexBuffer[dwBaseIndex + 0] = i * ( LnCellCount + 1 ) + j;
-            pIndexBuffer[dwBaseIndex + 1] = ( i + 1 ) * ( LnCellCount + 1 ) + j;
-            pIndexBuffer[dwBaseIndex + 2] = ( i + 1 ) * ( LnCellCount + 1 ) + j + 1;
+            pIndexBuffer[dwBaseIndex + 0] = i * ( mCellCount + 1 ) + j;
+            pIndexBuffer[dwBaseIndex + 1] = ( i + 1 ) * ( mCellCount + 1 ) + j;
+            pIndexBuffer[dwBaseIndex + 2] = ( i + 1 ) * ( mCellCount + 1 ) + j + 1;
 
-            pIndexBuffer[dwBaseIndex + 3] = i * ( LnCellCount + 1 ) + j;
-            pIndexBuffer[dwBaseIndex + 4] = ( i + 1 ) * ( LnCellCount + 1 ) + j + 1;;
-            pIndexBuffer[dwBaseIndex + 5] = i * ( LnCellCount + 1 ) + j + 1;
+            pIndexBuffer[dwBaseIndex + 3] = i * ( mCellCount + 1 ) + j;
+            pIndexBuffer[dwBaseIndex + 4] = ( i + 1 ) * ( mCellCount + 1 ) + j + 1;;
+            pIndexBuffer[dwBaseIndex + 5] = i * ( mCellCount + 1 ) + j + 1;
 
             dwBaseIndex += 6;
         }
@@ -92,19 +93,19 @@ bool CSea::Create()
 
     mesh->UnlockIndexBuffer();
 
-	mMeshBufferNode->Mesh(mesh);
-    mMeshBufferNode->SubSetCount(1);
+    mMeshBufferNode->Mesh ( mesh );
+    mMeshBufferNode->SubSetCount ( 1 );
 
     DWORD *pAdj = new DWORD[mesh->GetNumFaces() * 3];
 
-    mesh->GenerateAdjacency( 1.0f, pAdj );
-	GMetrialData* material=new GMetrialData;
-	mMeshBufferNode->Add(material);
+    mesh->GenerateAdjacency ( 1.0f, pAdj );
+    GMetrialData* material = new GMetrialData;
+    mMeshBufferNode->Add ( material );
     mpFace = new LPDIRECT3DTEXTURE9[1];
-	material->SetTexture(mstrFileName);
+    material->SetTexture ( mstrFileName );
 
     D3DMATERIAL9 mtrl;
-    ZeroMemory( &mtrl, sizeof( mtrl ) );
+    ZeroMemory ( &mtrl, sizeof ( mtrl ) );
 
     mtrl.Diffuse.r = 0.4f;
     mtrl.Diffuse.g = 0.4f;
@@ -124,9 +125,9 @@ bool CSea::Create()
     mtrl.Emissive.a = 0.5f;
 
     mtrl.Power = 9.0f;
-	material->SetMetiral(mtrl);
+    material->SetMetiral ( mtrl );
 
-    SetNormal( mMeshBufferNode->Mesh(), D9DEVICE->GetDvc() );
+    SetNormal ( mMeshBufferNode->Mesh(), D9DEVICE->GetDvc() );
 
     ResetVectorMesh();
 
@@ -134,14 +135,14 @@ bool CSea::Create()
 
 }
 
-int CSea::AddQuakePoint( float _x, float _z, float fAmplitude, float fAngVelocity )
+int CSea::AddQuakePoint ( float _x, float _z, float fAmplitude, float fAngVelocity )
 {
     float t = timeGetTime() / 1000.0f;
-    mQuakList[LnQuakeCount++].Init( _x, _z, fAmplitude, fAngVelocity, t );
-    return LnQuakeCount;
+    mQuakList[mQuakeCount++].Init ( _x, _z, fAmplitude, fAngVelocity, t );
+    return mQuakeCount;
 }
 
-void CSea::Update( float fpass )
+void CSea::update()
 {
 
     //海面纹理按时间切换
@@ -149,7 +150,7 @@ void CSea::Update( float fpass )
     static DWORD dwMainTime = 0;
     static DWORD dwPicIndex = 0;
 
-    dwMainTime += ( DWORD )fpass;
+    dwMainTime += TheTimer->getFrameTimems();
 
     if ( dwMainTime > dwPicIndex * FaceSwitchTime )
     {
@@ -169,18 +170,18 @@ void CSea::Update( float fpass )
 
     DWORD dwIndex = 0;
 
-    mMeshBufferNode->Mesh()->LockVertexBuffer( D3DLOCK_DISCARD, ( void** )&pVertexBuffer );
+    mMeshBufferNode->Mesh()->LockVertexBuffer ( D3DLOCK_DISCARD, ( void** ) &pVertexBuffer );
 
-    for ( int i = 0; i < LnCellCount + 1; i++ )
+    for ( int i = 0; i < mCellCount + 1; i++ )
     {
-        for ( int j = 0; j < LnCellCount + 1; j++ )
+        for ( int j = 0; j < mCellCount + 1; j++ )
         {
-            dwIndex = i * ( LnCellCount + 1 ) + j;
+            dwIndex = i * ( mCellCount + 1 ) + j;
             float fDelta = 0;
 
-            for ( int k = 0; k < LnQuakeCount; k++ )
+            for ( int k = 0; k < mQuakeCount; k++ )
             {
-                fDelta += mQuakList[k].GetPointEffect( pVertexBuffer[dwIndex].vertex.x, pVertexBuffer[dwIndex].vertex.z, ( float )timeGetTime() / 1000.0f );
+                fDelta += mQuakList[k].GetPointEffect ( pVertexBuffer[dwIndex].vertex.x, pVertexBuffer[dwIndex].vertex.z, ( float ) timeGetTime() / 1000.0f );
             }
 
             pVertexBuffer[dwIndex].vertex.y = fDelta;
@@ -189,38 +190,36 @@ void CSea::Update( float fpass )
 
     mMeshBufferNode->Mesh()->UnlockVertexBuffer();
 
-    //DWORD dwTime=timeGetTime();
-    char sFileName[128];
-    ZeroMemory( sFileName, sizeof( sFileName ) );
-    //sprintf(sFileName,"res\\water\\BlueShort\\A21C_%03d.jpg",dwTime%SEAPICNUM);
+    DWORD dwTime = timeGetTime();
+    //sprintf(sFileName,"res\\water\\BlueShort\\A21C_%03d.jpg",);
 
-    sprintf( sFileName, "..\\Data\\res\\water\\BlueShort\\A21C_%03d.jpg", dwPicIndex );
-
-    SAFERELEASE( mpFace[0] );
-
-    hr = D3DXCreateTextureFromFileA( D9DEVICE->GetDvc(), sFileName, &mpFace[0] );
-
+    GString sFileName;
+    sFileName.Format ( "..\\Data\\res\\water\\BlueShort\\A21C_%03d.jpg", dwTime % SEAPICNUM );
+	
+	GTexture* gtext=TextureMgr->getResource(sFileName);
+	if (gtext)
+		mpFace[0]=gtext->getTexture();
 }
 
 
 
-MeshPara* CSea::CreateParam() const
+MeshPara* CSea::getParam() const
 {
-	return mCreateParam;
+    return mCreateParam;
 }
 
-void CSea::CreateParam( const MeshPara& val )
+void CSea::setParam ( const MeshPara& val )
 {
-	CXSafeDelete(mCreateParam);
-	mCreateParam = new MeshPara;
-	CXMemoryCopy(mCreateParam,(void*)&val,sizeof(MeshPara));
+    dSafeDelete ( mCreateParam );
+    mCreateParam = new MeshPara;
+    dMemoryCopy ( mCreateParam, ( void* ) &val, sizeof ( MeshPara ) );
 }
 
 
 
 
 
-void QuakePoint::Init( float _x, float _z, float amplitude, float AngVelocity, float _t )
+void QuakePoint::Init ( float _x, float _z, float amplitude, float AngVelocity, float _t )
 {
     mfZ = _z;
     mfX = _x;
@@ -231,13 +230,13 @@ void QuakePoint::Init( float _x, float _z, float amplitude, float AngVelocity, f
     mInitTime = _t;
 }
 
-float QuakePoint::GetPointEffect( float _x, float _z, float _t )
+float QuakePoint::GetPointEffect ( float _x, float _z, float _t )
 {
-    float len = D3DXVec3Length( &( D3DXVECTOR3( mfX, 0, mfZ ) - D3DXVECTOR3( _x, 0, _z ) ) );
+    float len = D3DXVec3Length ( & ( D3DXVECTOR3 ( mfX, 0, mfZ ) - D3DXVECTOR3 ( _x, 0, _z ) ) );
 
     float dt = len / QUAKE_SPEED;
 
-    float fDeltaY = mAmplitude * sinf( mAngVelocity * ( _t - mInitTime ) - dt );
+    float fDeltaY = mAmplitude * sinf ( mAngVelocity * ( _t - mInitTime ) - dt );
 
     return fDeltaY;
 }

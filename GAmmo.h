@@ -15,7 +15,7 @@ public:
 
 public:
 
-	virtual bool Create();
+	virtual bool reCreate();
 
 	void Shoot();
 
@@ -37,11 +37,11 @@ public:
 
 public:
 
-	virtual bool Create();
+	virtual bool reCreate();
 
-	void Update();
+	void update();
 
-	bool Render();
+	bool render();
 
 public:
 	

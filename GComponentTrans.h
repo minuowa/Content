@@ -24,7 +24,7 @@ public:
     GComponentTrans ( void );
     ~GComponentTrans ( void );
 public:
-    virtual void RegisterAll();
+    virtual void registerAllProperty();
 public:
     D3DXMATRIX GetWorldMatrix ( bool bForTrans = false );
 

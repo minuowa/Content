@@ -94,58 +94,52 @@ void GFrameWork::resize( int w,int h )
 	D9DEVICE->OnResize(w,h);
 }
 
-
-
-LRESULT CALLBACK WndProc ( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
+LRESULT CALLBACK GFrameWork::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
 {
-    //HIMC hIMC;
-    //DWORD dwSize;
-    //HGLOBAL hstr;
-    //LPSTR lpstr;
-    //int x = 3;
-    switch ( message )
-    {
-    case WM_CLOSE:
-        PostMessage(hWnd,WM_DESTROY,0,0);
-        break;
-    case WM_KILLFOCUS:
-    case WA_INACTIVE:
-        TheGame->active ( false );
-        break;
-    case WM_SETFOCUS:
-    case WM_ACTIVATE:
-        TheGame->active ( true );
-        break;
-    case WM_DESTROY:
-        PostQuitMessage(0);
-        break;
+	switch ( message )
+	{
+	case WM_CLOSE:
+		PostMessage(hWnd,WM_DESTROY,0,0);
+		break;
+	case WM_KILLFOCUS:
+	case WA_INACTIVE:
+		TheGame->active ( false );
+		break;
+	case WM_SETFOCUS:
+	case WM_ACTIVATE:
+		TheGame->active ( true );
+		break;
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		break;
 
-    case WM_SIZE:
+	case WM_SIZE:
 		{
 			TheGame->resize(LOWORD(lParam),HIWORD(lParam));
 		}
-        break;
-    case WM_IME_COMPOSITION:
+		break;
+	case WM_IME_COMPOSITION:
 
-        //if (lParam & GCS_RESULTSTR)
-        //{
-        //	hIMC = ImmGetContext(hWnd);
+		//if (lParam & GCS_RESULTSTR)
+		//{
+		//	hIMC = ImmGetContext(hWnd);
 
-        //	dwSize = ImmGetCompositionString(hIMC, GCS_RESULTSTR, NULL, 0);
+		//	dwSize = ImmGetCompositionString(hIMC, GCS_RESULTSTR, NULL, 0);
 
-        //	dwSize += sizeof(WCHAR);
+		//	dwSize += sizeof(WCHAR);
 
-        //	ImmGetCompositionString(hIMC, GCS_RESULTSTR, lpstr, dwSize);
+		//	ImmGetCompositionString(hIMC, GCS_RESULTSTR, lpstr, dwSize);
 
-        //	ImmReleaseContext(hWnd, hIMC);
-        //}
+		//	ImmReleaseContext(hWnd, hIMC);
+		//}
 
-        break;
+		break;
 
-    default:
+	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
 		break;
-    }
+	}
 
-    return 0;
+	return 0;
 }
+

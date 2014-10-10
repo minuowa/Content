@@ -3,7 +3,7 @@
 
 GAmmo::GAmmo ( void )
 {
-    GetTrans().mfSpeedMove = 150;
+    getTrans().mfSpeedMove = 150;
 
 }
 
@@ -15,14 +15,14 @@ GAmmo::~GAmmo ( void )
 void GAmmo::Shoot()
 {
     m_bForceOnMap = true;
-    GetTrans().mbAutoMove = true;
-    GetTrans().mvSpeed = GetTrans().mfSpeedMove * GetTrans().mvDir;
+    getTrans().mbAutoMove = true;
+    getTrans().mvSpeed = getTrans().mfSpeedMove * getTrans().mvDir;
 }
 
 
-bool GAmmo::Create()
+bool GAmmo::reCreate()
 {
-    if ( !__super::Create() )
+    if ( !__super::reCreate() )
         return false;
 
     return true;
@@ -31,32 +31,32 @@ bool GAmmo::Create()
 void GAmmo::SetShooter ( GNode *pShooter )
 {
 
-    GetTrans().mTranslate = pShooter->GetTrans().mTranslate;
+    getTrans().mTranslate = pShooter->getTrans().mTranslate;
 
-    GetTrans().mTranslate.y += 50.0f;
-    GetTrans().mTranslate.z += 5.0f;
+    getTrans().mTranslate.y += 50.0f;
+    getTrans().mTranslate.z += 5.0f;
 
-    GetTrans().mvDir = pShooter->GetTrans().mvDir;
-    GetTrans().mvDir.y += 0.01f;
+    getTrans().mvDir = pShooter->getTrans().mvDir;
+    getTrans().mvDir.y += 0.01f;
 
-    D3DXVec3Normalize ( &GetTrans().mvDir, &GetTrans().mvDir );
+    D3DXVec3Normalize ( &getTrans().mvDir, &getTrans().mvDir );
 
-    GetTrans().mvRight = pShooter->GetTrans().mvRight;
+    getTrans().mvRight = pShooter->getTrans().mvRight;
 
-    D3DXVec3Cross ( &GetTrans().mvUpon, &GetTrans().mvDir, &GetTrans().mvRight );
+    D3DXVec3Cross ( &getTrans().mvUpon, &getTrans().mvDir, &getTrans().mvRight );
 
-    D3DXVec3Normalize ( &GetTrans().mvUpon, &GetTrans().mvUpon );
+    D3DXVec3Normalize ( &getTrans().mvUpon, &getTrans().mvUpon );
 
     mParent = NULL;
 }
 
 
-bool CAmmoParticles::Create()
+bool CAmmoParticles::reCreate()
 {
-    if ( !GAmmo::Create() )
+    if ( !GAmmo::reCreate() )
         return false;
 
-    mParticles.Create();
+    mParticles.reCreate();
 
     //ForceOnMap(pForceMap,1.0f,ftUpWithMap);
 
@@ -64,20 +64,20 @@ bool CAmmoParticles::Create()
 
 }
 
-void CAmmoParticles::Update(  )
+void CAmmoParticles::update(  )
 
 {
     m_bForceOnMap = false;
-    GRenderObject::Update();
+    GRenderObject::update();
 
-    mParticles.Update();
+    mParticles.update();
 }
 
-bool CAmmoParticles::Render()
+bool CAmmoParticles::render()
 {
-    GAmmo::Render();
+    GAmmo::render();
 
-    return mParticles.Render();
+    return mParticles.render();
 }
 
 CAmmoParticles::CAmmoParticles()

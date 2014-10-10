@@ -28,9 +28,9 @@ void GNode::GetInput ( DWORD frameTimeMs )
         {
             m_bBehaviour = true;
 
-            GetTrans().MoveStep ( frameTimeMs );
+            getTrans().MoveStep ( frameTimeMs );
 
-            GetTrans().mbBack = false;
+            getTrans().mbBack = false;
 
             SetState ( oasMoving, false );
 
@@ -39,9 +39,9 @@ void GNode::GetInput ( DWORD frameTimeMs )
         {
             m_bBehaviour = true;
 
-            GetTrans().MoveStep ( -frameTimeMs );
+            getTrans().MoveStep ( -frameTimeMs );
 
-            GetTrans().mbBack = true;
+            getTrans().mbBack = true;
 
             SetState ( oasMoving, true );
         }
@@ -49,31 +49,31 @@ void GNode::GetInput ( DWORD frameTimeMs )
 
         if ( bTrunLeft )
         {
-            GetTrans().TrunStepLeftRight ( -frameTimeMs / 3.0f );
+            getTrans().TrunStepLeftRight ( -frameTimeMs / 3.0f );
         }
 
         else if ( bTrunRight )
         {
-            GetTrans().TrunStepLeftRight ( frameTimeMs / 3.0f );
+            getTrans().TrunStepLeftRight ( frameTimeMs / 3.0f );
         }
 
         if ( bJump )
         {
-            if ( !GetTrans().mbJump )
+            if ( !getTrans().mbJump )
             {
                 m_bBehaviour = true;
 
                 if ( bMoveBack )
                 {
-                    GetTrans().mvSpeed = -GetTrans().mvDir * GetTrans().mfSpeedMove;
+                    getTrans().mvSpeed = -getTrans().mvDir * getTrans().mfSpeedMove;
                 }
                 if ( bMoveFront )
                 {
-                    GetTrans().mvSpeed = GetTrans().mvDir * GetTrans().mfSpeedMove;
+                    getTrans().mvSpeed = getTrans().mvDir * getTrans().mfSpeedMove;
                 }
             }
 
-            GetTrans().Jump();
+            getTrans().Jump();
         }
 
         if ( INPUTSYSTEM.IsPressKey ( DIK_1 ) )
@@ -112,17 +112,17 @@ D3DXMATRIX GNode::GetWorldMatrix ( bool bForTrans )
 
     if ( mParent == NULL )
     {
-        _matWorld = GetTrans().GetWorldMatrix ( bForTrans );
+        _matWorld = getTrans().GetWorldMatrix ( bForTrans );
     }
     else
     {
         if ( mOpt == optByPosition )
         {
-            _matWorld = ( GetTrans().GetWorldMatrix ( bForTrans ) ) * ( ( ( GNode* ) ( mParent ) )->GetTrans().GetWorldMatrix ( true ) );
+            _matWorld = ( getTrans().GetWorldMatrix ( bForTrans ) ) * ( ( ( GNode* ) ( mParent ) )->getTrans().GetWorldMatrix ( true ) );
         }
         else
         {
-            _matWorld = ( GetTrans().GetWorldMatrix ( false ) ) * ( ( ( GNode* ) ( mParent ) )->GetWorldMatrixByBone ( msParentName, false ) );
+            _matWorld = ( getTrans().GetWorldMatrix ( false ) ) * ( ( ( GNode* ) ( mParent ) )->GetWorldMatrixByBone ( mParentName, false ) );
 
             //_matWorld=mXPos.GetScaleMatrix(false)*mXPos.GetTransLation(false)*
             //	(((CXWorldObj*)(mParent))->GetWorldMatrixByBone(msParentName,false))*mXPos.GetRotationMatrix(false);
@@ -139,11 +139,9 @@ D3DXMATRIX GNode::GetWorldMatrix ( bool bForTrans )
 GNode::GNode()
     : mCanGetInput ( false )
 {
-    ZeroMemory ( msParentName, sizeof ( msParentName ) );
+    mParent = nullptr;
 
-    mParent = NULL;
-
-    m_pOnObj = NULL;
+    m_pOnObj = nullptr;
 
     m_fBoundRadius = 0.01f;
 
@@ -169,7 +167,7 @@ GNode::GNode()
 
     m_fBlockArea = ZEROFLOAT;
 
-	mOpt = optByPosition;
+    mOpt = optByPosition;
 
     m_bUseMatrialColor = false;
 
@@ -192,12 +190,12 @@ GNode::GNode()
     //    AddWatcher ( TheSceneMgr );
     //}
 
-    AttachComponent ( eComponentType_Trans, false, false );
+    attachComponent ( eComponentType_Trans, false, false );
 }
 
 GNode::~GNode()
 {
-
+    dSafeDeleteVector ( mChildren );
 }
 
 eObjAnimState GNode::SetState ( eObjAnimState oas, bool bBack )
@@ -209,7 +207,7 @@ eObjAnimState GNode::SetState ( eObjAnimState oas, bool bBack )
 
 
 
-D3DXMATRIX GNode::GetWorldMatrixByBone ( char *sBoneName, bool bForTrans/*=false*/ )
+D3DXMATRIX GNode::GetWorldMatrixByBone ( const char *sBoneName, bool bForTrans /*= false */ )
 {
     return GetWorldMatrix ( false );
 }
@@ -297,18 +295,16 @@ IntersectInfo * GNode::GetBlockPoint()
     return HitInfo;
 }
 
-void GNode::Update(  )
+void GNode::update(  )
 {
-    if ( mComponentOwner.GetComponent ( eComponentType_Trans ) )
+    if ( mComponentOwner.getComponent ( eComponentType_Trans ) )
     {
-        UpdateTrans();
+        updateTrans();
     }
-    GNodeArr::iterator iBegin = mChildren.begin();
-    GNodeArr::iterator iEnd = mChildren.end();
-    for ( ; iBegin != iEnd; ++iBegin )
+
+for ( GNode * child: mChildren )
     {
-        GNode* n = *iBegin;
-        n->Update();
+        child->update();
     }
 }
 
@@ -322,7 +318,7 @@ IntersectInfo * GNode::UpdateForForceOnMap()
         {
             GGameMap *pMap = ( GGameMap* ) mForceMap;
 
-            D3DXVECTOR4 vDir ( 0, -1, 0, 0 ), vPos ( GetTrans().mTranslate.x, GetTrans().mTranslate.y + 5000.0f, GetTrans().mTranslate.z, 1 );
+            D3DXVECTOR4 vDir ( 0, -1, 0, 0 ), vPos ( getTrans().mTranslate.x, getTrans().mTranslate.y + 5000.0f, getTrans().mTranslate.z, 1 );
 
             //向下的射线与地图碰撞，肯定能撞到
 
@@ -333,9 +329,9 @@ IntersectInfo * GNode::UpdateForForceOnMap()
 
                 SetDir ( pMap->m_InsectInfo.vNormal );
 
-                GetTrans().mTranslate = pMap->m_InsectInfo.vHitPos;
+                getTrans().mTranslate = pMap->m_InsectInfo.vHitPos;
 
-                GetTrans().mTranslate.y = pMap->m_InsectInfo.vHitPos.y + m_fForceHeight;
+                getTrans().mTranslate.y = pMap->m_InsectInfo.vHitPos.y + m_fForceHeight;
 
                 return & ( pMap->m_InsectInfo );
             }
@@ -351,12 +347,12 @@ void GNode::SetDir ( D3DXVECTOR3 vNormal )
 {
     if ( m_ForceType == ftUpAlways )
     {
-        GetTrans().SetDirWithUpon ( D3DXVECTOR3 ( 0, 1, 0 ) );
+        getTrans().SetDirWithUpon ( D3DXVECTOR3 ( 0, 1, 0 ) );
     }
 
     if ( m_ForceType == ftUpWithMap )
     {
-        GetTrans().SetDirWithUpon ( vNormal );
+        getTrans().SetDirWithUpon ( vNormal );
     }
 }
 
@@ -369,7 +365,7 @@ IntersectInfo * GNode::UpdateForForceOnObj ( void *pObj )
 
     GMeshBaseObj *lpObj = ( GMeshBaseObj * ) pObj;
 
-    D3DXVECTOR4 vDir ( 0, -1, 0, 0 ), vPos ( GetTrans().mTranslate.x, GetTrans().mTranslate.y + 20.0f, GetTrans().mTranslate.z, 1 );
+    D3DXVECTOR4 vDir ( 0, -1, 0, 0 ), vPos ( getTrans().mTranslate.x, getTrans().mTranslate.y + 20.0f, getTrans().mTranslate.z, 1 );
 
     //向下的射线与地图碰撞，肯定能撞到
 
@@ -385,9 +381,9 @@ IntersectInfo * GNode::UpdateForForceOnObj ( void *pObj )
         //{
         SetDir ( lpObj->m_InsectInfo.vNormal );
 
-        GetTrans().mTranslate = lpObj->m_InsectInfo.vHitPos;
+        getTrans().mTranslate = lpObj->m_InsectInfo.vHitPos;
 
-        GetTrans().mTranslate.y = lpObj->m_InsectInfo.vHitPos.y + m_fForceHeight;
+        getTrans().mTranslate.y = lpObj->m_InsectInfo.vHitPos.y + m_fForceHeight;
         //}
         //else
         //{
@@ -400,29 +396,28 @@ IntersectInfo * GNode::UpdateForForceOnObj ( void *pObj )
     return NULL;
 }
 
-GNode* GNode::AddChild ( GNode* c )
+GNode* GNode::addChild ( GNode* c )
 {
     CXASSERT_RETURN_FALSE ( c );
     mChildren.push_back ( c );
     c->mParent = this;
-    //EditorEvent event;
-    //event.mType = eSceneToEditor_Add;
-    //event.mArgs.push_back ( c->GetObjectName() );
-    //event.mArgs.push_back ( GetObjectName() );
-    //Notify ( event );
+
+    mOperatorParentObj = this;
+    mOperatorObj = c;
+    mDelegateAddObj.trigger();
 
     return c;
 }
 
-bool GNode::Draw()
+bool GNode::draw()
 {
-    BeginRender();
-    Render();
-    EndRender();
+    beginRender();
+    render();
+    endRender();
     return true;
 }
 
-bool GNode::RemoveChild ( GNode* child )
+bool GNode::removeChild ( GNode* child )
 {
     GNodeArr::iterator iBegin = mChildren.begin();
     GNodeArr::iterator iEnd = mChildren.end();
@@ -434,24 +429,24 @@ bool GNode::RemoveChild ( GNode* child )
             mChildren.erase ( iBegin );
             return true;
         }
-        return n->RemoveChild ( child );
+        return n->removeChild ( child );
     }
     return false;
 }
 
-void GNode::BeginRender()
+void GNode::beginRender()
 {
 
 }
 
-void GNode::EndRender()
+void GNode::endRender()
 {
     GNodeArr::iterator iBegin = mChildren.begin();
     GNodeArr::iterator iEnd = mChildren.end();
     for ( ; iBegin != iEnd; ++iBegin )
     {
         GNode* n = *iBegin;
-        n->Draw();
+        n->draw();
     }
 }
 
@@ -460,13 +455,14 @@ void GNode::EndRender()
 
 
 
-bool GNode::Create()
+bool GNode::reCreate()
 {
+    this->clear();
     return true;
 }
 
 
-void GNode::SetParentBone ( GNode *Parent, char *sName )
+void GNode::setParentBone ( GNode *Parent, const char *sName )
 {
     if ( sName == NULL || strlen ( sName ) == 0 || strlen ( sName ) > 31 )
     {
@@ -476,24 +472,24 @@ void GNode::SetParentBone ( GNode *Parent, char *sName )
     mOpt = optByName;
 
     mParent = Parent;
-
-    strcpy ( msParentName, sName );
+    mParentName = sName;
 
 }
 
-int GNode::GetObjID() const
+int GNode::getObjID() const
 {
     return _nID;
 }
 
-void GNode::RegisterAll()
+void GNode::registerAllProperty()
 {
-    __super::RegisterAll();
+    __super::registerAllProperty();
+
     for ( int i = 0; i < eComponentType_Count; ++i )
     {
-        GComponentInterface* component = mComponentOwner.GetComponent ( eComponentType ( i ) );
+        GComponentInterface* component = mComponentOwner.getComponent ( eComponentType ( i ) );
         if ( component )
-            RegisterProperty ( component );
+            registerProperty ( component );
     }
 }
 #define XML_OBJ_NODE_NULL	""
@@ -504,24 +500,23 @@ void GNode::RegisterAll()
 #define XML_OBJ_NODE_PROP_NAME	"Name"
 #define XML_OBJ_NODE_PROP_VALUE "Value"
 #define XML_OBJ_NODE_CATEGORY	"Category"
-void GNode::LinkTo ( CXRapidxmlNode* parent )
+void GNode::linkTo ( CXRapidxmlNode* parent )
 {
     CXASSERT_RETURN ( parent );
-    if ( !IsRegisterAll() )
-        RegisterAll();
+    registerAll();
     //<Object Type="GNode" Name="" ParentName="">
     CXRapidxmlNode* me = parent->document()->allocate_node ( rapidxml::node_element );
     me->name ( XML_OBJ_NODE_NAME );
     CXRapidxmlAttr* attrType = parent->document()->allocate_attribute ( XML_OBJ_NODE_TYPE );
     CXRapidxmlAttr* attrParent = parent->document()->allocate_attribute ( XML_OBJ_NODE_PARENT );
-    attrType->value ( CategoryName() );
-    attrParent->value ( mParent ? mParent->GetObjectName() : XML_OBJ_NODE_NULL );
+    attrType->value ( categoryName() );
+    attrParent->value ( mParent ? mParent->getObjectName() : XML_OBJ_NODE_NULL );
     me->append_attribute ( attrType );
     me->append_attribute ( attrParent );
 
     parent->append_node ( me );
 
-    const CategoryPropertyMap& otherPropMap = GetPropertyMap();
+    const CategoryPropertyMap& otherPropMap = getPropertyMap();
     CategoryPropertyMap::const_iterator ibegin = otherPropMap.begin();
     CategoryPropertyMap::const_iterator iend = otherPropMap.end();
     for ( ; ibegin != iend; ++ibegin )
@@ -558,14 +553,14 @@ void GNode::LinkTo ( CXRapidxmlNode* parent )
     for ( ; iBegin != iEnd; ++iBegin )
     {
         GNode* n = *iBegin;
-        n->LinkTo ( parent );
+        n->linkTo ( parent );
     }
 }
 
 void GNode::MakeXMLNode ( CXRapidxmlNode& node )
 {
     node.name ( "Object" );
-    CXRapidxmlAttr* attr = node.document()->allocate_attribute ( "Type", this->CategoryName() );
+    CXRapidxmlAttr* attr = node.document()->allocate_attribute ( "Type", this->categoryName() );
     node.append_attribute ( attr );
     assert ( 0 && "undo work" );
     //CategoryPropertyMap::iterator it ( mOption.begin() );
@@ -581,17 +576,17 @@ void GNode::MakeXMLNode ( CXRapidxmlNode& node )
     //}
 }
 
-void GNode::SetNodeName ( CChar* name )
+void GNode::setNodeName ( CChar* name )
 {
     mNodeName = name;
 }
 
-bool GNode::Render()
+bool GNode::render()
 {
     return true;
 }
 
-GNode* GNode::GetNodeByName ( const char* name )
+GNode* GNode::getNodeByName ( const char* name )
 {
     if ( mNodeName == name )
         return this;
@@ -602,23 +597,23 @@ GNode* GNode::GetNodeByName ( const char* name )
     for ( ; iBegin != iEnd; ++iBegin )
     {
         GNode* child = *iBegin;
-        target = child->GetNodeByName ( name );
+        target = child->getNodeByName ( name );
         if ( target )
             return target;
     }
     return target;
 }
 
-GComponentTrans& GNode::GetTrans() const
+GComponentTrans& GNode::getTrans() const
 {
-    GComponentTrans* pTrans = ( GComponentTrans* ) mComponentOwner.GetComponent ( eComponentType_Trans );
+    GComponentTrans* pTrans = ( GComponentTrans* ) mComponentOwner.getComponent ( eComponentType_Trans );
     assert ( pTrans );
     return *pTrans;
 }
 
-void GNode::UpdateTrans()
+void GNode::updateTrans()
 {
-    const bool bOriginAutoMove = GetTrans().mbAutoMove;
+    const bool bOriginAutoMove = getTrans().mbAutoMove;
 
 
     eHitType htMap = htNull;
@@ -643,10 +638,10 @@ void GNode::UpdateTrans()
 
     if ( bOriginAutoMove )
     {
-        GetTrans().Update();
+        getTrans().Update();
     }
 
-    const GComponentTrans cXPos = GetTrans();
+    const GComponentTrans cXPos = getTrans();
     /*************************************************************************************************
     //如果是在自动移动就在mXPos.Update(fPass)中更新Pos和LastPos：
     //否则就在GetInput（fPass）中更新Pos和LastPos:
@@ -659,20 +654,20 @@ void GNode::UpdateTrans()
         GGameMap *pMap = ( GGameMap* ) mForceMap;
 
         D3DXVECTOR4 vDir;
-        vDir.x = GetTrans().mTranslate.x - GetTrans().mvLastPos.x;
-        vDir.y = GetTrans().mTranslate.y - GetTrans().mvLastPos.y;
-        vDir.z = GetTrans().mTranslate.z - GetTrans().mvLastPos.z;
+        vDir.x = getTrans().mTranslate.x - getTrans().mvLastPos.x;
+        vDir.y = getTrans().mTranslate.y - getTrans().mvLastPos.y;
+        vDir.z = getTrans().mTranslate.z - getTrans().mvLastPos.z;
         vDir.w = 0;
 
-        D3DXVECTOR4 vPos ( GetTrans().mvLastPos.x, GetTrans().mvLastPos.y, GetTrans().mvLastPos.z, 1 );
+        D3DXVECTOR4 vPos ( getTrans().mvLastPos.x, getTrans().mvLastPos.y, getTrans().mvLastPos.z, 1 );
 
         bool bHit = pMap->CheckIntersect ( vPos, vDir, true );
 
         if ( bHit )
         {
-            float fHitDist = D3DXVec3Length ( & ( pMap->m_InsectInfo.vHitPos - GetTrans().mvLastPos ) );
+            float fHitDist = D3DXVec3Length ( & ( pMap->m_InsectInfo.vHitPos - getTrans().mvLastPos ) );
 
-            float fDist = D3DXVec3Length ( & ( GetTrans().mTranslate - GetTrans().mvLastPos ) );
+            float fDist = D3DXVec3Length ( & ( getTrans().mTranslate - getTrans().mvLastPos ) );
 
             if ( fHitDist > fDist )
             {
@@ -683,15 +678,15 @@ void GNode::UpdateTrans()
                 htMap = htAutoMoveHitMap;
 
                 //自动移动结束：
-                GetTrans().mbJump = false;
+                getTrans().mbJump = false;
 
-                GetTrans().mbBack = false;
+                getTrans().mbBack = false;
 
-                GetTrans().mbAutoMove = false;
+                getTrans().mbAutoMove = false;
 
-                GetTrans().mbCanMoveStep = true;
+                getTrans().mbCanMoveStep = true;
 
-                GetTrans().mvSpeed = ZEROVECTOR3;
+                getTrans().mvSpeed = ZEROVECTOR3;
 
                 pIntersectMapInfo = & ( pMap->m_InsectInfo );
             }
@@ -705,7 +700,7 @@ void GNode::UpdateTrans()
             pIntersectObj = UpdateForForceOnObj ( m_pOnObj );
         }
 
-        GetTrans() = cXPos;
+        getTrans() = cXPos;
 
         pIntersectMapInfo = UpdateForForceOnMap();
 
@@ -717,24 +712,24 @@ void GNode::UpdateTrans()
             }
             else
             {
-                GetTrans().mTranslate = pIntersectObj->vHitPos + D3DXVECTOR3 ( 0, m_fForceHeight, 0 );
+                getTrans().mTranslate = pIntersectObj->vHitPos + D3DXVECTOR3 ( 0, m_fForceHeight, 0 );
 
                 float fTmpAng = D3DXVec3Dot ( &pIntersectObj->vNormal, &D3DXVECTOR3 ( 0, 1, 0 ) );
                 if ( 0 < fTmpAng && fTmpAng < 0.5f )
                 {
-                    GetTrans().mvDir = cXPos.mvDir;
+                    getTrans().mvDir = cXPos.mvDir;
 
-                    D3DXVECTOR3 vDirTmp = GetTrans().mvUpon + pIntersectObj->vNormal;
+                    D3DXVECTOR3 vDirTmp = getTrans().mvUpon + pIntersectObj->vNormal;
                     SetDir ( vDirTmp / 2.0f );
                 }
                 else if ( fTmpAng >= 0.5f )
                 {
-                    GetTrans().mvDir = cXPos.mvDir;
+                    getTrans().mvDir = cXPos.mvDir;
                     SetDir ( pIntersectObj->vNormal );
                 }
                 else
                 {
-                    GetTrans().mTranslate = cXPos.mvLastPos;
+                    getTrans().mTranslate = cXPos.mvLastPos;
 
                     UpdateForForceOnObj ( m_pOnObj );
                 }
@@ -754,15 +749,15 @@ void GNode::UpdateTrans()
 
                 if ( fAng < 0.7 )
                 {
-                    GetTrans().mTranslate = cXPos.mvLastPos;
+                    getTrans().mTranslate = cXPos.mvLastPos;
                     UpdateForForceOnMap();
                 }
                 else
                 {
                     m_pOnObj = pIntersect->pObj;
-                    GetTrans().mvDir = cXPos.mvDir;
+                    getTrans().mvDir = cXPos.mvDir;
 
-                    GetTrans().mTranslate = pIntersect->vHitPos + D3DXVECTOR3 ( 0, m_fForceHeight, 0 );
+                    getTrans().mTranslate = pIntersect->vHitPos + D3DXVECTOR3 ( 0, m_fForceHeight, 0 );
 
                     SetDir ( pIntersect->vNormal );
                 }
@@ -778,7 +773,7 @@ void GNode::UpdateTrans()
     /*************************************************************************************************
     2、与地图中场景物体碰撞
     **************************************************************************************************/
-    GetTrans() = cXPos;
+    getTrans() = cXPos;
 
     IntersectInfo *pInterBlock = GetBlockPoint();
     /*************************************************************************************************
@@ -832,7 +827,7 @@ void GNode::UpdateTrans()
             if ( D3DXVec3Dot ( & ( pInterBlock->vNormal ), & ( D3DXVECTOR3 ( 0, 1, 0 ) ) ) < 0.5 )
             {
                 //保持在原地，不能前进
-                GetTrans().mTranslate = GetTrans().mvLastPos;
+                getTrans().mTranslate = getTrans().mvLastPos;
 
                 UpdateForForceOnMap();
             }
@@ -840,7 +835,7 @@ void GNode::UpdateTrans()
             {
                 m_pOnObj = pInterBlock->pObj;
 
-                GetTrans().mTranslate = pInterBlock->vHitPos;
+                getTrans().mTranslate = pInterBlock->vHitPos;
 
                 UpdateForForceOnObj ( m_pOnObj );
             }
@@ -858,7 +853,7 @@ void GNode::UpdateTrans()
             if ( D3DXVec3Dot ( & ( pInterBlock->vNormal ), & ( D3DXVECTOR3 ( 0, 1, 0 ) ) ) < 0.5 )
             {
                 //保持在原地，不能前进
-                GetTrans().mTranslate = GetTrans().mvLastPos;
+                getTrans().mTranslate = getTrans().mvLastPos;
 
                 UpdateForForceOnObj ( m_pOnObj );
             }
@@ -866,7 +861,7 @@ void GNode::UpdateTrans()
             {
                 m_pOnObj = pInterBlock->pObj;
 
-                GetTrans().mTranslate = pInterBlock->vHitPos;
+                getTrans().mTranslate = pInterBlock->vHitPos;
 
                 UpdateForForceOnObj ( m_pOnObj );
             }
@@ -917,64 +912,68 @@ void GNode::UpdateTrans()
 
     if ( pIntersectFinalHit != NULL )
     {
-        GetTrans().mTranslate = pIntersectFinalHit->vHitPos + D3DXVECTOR3 ( 0, m_fForceHeight, 0 );
+        getTrans().mTranslate = pIntersectFinalHit->vHitPos + D3DXVECTOR3 ( 0, m_fForceHeight, 0 );
 
         m_bBehaviour = false;
 
         //自动移动结束：
-        GetTrans().mbJump = false;
+        getTrans().mbJump = false;
 
-        GetTrans().mbBack = false;
+        getTrans().mbBack = false;
 
-        GetTrans().mbAutoMove = false;
+        getTrans().mbAutoMove = false;
 
-        GetTrans().mbCanMoveStep = true;
+        getTrans().mbCanMoveStep = true;
 
-        GetTrans().mvSpeed = ZEROVECTOR3;
+        getTrans().mvSpeed = ZEROVECTOR3;
 
         SetDir ( pIntersectFinalHit->vNormal );
     }
 }
 
-void GNode::OnComponentChange ( GComponentInterface* component,  bool canDetach , bool notifyEditor )
+void GNode::onComponentChange ( GComponentInterface* component,  bool canDetach , bool notifyEditor )
 {
     if ( component )
     {
         component->SetTarget ( this );
-        component->SetCanDetach ( canDetach );
+        component->setCanDetach ( canDetach );
     }
     if ( notifyEditor )
     {
-        UnRegisterAll();
-        RegisterAll();
-
-        //EditorEvent event;
-        //event.mType = eEditorToSecne_Select;
-        //event.mArgs.push_back ( mNodeName );
-        //Notify ( event );
+        registerAll();
+        mOperatorObj = this;
+        mDelegateComponentChange.trigger();
     }
 }
 
-void GNode::OnPropertyChange ( void* pre, void* changed )
+void GNode::onPropertyChange ( void* pre, void* changed )
 {
-    __super::OnPropertyChange ( pre, changed );
+    __super::onPropertyChange ( pre, changed );
+
     for ( int i = 0; i < eComponentType_Count; ++i )
     {
-        if ( mComponentOwner.GetComponent ( eComponentType ( i ) ) )
+        if ( mComponentOwner.getComponent ( eComponentType ( i ) ) )
         {
-            mComponentOwner.GetComponent ( eComponentType ( i ) )->OnPropertyChange ( pre, changed );
+            mComponentOwner.getComponent ( eComponentType ( i ) )->onPropertyChange ( pre, changed );
         }
     }
 }
 
-bool GNode::ReCreate()
-{
-    Clear();
-    return true;
-}
 
-void GNode::Clear()
+void GNode::clear()
 {
 
 }
+
+CXDelegate GNode::mDelegateComponentChange;
+
+CXDelegate GNode::mDelegateAddObj;
+
+GNode* GNode::mOperatorObj = nullptr;
+
+GNode* GNode::mOperatorParentObj = nullptr;
+
+CXDelegate GNode::mDelegateDesotoryObj;
+
+CXDelegate GNode::mDelegateCreateObj;
 

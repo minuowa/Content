@@ -52,10 +52,7 @@ public:
 
     bool VertexShaderSurport() const;
 
-    IDirect3DDevice9 *GetDvc() const
-    {
-        return mD9Device;
-    }
+    inline IDirect3DDevice9 *GetDvc() const;
 	inline int TestDevice();
     void OnDeviceLost();
 	void OnResize(int w,int h);
@@ -63,11 +60,17 @@ protected:
 	bool ResetDevice(int w,int h);
 public:
 	CXDelegate mOnLostDevice;
-	CXDelegate mOnResstDevice;
+	CXDelegate mOnResetDevice;
 };
 typedef CXSingleton<GD9Device> GSingletonD9Device;
 #define  D9DEVICE	GSingletonD9Device::GetSingletonPtr()
+
 inline int GD9Device::TestDevice()
 {
 	return mD9Device->TestCooperativeLevel();
+}
+
+inline IDirect3DDevice9 * GD9Device::GetDvc() const
+{
+	return mD9Device;
 }

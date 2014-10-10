@@ -2,31 +2,32 @@
 #include "GAllocateHierarchy.h"
 #include "GAnimationResource.h"
 #include "GD9Device.h"
+#include "GTexture.h"
 
 HRESULT AllocateName ( LPCTSTR Name, LPTSTR *pNewName )
 {
-	//Name为空值，返回错误
-	if ( Name == NULL )
-	{
-		*pNewName = NULL;
+    //Name为空值，返回错误
+    if ( Name == NULL )
+    {
+        *pNewName = NULL;
 
 
-		return S_FALSE;
-	}
+        return S_FALSE;
+    }
 
-	int nLen = lstrlen ( Name ) + 1;
+    int nLen = lstrlen ( Name ) + 1;
 
-	*pNewName = new TCHAR[nLen];
+    *pNewName = new TCHAR[nLen];
 
-	//内存不足，返回错误
-	if ( *pNewName == NULL )
-	{
-		return E_OUTOFMEMORY;
-	}
+    //内存不足，返回错误
+    if ( *pNewName == NULL )
+    {
+        return E_OUTOFMEMORY;
+    }
 
-	memcpy ( *pNewName, Name, nLen * sizeof ( TCHAR ) );
+    memcpy ( *pNewName, Name, nLen * sizeof ( TCHAR ) );
 
-	return S_OK;
+    return S_OK;
 
 }
 STDMETHODIMP GAllocateHierarchy::CreateFrame ( LPCSTR Name, LPD3DXFRAME *ppNewFrame )
@@ -195,11 +196,17 @@ STDMETHODIMP GAllocateHierarchy::CreateMeshContainer
     {
         memcpy ( pMeshContainerTmp->pMaterials, pMaterials, sizeof ( D3DXMATERIAL ) *NumMaterials );
 
+        CXFileName filename ( mMediaFileName );
+        GString path = filename.GetRelativePath();
+
         for ( DWORD i = 0; i < NumMaterials; i++ )
         {
             if ( pMeshContainerTmp->pMaterials[i].pTextureFilename != NULL )
             {
-                hr = D3DXCreateTextureFromFileA ( D9DEVICE->GetDvc(), pMeshContainerTmp->pMaterials[i].pTextureFilename, &pMeshContainerTmp->ppTexture[i] );
+                GString fileName = path + CXFileName::PathSpliter + pMeshContainerTmp->pMaterials[i].pTextureFilename;
+                GTexture* gtext = TextureMgr->getResource ( fileName.c_str() );
+                if ( gtext )
+                    pMeshContainerTmp->ppTexture[i] = gtext->getTexture();
             }
         }
     }
@@ -255,8 +262,10 @@ e_Exit:
     return S_OK;
 }
 
-GAllocateHierarchy::GAllocateHierarchy ( IDirect3DDevice9 * DVC )
+GAllocateHierarchy::GAllocateHierarchy ( IDirect3DDevice9 * DVC, const char* mediaFile )
 {
+    if ( mediaFile != nullptr )
+        mMediaFileName = mediaFile;
 }
 
 HRESULT GAllocateHierarchy::DestroyMeshContainer ( LPD3DXMESHCONTAINER pMeshContainerToFree )
@@ -381,5 +390,7 @@ GAllocateHierarchy::~GAllocateHierarchy()
 
 STDMETHODIMP GAllocateHierarchy::DestroyFrame ( LPD3DXFRAME pFrameToFree )
 {
+    dSafeDeleteArray ( pFrameToFree->Name );
+    dSafeDelete ( pFrameToFree );
     return S_OK;
 }

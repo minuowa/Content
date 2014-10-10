@@ -20,27 +20,27 @@ GGame::GGame ( void )
 
 GGame::~GGame ( void )
 {
-
+    dSafeDelete ( mSceneMgr );
 }
 
-void GGame::Loop()
+void GGame::loop()
 {
-    TIMER.Update();
+    TheTimer->Update();
 
     if ( mIsActive )
     {
         INPUTSYSTEM.Update();
-        GetInput();
+        getInput();
     }
 
-    Update();
+    update();
 
-    Render();
+    render();
 }
 
-void GGame::GetInput()
+void GGame::getInput()
 {
-    float fPass = TIMER.GetFrameTimeSec();
+    float fPass = TheTimer->GetFrameTimeSec();
 
 
     if ( INPUTSYSTEM.IskeyUp ( DIK_ESCAPE ) )
@@ -108,7 +108,7 @@ void GGame::GetInput()
         {
             if ( mpSelectAnim != NULL )
             {
-                if ( !mpSelectAnim->GetTrans().mbCanMoveStep )
+                if ( !mpSelectAnim->getTrans().mbCanMoveStep )
                 {
                     mpSelectObj->GetInput ( fPass );
                 }
@@ -125,13 +125,13 @@ void GGame::GetInput()
             if ( INPUTSYSTEM.IsPressKey ( DIK_COMMA ) )
             {
                 //>增加速度
-                mpSelectObj->GetTrans().mfSpeedMove += 0.8f;
+                mpSelectObj->getTrans().mfSpeedMove += 0.8f;
             }
 
             if ( INPUTSYSTEM.IsPressKey ( DIK_PERIOD ) )
             {
                 //<减小速度
-                mpSelectObj->GetTrans().mfSpeedMove -= 0.8f;
+                mpSelectObj->getTrans().mfSpeedMove -= 0.8f;
             }
 
             if ( DI_BUTTONUP == INPUTSYSTEM.GetKeyAction ( DIK_DELETE ) )
@@ -148,12 +148,12 @@ void GGame::GetInput()
         {
             if ( mpSelectObj != NULL )
             {
-                mpSelectObj->GetTrans().mvZoom += D3DXVECTOR3 ( 0.01f, 0.01f, 0.01f );
+                mpSelectObj->getTrans().mvZoom += D3DXVECTOR3 ( 0.01f, 0.01f, 0.01f );
             }
 
             if ( mpSelectAnim != NULL )
             {
-                mpSelectAnim->GetTrans().mfSpeedMove += 0.5f;
+                mpSelectAnim->getTrans().mfSpeedMove += 0.5f;
             }
 
         }
@@ -162,12 +162,12 @@ void GGame::GetInput()
         {
             if ( mpSelectObj != NULL )
             {
-                mpSelectObj->GetTrans().mvZoom -= D3DXVECTOR3 ( 0.01f, 0.01f, 0.01f );
+                mpSelectObj->getTrans().mvZoom -= D3DXVECTOR3 ( 0.01f, 0.01f, 0.01f );
             }
 
             if ( mpSelectAnim != NULL )
             {
-                mpSelectAnim->GetTrans().mfSpeedMove -= 0.5f;
+                mpSelectAnim->getTrans().mfSpeedMove -= 0.5f;
             }
 
         }
@@ -184,7 +184,7 @@ void GGame::GetInput()
                 D9DEVICE->GetDvc()->SetRenderState ( D3DRS_FILLMODE, D3DFILL_WIREFRAME );
             }
 
-            Toggle ( bFlag );
+            toggle ( bFlag );
 
             //OPENCLOSE( mpNowMap->mLighting );
         }
@@ -201,7 +201,7 @@ void GGame::GetInput()
 
 }
 
-void GGame::Update( )
+void GGame::update( )
 {
 
     if ( INPUTSYSTEM.IskeyUp ( DIK_TAB ) )
@@ -215,7 +215,7 @@ void GGame::Update( )
 
     eGameScene gs = mSceneMgr->mSceneMachine.GetNowScene();
 
-    float fPass = TIMER.GetFrameTimeSec();
+    float fPass = TheTimer->GetFrameTimeSec();
 
     switch ( gs )
     {
@@ -225,7 +225,7 @@ void GGame::Update( )
         break;
 
     case gsGame:
-        mSceneMgr->Update ( fPass );
+        mSceneMgr->update ( fPass );
         //gAnimMesh[0].Update();
         //mSea.Update( fPass );
 
@@ -235,13 +235,13 @@ void GGame::Update( )
 
 }
 
-void GGame::Render( )
+void GGame::render( )
 {
-    float fPass = TIMER.GetFrameTimeSec();
+    float fPass = TheTimer->GetFrameTimeSec();
 
     eGameScene gs = mSceneMgr->mSceneMachine.GetNowScene();
 
-    mSceneMgr->SetView();
+    mSceneMgr->setView();
     switch ( D9DEVICE->TestDevice() )
     {
     case D3D_OK:
@@ -258,32 +258,32 @@ void GGame::Render( )
     }
     break;
     }
-	if (D9DEVICE->BeginRender())
-	{
-		switch ( gs )
-		{
+    if ( D9DEVICE->BeginRender() )
+    {
+        switch ( gs )
+        {
 
-		case gsLoading:
+        case gsLoading:
 
-			//mpUIMgr->RenderLoading( fPass );
+            //mpUIMgr->RenderLoading( fPass );
 
-			break;
+            break;
 
-		case  gsGame:
+        case  gsGame:
 
-			GameRender ( fPass );
+            gameRender ( fPass );
 
-			break;
+            break;
 
-		case gslogin:
+        case gslogin:
 
-			//mpUIMgr->RenderLogin(fPass);
+            //mpUIMgr->RenderLogin(fPass);
 
-			break;
-		}
+            break;
+        }
 
-		D9DEVICE->EndRender();
-	}
+        D9DEVICE->EndRender();
+    }
 
 }
 
@@ -307,10 +307,6 @@ bool GGame::initBase ( HWND mainWnd )
 
     //初始化框架
     CXASSERT_RETURN_FALSE ( __super::initBase ( mainWnd ) );
-    //if ( mEditor )
-    //{
-    //    mEditor->SetWndProc ( ( void* ) WndProc );
-    //}
     //初始化D3D设备
     CXASSERT_RETURN_FALSE (
         GSingletonD9Device::GetSingletonPtr()->Init ( mMainWin )
@@ -321,7 +317,7 @@ bool GGame::initBase ( HWND mainWnd )
     );
 
     //初始化场景管理器
-    mSceneMgr = new GSceneMgr;
+    mSceneMgr = new GSceneManager;
 
     bSuccess = mSceneMgr->Init ( GSingletonD9Device::GetSingleton() );
 
@@ -369,7 +365,7 @@ bool GGame::initBase ( HWND mainWnd )
     return true;
 }
 
-void GGame::ShutDown()
+void GGame::shutDown()
 {
 
 }
@@ -386,22 +382,28 @@ DWORD WINAPI LoadObj ( LPVOID pParam )
     }
 
     //设置投影矩阵
-    TheSceneMgr->SetProj();
+    TheSceneMgr->setProj();
 
     //创建世界坐标系
-    GWorldCorrd* corrd = new GWorldCorrd();
-    corrd->SetNodeName ( "World Corrd" );
-    CXASSERT_RETURN_FALSE ( corrd->Create() );
-    TheSceneMgr->AddStaticObj ( corrd );
+	GWorldCorrd* corrd = new GWorldCorrd();
+	corrd->setNodeName ( "World Corrd" );
+	CXASSERT_RETURN_FALSE ( corrd->reCreate() );
+	TheSceneMgr->addStaticObj ( corrd );
 
-//   MeshPara seaPara( 0, 80.0f, 0, 64, "..\\Data\\res\\water\\BlueShort\\A21C_000.jpg", NULL );
-//   pGame->mSea.CreateParam(seaPara);
-    //pGame->mSea.Create( NULL, ( void* )&seaPara );
-//   pGame->mSea.mLighting = true;
-//   pGame->mSea.m_bCanSelect = false;
-//   pGame->mSea.AddQuakePoint( 0, 0, 10.0f, 0.5f );
+	MeshPara seaPara( 0, 80.0f, 0, 64, "..\\Data\\res\\water\\BlueShort\\A21C_000.jpg", NULL );
+	
+	//CSea* sea=new CSea;
+	//sea->setParam(seaPara);
+	//sea->mLighting = true;
+	//sea->m_bCanSelect = false;
+	//sea->AddQuakePoint( 0, 0, 10.0f, 0.5f );
+	//sea->reCreate();
+	//TheSceneMgr->addDynaObj ( sea );
 
-//   GAnimMeshObj *pAnimMesh = new GAnimMeshObj;
+	GAnimMeshObj *pAnimMesh = new GAnimMeshObj;
+	pAnimMesh->setMediaFile ( "..\\Data\\res\\Anim\\AnimMesh0002\\A0002.X" );
+	CXASSERT_RETURN_FALSE ( pAnimMesh->reCreate() );
+	TheSceneMgr->addDynaObj ( pAnimMesh );
 
     //TheSceneMgr->mEye.InitTrack( &gAnimMesh[0] );
 
@@ -415,21 +417,20 @@ DWORD WINAPI LoadObj ( LPVOID pParam )
 
 
 
-void GGame::GameRender ( float fPass )
+void GGame::gameRender ( float fPass )
 {
-
     //GMeshManager::GetSingleton().Render( fPass );
 
-    mSceneMgr->mSceneRootNode->Draw();
+    mSceneMgr->mSceneRootNode->draw();
 
     //gAnimMesh[0].Render( fPass );
 
-    RenderEye ( fPass );
+    renderEye ( fPass );
 
     //mpUIMgr->Render( fPass );
 }
 
-void GGame::RenderEye ( float fPass )
+void GGame::renderEye ( float fPass )
 {
     /**************************************************************************************
 
@@ -495,7 +496,7 @@ void GGame::RenderEye ( float fPass )
 
 }
 
-void GGame::Finish()
+void GGame::finish()
 {
     mFinished = true;
 }

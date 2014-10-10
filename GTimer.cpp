@@ -17,7 +17,7 @@ GTimer::~GTimer(void)
 }
 
 
-DWORD GTimer::GetFrameTimems()
+DWORD GTimer::getFrameTimems()
 {
 	return mFrameTime;
 }

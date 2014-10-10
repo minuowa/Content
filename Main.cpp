@@ -9,14 +9,14 @@ extern "C"
     }
     FiGameDemo_API void FiGameDemo_Update()
     {
-        TheGame->Loop();
+        TheGame->loop();
     }
     FiGameDemo_API void FiGameDemo_ShutDown()
     {
-        TheGame->ShutDown();
+        TheGame->shutDown();
     }
 }
-#if 1
+#if 0
 int WINAPI WinMain ( __in HINSTANCE hInstance, __in_opt HINSTANCE hPrevInstance, __in_opt LPSTR lpCmdLine, __in int nShowCmd )
 {
     if ( !FiGameDemo_Init ( 0 ) )

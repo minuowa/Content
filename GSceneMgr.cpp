@@ -7,57 +7,51 @@
 #include "GComponentFactory.h"
 #include "GComponentBox.h"
 
-GSceneMgr::GSceneMgr ( void )
-    : mSceneDynamiRootNode ( 0 )
+GSceneManager::GSceneManager ( void )
+    : mSceneDynamicRootNode ( 0 )
     , mSceneRootNode ( 0 )
     , mSceneStaticRootNode ( 0 )
     , mCurCamera ( 0 )
 {
-
+    mOperatoredObj = 0;
 }
 
-GSceneMgr::~GSceneMgr ( void )
+GSceneManager::~GSceneManager ( void )
 {
-
+    dSafeDelete ( mSceneRootNode );
 }
 
-bool GSceneMgr::Init( const GD9Device& DVC )
+bool GSceneManager::Init ( const GD9Device& DVC )
 {
-    InitNodeFactory();
-    InitComponentFactory();
+    initNodeFactory();
+    initComponentFactory();
 
     mSceneRootNode = new GNode();
-    mSceneRootNode->SetNodeName ( "Scene Root" );
-
-    //EditorEvent event;
-    //event.mType = eSceneToEditor_Add;
-    //event.mArgs.push_back ( mSceneRootNode->GetObjectName() );
-    //event.mArgs.push_back ( "" );
-    //Notify ( event );
+    mSceneRootNode->setNodeName ( "Scene Root" );
 
     mSceneStaticRootNode = new GNode();
-    mSceneDynamiRootNode = new GNode();
-    mSceneStaticRootNode->SetNodeName ( "Scene Static Root" );
-    mSceneDynamiRootNode->SetNodeName ( "Scene Dyna Root" );
-    mSceneRootNode->AddChild ( mSceneStaticRootNode );
-    mSceneRootNode->AddChild ( mSceneDynamiRootNode );
+    mSceneDynamicRootNode = new GNode();
+    mSceneStaticRootNode->setNodeName ( "Scene Static Root" );
+    mSceneDynamicRootNode->setNodeName ( "Scene Dyna Root" );
+    mSceneRootNode->addChild ( mSceneStaticRootNode );
+    mSceneRootNode->addChild ( mSceneDynamicRootNode );
 
     mCurCamera = new GCamera;
-    mCurCamera->SetNodeName ( "Current Camera" );
-    if ( mCurCamera->Create()  )
+    mCurCamera->setNodeName ( "Current Camera" );
+    if ( mCurCamera->reCreate()  )
     {
         //GComponentTrans* trans = get
-        mCurCamera->GetTrans().mvDir = D3DXVECTOR3 ( ZEROFLOAT, -200.0f, 200.0f );
-        mCurCamera->GetTrans().mvRight = D3DXVECTOR3 ( 1.0f, ZEROFLOAT, ZEROFLOAT );
-        D3DXVec3Cross ( &mCurCamera->GetTrans().mvUpon, &mCurCamera->GetTrans().mvDir, &mCurCamera->GetTrans().mvRight );
+        mCurCamera->getTrans().mvDir = D3DXVECTOR3 ( ZEROFLOAT, -200.0f, 200.0f );
+        mCurCamera->getTrans().mvRight = D3DXVECTOR3 ( 1.0f, ZEROFLOAT, ZEROFLOAT );
+        D3DXVec3Cross ( &mCurCamera->getTrans().mvUpon, &mCurCamera->getTrans().mvDir, &mCurCamera->getTrans().mvRight );
 
-        D3DXVec3Normalize ( &mCurCamera->GetTrans().mvDir, &mCurCamera->GetTrans().mvDir );
-        D3DXVec3Normalize ( &mCurCamera->GetTrans().mvRight, &mCurCamera->GetTrans().mvRight );
-        D3DXVec3Normalize ( &mCurCamera->GetTrans().mvUpon, &mCurCamera->GetTrans().mvUpon );
+        D3DXVec3Normalize ( &mCurCamera->getTrans().mvDir, &mCurCamera->getTrans().mvDir );
+        D3DXVec3Normalize ( &mCurCamera->getTrans().mvRight, &mCurCamera->getTrans().mvRight );
+        D3DXVec3Normalize ( &mCurCamera->getTrans().mvUpon, &mCurCamera->getTrans().mvUpon );
 
-        mCurCamera->GetTrans().mfSpeedMove = 150.0f;
+        mCurCamera->getTrans().mfSpeedMove = 150.0f;
 
-        AddDynaObj ( mCurCamera );
+        addDynaObj ( mCurCamera );
 
         return true;
     }
@@ -65,46 +59,45 @@ bool GSceneMgr::Init( const GD9Device& DVC )
     return false;
 }
 
-void* GSceneMgr::GetInput ( float fPass )
+void* GSceneManager::GetInput ( float fPass )
 {
-    mSceneDynamiRootNode->GetInput ( fPass );
+    mSceneDynamicRootNode->GetInput ( fPass );
     return 0;
 }
 
-void GSceneMgr::SetView()
+void GSceneManager::setView()
 {
-    mCurCamera->SetView();
+    mCurCamera->setView();
 }
 
-void GSceneMgr::SetProj()
+void GSceneManager::setProj()
 {
-    mCurCamera->SetProj();
+    mCurCamera->setProj();
 }
 
-void GSceneMgr::Update ( float fPass )
+void GSceneManager::update ( float fPass )
 {
     //mCurCamera->Update();
-	if (mSceneRootNode)
-	{
-		mSceneRootNode->Update();
-	}
+    if ( mSceneDynamicRootNode )
+    {
+        //mSceneRootNode->Update();
+        mSceneDynamicRootNode->update();
+    }
 }
 
-void GSceneMgr::Delete ( CGameStaticObj *pObj )
+void GSceneManager::Delete ( CGameStaticObj *pObj )
 {
-    char sConfigFile[FILE_NAME_LENGTH];
-    ZeroMemory ( sConfigFile, sizeof ( sConfigFile ) );
+    GString sConfigFile;
+    sConfigFile.Format ( "Data\\StaticObj\\Save\\StaticObj%03d.txt", pObj->m_nObjID );
 
-    sprintf ( sConfigFile, "Data\\StaticObj\\Save\\StaticObj%03d.txt", pObj->m_nObjID );
-
-    if ( IsFileExist ( sConfigFile ) )
+    if ( IsFileExist ( sConfigFile.c_str() ) )
     {
         DeleteFileA ( sConfigFile );
     }
 
 }
 
-bool GSceneMgr::SaveScene ( CChar* xmlFile )
+bool GSceneManager::SaveScene ( CChar* xmlFile )
 {
     //version="1.0" encoding="UTF-8"
     CXRapidxmlDocument doc;
@@ -114,144 +107,120 @@ bool GSceneMgr::SaveScene ( CChar* xmlFile )
     CXRapidxmlNode* root = doc.allocate_node ( rapidxml::node_element );
     root->name ( "GameObects" );
     doc.append_node ( root );
-    mSceneRootNode->LinkTo ( root );
+    mSceneRootNode->linkTo ( root );
     CXRapidxmlWriter writer;
     writer.AppendChild ( &doc );
     writer.Write ( xmlFile );
     return true;
 }
 
-void GSceneMgr::AddStaticObj ( GNode* node )
+void GSceneManager::addStaticObj ( GNode* node )
 {
     CXASSERT ( node );
-    mSceneStaticRootNode->AddChild ( node );
+    mSceneStaticRootNode->addChild ( node );
 }
 
-void GSceneMgr::AddDynaObj ( GNode* node )
+void GSceneManager::addDynaObj ( GNode* node )
 {
     CXASSERT ( node );
-    mSceneDynamiRootNode->AddChild ( node );
-}
-
-void GSceneMgr::ProcessEvent()
-{
-    //if ( TheEditor )
-    //{
-    //    const EditorEventArr& eventArr = TheEditor->GetEventArr();
-    //    if ( eventArr.size() )
-    //    {
-    //        EditorEventArr::const_iterator it ( eventArr.begin() );
-    //        EditorEventArr::const_iterator iend ( eventArr.end() );
-    //        for ( ; it != iend; ++it )
-    //        {
-    //            const EditorEvent& event = *it;
-    //            HandleEvent ( event );
-    //        }
-    //        TheEditor->ClearEvent();
-    //    }
-    //}
+    mSceneDynamicRootNode->addChild ( node );
 }
 
 
-GNode* GSceneMgr::GetNodeByName ( const char* name )
+GNode* GSceneManager::getNodeByName ( const char* name )
 {
     if ( mSceneRootNode )
-        return mSceneRootNode->GetNodeByName ( name );
-    return 0;
+        return mSceneRootNode->getNodeByName ( name );
+    return nullptr;
 }
 
 #define __RegisterGameObjCreator(className) \
-	mGameObjFactory.RegisterCreator(#className,className::CreateNode)
+	mGameObjFactory.registerCreator(#className,className::CreateNode)
 
-void GSceneMgr::InitNodeFactory()
+void GSceneManager::initNodeFactory()
 {
     __RegisterGameObjCreator ( GNode );
     __RegisterGameObjCreator ( GAnimMeshObj );
     __RegisterGameObjCreator ( GMeshBaseObj );
     __RegisterGameObjCreator ( GRenderObject );
 
-    //if ( TheEditor )
-    //{
-    //    typedef GFactory<GNode>::ObjCreatorMap GNodeCreatorMap;
-    //    const GNodeCreatorMap& nodeCreatorMap = mGameObjFactory.GetCreators();
-    //    GNodeCreatorMap::const_iterator walk = nodeCreatorMap.begin();
-    //    GNodeCreatorMap::const_iterator end = nodeCreatorMap.end();
-    //    CharStringArr gameobjectTypeArr;
-    //    for ( ; walk != end; ++walk )
-    //    {
-    //        gameobjectTypeArr.push_back ( walk->first.c_str() );
-    //    }
-    //    TheEditor->InitObjectMenu ( gameobjectTypeArr );
-    //}
+#if TheEditor
+    typedef GFactory<GNode>::ObjCreatorMap GNodeCreatorMap;
+    const GNodeCreatorMap& nodeCreatorMap = mGameObjFactory.getCreators();
+    GNodeCreatorMap::const_iterator walk = nodeCreatorMap.begin();
+    GNodeCreatorMap::const_iterator end = nodeCreatorMap.end();
+    for ( ; walk != end; ++walk )
+    {
+        mGameObjectTypeArray.push_back ( walk->first.c_str() );
+    }
+#endif
 }
 
 
-void GSceneMgr::InitComponentFactory()
+void GSceneManager::initComponentFactory()
 {
     __RegisterComponentCreator ( GComponentTrans );
     __RegisterComponentCreator ( GComponentMesh );
     __RegisterComponentCreator ( GComponentBox );
 
-    //if ( TheEditor )
-    //{
-    //    typedef GComponentFactory::ComponentCreatorMap ComponentCreatorMap;
-    //    const ComponentCreatorMap& nodeCreatorMap =
-    //        CXSingleton<GComponentFactory>::GetSingleton().GetCreators();
-    //    ComponentCreatorMap::const_iterator walk = nodeCreatorMap.begin();
-    //    ComponentCreatorMap::const_iterator end = nodeCreatorMap.end();
-    //    CharStringArr componentTypeArr;
-    //    for ( ; walk != end; ++walk )
-    //    {
-    //        componentTypeArr.push_back ( walk->first.c_str() );
-    //    }
-    //    TheEditor->InitComponentMenu ( componentTypeArr );
-    //}
+    typedef GComponentFactory::ComponentCreatorMap ComponentCreatorMap;
+    const ComponentCreatorMap& nodeCreatorMap =
+        CXSingleton<GComponentFactory>::GetSingleton().getCreators();
+    ComponentCreatorMap::const_iterator walk = nodeCreatorMap.begin();
+    ComponentCreatorMap::const_iterator end = nodeCreatorMap.end();
+    for ( ; walk != end; ++walk )
+    {
+        mObjectComponentTypeArray.push_back ( walk->first.c_str() );
+    }
 }
 
-void GSceneMgr::EditorSetObjectProperty ( GNode* node )
+const CharStringArr& GSceneManager::getGameObjectTypes()
 {
-    //if ( node && TheEditor )
-    //{
-    //    if ( !node->IsRegisterAll() )
-    //        node->RegisterAll();
-
-    //    EPropertySheet* propSheet = TheEditor->GetPropertySheet();
-    //    CXASSERT_RETURN ( propSheet );
-
-    //    const CategoryPropertyMap& cateMap = node->GetPropertyMap();
-
-    //    propSheet->ClearPropertyies();
-
-    //    CategoryPropertyMap::const_iterator walk = cateMap.begin();
-    //    CategoryPropertyMap::const_iterator end = cateMap.end();
-    //    for ( ; walk != end; ++walk )
-    //    {
-    //        PropertyMap* propMap = walk->second;
-    //        PropertyMap::iterator propIt = propMap->begin();
-    //        PropertyMap::iterator propEnd = propMap->end();
-    //        for ( ; propIt != propEnd; ++propIt )
-    //        {
-    //            propSheet->AddProperty ( walk->first.c_str(), propIt->first.c_str(), propIt->second );
-    //        }
-    //    }
-    //}
+    return mGameObjectTypeArray;
 }
 
-void GSceneMgr::EditorUpdatePopupMenu ( GNode* node )
+void GSceneManager::setOperatorObj ( int objID )
 {
-    //if ( TheEditor && node )
-    //{
-    //    TheEditor->ResetComponentMenuState();
-    //    GComponentOwner& owner = node->GetComponentOwner();
-    //    for ( int i = 0; i < eComponentType_Count; ++i )
-    //    {
-    //        GComponentInterface* component = owner.GetComponent ( ( eComponentType ) i );
-    //        if ( component )
-    //        {
-    //            TheEditor->SetComponentMenuState ( component->GetComponentName(), true, component->CanDetach()  );
-    //        }
-    //    }
-    //}
+    mOperatoredObj = objID;
+}
+
+void GSceneManager::onCallBack ( const CXDelegate& delgate )
+{
+}
+
+GNode* GSceneManager::getSceneRoot() const
+{
+    return mSceneRootNode;
+}
+
+const CharStringArr& GSceneManager::getObjectComponentTypes()
+{
+    return mObjectComponentTypeArray;
+}
+
+void GSceneManager::addObj ( GNode* node, GNode* parent/*=nullptr*/ )
+{
+    if ( parent )
+    {
+        parent->addChild ( node );
+    }
+    else
+    {
+        CXASSERT ( mSceneRootNode );
+        mSceneRootNode->addChild ( node );
+    }
+}
+
+void GSceneManager::addObj ( const char* parentName, const char* typeName )
+{
+    GNode* parent = getNodeByName ( parentName );
+    GNode* child = createObjByTypeName ( typeName );
+    addObj ( child , parent );
+}
+
+GNode* GSceneManager::createObjByTypeName ( const char* typeName )
+{
+    return mGameObjFactory.create ( typeName );
 }
 
 //bool GSceneMgr::OnNotify ( const EditorEvent& event )
@@ -278,9 +247,7 @@ void GSceneMgr::EditorUpdatePopupMenu ( GNode* node )
 //    case eEditorToScene_PropertyChange:
 //    {
 //        String objName = event.mArgs[0];
-//        GNode* node = GetNodeByName ( objName );
-//        if ( node )
-//            node->OnPropertyChange ( event.mExtraData0, event.mExtraData1 );
+
 //    }
 //    break;
 //    case eEditorToScene_ComponentAttach:

@@ -2,14 +2,14 @@
 #include "GComponentFactory.h"
 
 
-GComponentFactory::ComponentCreator* GComponentFactory::GetCreator ( const char* typeName ) const
+GComponentFactory::ComponentCreator* GComponentFactory::getCreator ( const char* typeName ) const
 {
     ComponentCreator* creator = 0;
     CXASSERT_RETURN_FALSE ( mComponentCreatorMap.Get ( typeName, creator ) );
     return creator;
 }
 
-GComponentFactory::ComponentCreator* GComponentFactory::GetCreator ( eComponentType type ) const
+GComponentFactory::ComponentCreator* GComponentFactory::getCreator ( eComponentType type ) const
 {
     for ( ComponentCreatorMap::const_iterator walk = mComponentCreatorMap.begin();
             walk != mComponentCreatorMap.end(); ++walk )
@@ -23,7 +23,7 @@ GComponentFactory::ComponentCreator* GComponentFactory::GetCreator ( eComponentT
     return 0;
 }
 
-void GComponentFactory::RegisterCreator ( const char* typeName, int type, ObjCrator creator )
+void GComponentFactory::registerCreator ( const char* typeName, int type, ObjCrator creator )
 {
     if ( mComponentCreatorMap.find ( typeName ) == mComponentCreatorMap.end() )
     {
@@ -38,14 +38,14 @@ void GComponentFactory::RegisterCreator ( const char* typeName, int type, ObjCra
     }
 }
 
-GComponentInterface* GComponentFactory::Create ( const char* typeName )
+GComponentInterface* GComponentFactory::create ( const char* typeName )
 {
-    ComponentCreator* creator = GetCreator ( typeName );
+    ComponentCreator* creator = getCreator ( typeName );
     CXASSERT_RETURN_FALSE ( creator );
     return creator->mCreator();
 }
 
 GComponentFactory::~GComponentFactory()
 {
-	CXSafeDeleteMap2(mComponentCreatorMap);
+	dSafeDeleteMap2(mComponentCreatorMap);
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include "GTextureBuffer.h"
+#include "GTexture.h"
 class GGraphIndexBuffer
 {
 public:

@@ -24,7 +24,7 @@ CRectMesh::~CRectMesh( void )
 
 
 
-bool CRectMesh::Create()
+bool CRectMesh::reCreate()
 {
 
     HRESULT hr = S_FALSE;
@@ -94,10 +94,10 @@ bool CRectMesh::Create()
 
 
 
-void CRectMesh::Update( )
+void CRectMesh::update( )
 {
     PreRandom();
-    float fPass = TIMER.GetFrameTimems() / 1000.0f;
+    float fPass = TheTimer->getFrameTimems() / 1000.0f;
 
     for ( int i = 0; i < LnNumParticles; i++ )
     {
@@ -114,10 +114,10 @@ void CRectMesh::Update( )
 
     }
 
-    GRenderObject::Update();
+    GRenderObject::update();
 }
 
-bool CRectMesh::Render()
+bool CRectMesh::render()
 {
     return false;
 

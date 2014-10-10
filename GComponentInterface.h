@@ -32,13 +32,13 @@ public:
 	}
     inline const char* GetComponentName()
 	{
-		return CategoryName();
+		return categoryName();
 	}
-    inline bool CanDetach() const
+    inline bool canDetach() const
     {
         return mCanDetach;
     }
-    inline void SetCanDetach ( bool can )
+    inline void setCanDetach ( bool can )
     {
         mCanDetach = can;
     }
@@ -58,14 +58,16 @@ class GComponentOwner
 {
 public:
     GComponentOwner();
-    GComponentInterface* GetComponent ( const char* name ) const;
-    GComponentInterface* GetComponent ( eComponentType type ) const;
+	~GComponentOwner();
 
-	GComponentInterface* AttachComponent ( eComponentType type);
-	GComponentInterface* AttachComponent ( const char* name);
+    GComponentInterface* getComponent ( const char* name ) const;
+    GComponentInterface* getComponent ( eComponentType type ) const;
 
-	void DetachComponent ( const char* name );
-	void DetachComponent ( eComponentType type );
+	GComponentInterface* attachComponent ( eComponentType type);
+	GComponentInterface* attachComponent ( const char* name);
+
+	void detachComponent ( const char* name );
+	void detachComponent ( eComponentType type );
 protected:
 
     GComponentInterface* mCompoents[eComponentType_Count];
@@ -75,7 +77,7 @@ protected:
 
 #define DeclareComponentCreator(className) \
 	 public:\
-	 static GComponentInterface* CreateComponent() \
+	 static GComponentInterface* createComponent() \
 {\
 	return new className;\
 }

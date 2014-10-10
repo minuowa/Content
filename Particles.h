@@ -43,11 +43,11 @@ class CRectMesh: public GRenderObject
 
     public:
 
-		bool Create();
+		bool reCreate();
 
-        void Update();
+        void update();
 
-		virtual bool Render();
+		virtual bool render();
 
     public:
 

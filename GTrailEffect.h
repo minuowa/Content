@@ -20,8 +20,8 @@ public:
 public:
 	void Generate(D3DXMATRIX* v1,D3DXMATRIX*v2);
 
-	String mLinkerName1;
-	String mLinkerName2;
+	GString mLinkerName1;
+	GString mLinkerName2;
 
 	GBoneLinker* mLinker1;
 	GBoneLinker* mLinker2;

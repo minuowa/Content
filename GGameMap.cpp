@@ -3,33 +3,33 @@
 #include "GMeshBuffer.h"
 #include "GD9Device.h"
 
-GGameMap::GGameMap( void )
-    : _pTexture( 0 )
-    , _pMesh( 0 )
-    , _pMat( 0 )
+GGameMap::GGameMap ( void )
+    : _pTexture ( 0 )
+    , _pMesh ( 0 )
+    , _pMat ( 0 )
 {
-    ZeroMemory( mppStaticObj, sizeof( mppStaticObj ) );
+    ZeroMemory ( mppStaticObj, sizeof ( mppStaticObj ) );
 }
 
-GGameMap::~GGameMap( void )
+GGameMap::~GGameMap ( void )
 {
     for ( unsigned int i = 0; i < _nNumFace; ++i )
     {
         if ( _pTexture )
         {
-            SAFERELEASE( _pTexture[i] );
+            SAFERELEASE ( _pTexture[i] );
         }
     }
 
     _nNumFace = 0;
-    SAFERELEASE( _pMesh );
-    SAFED_ELETE( _pMat );
+    SAFERELEASE ( _pMesh );
+    SAFED_ELETE ( _pMat );
 }
 
-bool GGameMap::Create()
+bool GGameMap::reCreate()
 {
-    if(!__super::Create(  ))
-		return false;
+    if ( !__super::reCreate(  ) )
+        return false;
 
     //获取参数
 
@@ -46,88 +46,71 @@ bool GGameMap::Create()
     return true;
 }
 
-bool GGameMap::Render()
+bool GGameMap::render()
 {
-	if(!__super::Render())
-		return false;
+    if ( !__super::render() )
+        return false;
     D3DXMATRIX mat;
-    D3DXMatrixIdentity( &mat );
-    D9DEVICE->GetDvc()->SetTransform( D3DTS_TEXTURE0, &mat );
+    D3DXMatrixIdentity ( &mat );
+    D9DEVICE->GetDvc()->SetTransform ( D3DTS_TEXTURE0, &mat );
 
     return true;
 
 }
 
 
-void GGameMap::LoadFromFile( char *sConfigName )
+void GGameMap::LoadFromFile ( char *sConfigName )
 {
-    if ( IsStrEmpty( sConfigName ) )
+    if ( IsStrEmpty ( sConfigName ) )
     {
         return;
     }
 
     char sTmp[128];
-    ZeroMemory( sTmp, sizeof( sTmp ) );
+    ZeroMemory ( sTmp, sizeof ( sTmp ) );
 
     mstrHeightMap = new char[FILE_NAME_LENGTH];
-    GetPrivateProfileStringA( "Map", "HeightMapFileName", "", mstrHeightMap, 128, sConfigName );
+    GetPrivateProfileStringA ( "Map", "HeightMapFileName", "", mstrHeightMap, 128, sConfigName );
 
     mstrFileName = new char[FILE_NAME_LENGTH];
-    GetPrivateProfileStringA( "Map", "TextureFileName", "", mstrFileName, 128, sConfigName );
+    GetPrivateProfileStringA ( "Map", "TextureFileName", "", mstrFileName, 128, sConfigName );
 
-    GetPrivateProfileStringA( "Map", "fMapCellWidth", "80.0", sTmp, 128, sConfigName );
-    mfCellWidth = atof( sTmp );
-    ZeroMemory( sTmp, sizeof( sTmp ) );
+    GetPrivateProfileStringA ( "Map", "fMapCellWidth", "80.0", sTmp, 128, sConfigName );
+    mfCellWidth = atof ( sTmp );
+    ZeroMemory ( sTmp, sizeof ( sTmp ) );
 
-    GetPrivateProfileStringA( "Map", "fMapMaxHeight", "800.0", sTmp, 128, sConfigName );
-    mfMaxHeight = atof( sTmp );
-    ZeroMemory( sTmp, sizeof( sTmp ) );
+    GetPrivateProfileStringA ( "Map", "fMapMaxHeight", "800.0", sTmp, 128, sConfigName );
+    mfMaxHeight = atof ( sTmp );
+    ZeroMemory ( sTmp, sizeof ( sTmp ) );
 
-    LnCellCount = GetPrivateProfileIntA( "Map", "nMapCellCount", 64, sConfigName );
+    LnCellCount = GetPrivateProfileIntA ( "Map", "nMapCellCount", 64, sConfigName );
 
-    char sName[32];
-    ZeroMemory( sName, sizeof( sName ) );
+    GString sName;
 
     for ( int i = 1; i < 10; i++ )
     {
-        sprintf( sName, "OBJ%d", i );
-        GetPrivateProfileStringA( "ObjList", sName, "", sTmp, 128, sConfigName );
+        sName.Format ( "OBJ%d", i );
+        GetPrivateProfileStringA ( "ObjList", sName, "", sTmp, 128, sConfigName );
 
-        if ( strlen( sTmp ) == 0 )
+        if ( strlen ( sTmp ) == 0 )
         {
             break;
         }
 
-        StrToMapObjInfo( sTmp, &mppStaticObj[i - 1] );
-
-        ZeroMemory( sName, sizeof( sName ) );
-        ZeroMemory( sTmp, sizeof( sTmp ) );
+        StrToMapObjInfo ( sTmp, &mppStaticObj[i - 1] );
+        sName.clear();
+        ZeroMemory ( sTmp, sizeof ( sTmp ) );
     }
 
 }
 
 
-bool GGameMap::StrToMapObjInfo( char *str, MapObjInfo *pObjInfo )
+bool GGameMap::StrToMapObjInfo ( const char *str, MapObjInfo *pObjInfo )
 {
-    if ( IsStrEmpty( str ) || pObjInfo == NULL )
-    {
+    if ( IsStrEmpty ( str ) || pObjInfo == NULL )
         return false;
-    }
 
-    char sTmp[128];
-    ZeroMemory( sTmp, sizeof( sTmp ) );
-
-    GetSubString( str, ",", 0, sTmp );
-
-    pObjInfo->nObjId = StrToIntA( sTmp );
-
-    ZeroMemory( sTmp, sizeof( sTmp ) );
-    GetSubString( str, ",", 1, sTmp );
-    pObjInfo->x = atof( sTmp );
-
-    ZeroMemory( sTmp, sizeof( sTmp ) );
-    GetSubString( str, ",", 2, sTmp );
-    pObjInfo->z = atof( sTmp );
+    sscanf_s ( str, "%d,%.f,%.f", &pObjInfo->nObjId, &pObjInfo->x, &pObjInfo->z );
 
     return true;
 }
@@ -152,15 +135,15 @@ int GGameMap::AfterCreate()
 
     //创建Mesh
 
-    SAFERELEASE( _pMesh );
+    SAFERELEASE ( _pMesh );
 
-    hr = D3DXCreateMeshFVF(
+    hr = D3DXCreateMeshFVF (
              LnCellCount * LnCellCount * 2,
              ( LnCellCount + 1 ) * ( LnCellCount + 1 ),
              D3DXMESH_32BIT | D3DXMESH_MANAGED, FVFMAP, D9DEVICE->GetDvc(), &_pMesh
          );
 
-    if ( FAILED( hr ) )
+    if ( FAILED ( hr ) )
     {
         return -1;
     }
@@ -171,7 +154,7 @@ int GGameMap::AfterCreate()
     _pTexture = new LPDIRECT3DTEXTURE9[_nNumFace];
 
     //设置材质
-    ZeroMemory( _pMat, _nNumFace * sizeof( D3DMATERIAL9 ) );
+    ZeroMemory ( _pMat, _nNumFace * sizeof ( D3DMATERIAL9 ) );
 
     _pMat[0].Diffuse.r = 0.4f;
     _pMat[0].Diffuse.g = 0.4f;
@@ -194,27 +177,27 @@ int GGameMap::AfterCreate()
     //设置纹理
     if ( mstrFileName != NULL )
     {
-        hr = D3DXCreateTextureFromFileA( D9DEVICE->GetDvc(), mstrFileName, &_pTexture[0] );
+        hr = D3DXCreateTextureFromFileA ( D9DEVICE->GetDvc(), mstrFileName, &_pTexture[0] );
     }
 
     //读取高度图
     if ( mstrHeightMap != NULL )
     {
-        hr = D3DXCreateTextureFromFileA( D9DEVICE->GetDvc(), mstrHeightMap, &pHeightMap );
+        hr = D3DXCreateTextureFromFileA ( D9DEVICE->GetDvc(), mstrHeightMap, &pHeightMap );
     }
 
-    pHeightMap->GetLevelDesc( 0, &surfaceDesc );
+    pHeightMap->GetLevelDesc ( 0, &surfaceDesc );
 
     dwHeight = surfaceDesc.Height;
     dwWidth = surfaceDesc.Width;
 
-    hr = pHeightMap->LockRect( 0, &rcLock, NULL, 0 );
+    hr = pHeightMap->LockRect ( 0, &rcLock, NULL, 0 );
 
-    DWORD dwPitch = rcLock.Pitch / sizeof( DWORD );
+    DWORD dwPitch = rcLock.Pitch / sizeof ( DWORD );
 
-    DWORD *pBit = ( DWORD* )rcLock.pBits;
+    DWORD *pBit = ( DWORD* ) rcLock.pBits;
 
-    _pMesh->LockVertexBuffer( D3DLOCK_DISCARD, ( void** )&pVertextBuffer );
+    _pMesh->LockVertexBuffer ( D3DLOCK_DISCARD, ( void** ) &pVertextBuffer );
 
     DWORD dwRow, dwLine;
     //设置顶点数据
@@ -234,7 +217,7 @@ int GGameMap::AfterCreate()
             dwcolor = dwcolor << 8;
             dwcolor = dwcolor >> 24;
 
-            float fHeight = ( float )dwcolor;
+            float fHeight = ( float ) dwcolor;
 
             dwIndex = i * ( LnCellCount + 1 ) + j;
 
@@ -254,26 +237,26 @@ int GGameMap::AfterCreate()
         for ( int j = 1; j < LnCellCount; j++ )
         {
             pVertextBuffer[i * ( LnCellCount + 1 ) + j].vVertex.y = 0.125f * (
-                        pVertextBuffer[( i - 1 ) * dwVerNum + j - 1].vVertex.y +
-                        pVertextBuffer[( i - 1 ) * dwVerNum + j].vVertex.y +
-                        pVertextBuffer[( i - 1 ) * dwVerNum + j - 1].vVertex.y +
+                        pVertextBuffer[ ( i - 1 ) * dwVerNum + j - 1].vVertex.y +
+                        pVertextBuffer[ ( i - 1 ) * dwVerNum + j].vVertex.y +
+                        pVertextBuffer[ ( i - 1 ) * dwVerNum + j - 1].vVertex.y +
                         pVertextBuffer[i * dwVerNum + j - 1].vVertex.y +
                         pVertextBuffer[i * dwVerNum + j + 1].vVertex.y +
-                        pVertextBuffer[( i + 1 ) * dwVerNum + j - 1].vVertex.y +
-                        pVertextBuffer[( i + 1 ) * dwVerNum + j].vVertex.y +
-                        pVertextBuffer[( i + 1 ) * dwVerNum + j + 1].vVertex.y
+                        pVertextBuffer[ ( i + 1 ) * dwVerNum + j - 1].vVertex.y +
+                        pVertextBuffer[ ( i + 1 ) * dwVerNum + j].vVertex.y +
+                        pVertextBuffer[ ( i + 1 ) * dwVerNum + j + 1].vVertex.y
                     );
         }
     }
 
-    pHeightMap->UnlockRect( 0 );
+    pHeightMap->UnlockRect ( 0 );
 
-    SAFERELEASE( pHeightMap );
+    SAFERELEASE ( pHeightMap );
 
     _pMesh->UnlockVertexBuffer();
 
     //设置索引数据
-    _pMesh->LockIndexBuffer( D3DLOCK_DISCARD, ( void** )&pIndexBuffer );
+    _pMesh->LockIndexBuffer ( D3DLOCK_DISCARD, ( void** ) &pIndexBuffer );
 
     DWORD dwBaseIndex = 0;
 
@@ -299,26 +282,26 @@ int GGameMap::AfterCreate()
     DWORD *pAdj = new DWORD[_pMesh->GetNumFaces() * 3];
 
     mMeshBufferNode = new GMeshBufferNode();
-    mMeshBufferNode->SubSetCount( 1);
-    mMeshBufferNode->Mesh(_pMesh);
+    mMeshBufferNode->SubSetCount ( 1 );
+    mMeshBufferNode->Mesh ( _pMesh );
     mLighting = true;
 
-	GMetrialData* data = new GMetrialData;
-	data->SetTexture(mstrFileName);
-	data->SetMetiral(*_pMat);
-	mMeshBufferNode->Add(data);
-    _pMesh->GenerateAdjacency( 1.0f, pAdj );
+    GMetrialData* data = new GMetrialData;
+    data->SetTexture ( mstrFileName );
+    data->SetMetiral ( *_pMat );
+    mMeshBufferNode->Add ( data );
+    _pMesh->GenerateAdjacency ( 1.0f, pAdj );
 
-    mMeshBufferNode->MakeLod( pAdj );
+    mMeshBufferNode->MakeLod ( pAdj );
 
-    SetNormal( mMeshBufferNode->Mesh(), D9DEVICE->GetDvc() );
+    SetNormal ( mMeshBufferNode->Mesh(), D9DEVICE->GetDvc() );
 
     ResetVectorMesh();
 
     return _nID;
 }
 
-bool GGameMap::IsBlock( D3DXVECTOR3 vPos, int *pCounter )
+bool GGameMap::IsBlock ( D3DXVECTOR3 vPos, int *pCounter )
 {
     bool bBlock = false;
 
@@ -329,7 +312,7 @@ bool GGameMap::IsBlock( D3DXVECTOR3 vPos, int *pCounter )
             return false;
         }
 
-        D3DXVECTOR3 vMin( mppStaticObj[i].vMin ), vMax( mppStaticObj[i].vMax );
+        D3DXVECTOR3 vMin ( mppStaticObj[i].vMin ), vMax ( mppStaticObj[i].vMax );
 
         if ( vPos.x > vMin.x && vPos.x < vMax.x && vPos.z > vMin.z && vPos.z < vMax.z )
         {

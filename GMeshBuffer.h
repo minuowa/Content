@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GTextureBuffer.h"
+#include "GTexture.h"
 #include "GMeshBaseObj.h"
 #include "GMeshData.h"
 
@@ -41,10 +41,10 @@ class GMeshBufferNode
 		void Mesh(ID3DXMesh* val) { mMesh = val; }
 		WORD			mSubSetCount;
 		GRenderDataArr	mRenderData;
-		String		mFileName;
+		GString		mFileName;
 };
 
-typedef CXMap<String,GMeshBufferNode*> GMeshBufferNodeMap;
+typedef CXMap<GString,GMeshBufferNode*> GMeshBufferNodeMap;
 class GMeshManager
 {
         CXDeclareSingleton( GMeshManager );

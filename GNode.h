@@ -13,24 +13,22 @@ public:
     GNode();
 
     virtual ~GNode();
-    void SetNodeName ( CChar* name );
+    void setNodeName ( CChar* name );
 
-    void LinkTo ( CXRapidxmlNode* parent );
-    GNode* GetNodeByName ( const char* name );
-    virtual void Clear();
-    virtual bool ReCreate();
+    void linkTo ( CXRapidxmlNode* parent );
+    GNode* getNodeByName ( const char* name );
+    virtual void clear();
+    virtual bool reCreate();
 public:
-    virtual void RegisterAll();
-    DWORD GetObjCount();					//获取所有创建的物体总数，包括已经销毁的对象
-    bool Create( );
-    void SetParentBone ( GNode *Parent, char *sName );
-    int GetObjID() const;
-    GNode* AddChild ( GNode* c );
-    bool	RemoveChild ( GNode* child );
+    DWORD getObjCount();					//获取所有创建的物体总数，包括已经销毁的对象
+	void setParentBone ( GNode *Parent, const char *sName );
+    int getObjID() const;
+	GNode* addChild ( GNode* c);
+    bool	removeChild ( GNode* child );
 
-    virtual bool Draw();
+    virtual bool draw();
     virtual void GetInput ( DWORD frameTimeMs );
-    virtual void Update();
+    virtual void update();
 
 
     //创建物体后更新一下，得到物体在地图上的位置
@@ -39,7 +37,7 @@ public:
     IntersectInfo *UpdateForForceOnObj ( void *pObj );
     D3DXMATRIX GetWorldMatrix ( bool bForTrans );
     virtual eObjAnimState SetState ( eObjAnimState oas, bool bBack ) ;
-    virtual D3DXMATRIX GetWorldMatrixByBone ( char *sBoneName, bool bForTrans = false );
+	virtual D3DXMATRIX GetWorldMatrixByBone (const char *sBoneName, bool bForTrans = false );
 
     void ForceOnMap ( void *pMap, float fForceHeight, eForceType ft );
 
@@ -47,17 +45,27 @@ public:
 
     void SetDir ( D3DXVECTOR3 vNormal );
 
-    GComponentTrans& GetTrans() const;
-    void UpdateTrans();
-    void OnComponentChange ( GComponentInterface* component, bool canDetach, bool notifyEditor );
-    virtual void OnPropertyChange ( void* pre, void* changed );
+    GComponentTrans& getTrans() const;
+    void updateTrans();
+    void onComponentChange ( GComponentInterface* component, bool canDetach, bool notifyEditor );
+    virtual void onPropertyChange ( void* pre, void* changed );
 protected:
-    virtual void BeginRender();
-    virtual void EndRender();
-    virtual bool Render();
+	virtual void registerAllProperty();
+protected:
+    virtual void beginRender();
+    virtual void endRender();
+    virtual bool render();
     void	MakeXMLNode ( CXRapidxmlNode& node );
 
 public:
+	static CXDelegate mDelegateCreateObj;
+	static CXDelegate mDelegateDesotoryObj;
+
+	static GNode* mOperatorParentObj;
+	static GNode* mOperatorObj;
+	static CXDelegate mDelegateAddObj;
+
+	static CXDelegate mDelegateComponentChange;
 
     CXDynaArray<GNode*> mChildren;
 
@@ -117,7 +125,7 @@ public:
 
     eObjParentType mOpt;
 
-    char msParentName[32];
+    GString mParentName;
 
     GNode *mParent;							//依附的对象
 
@@ -125,30 +133,31 @@ protected:
 
     DWORD _nID;								//物体在所有的创建的物体中的绝对ID
 
+
 private:
 
     static DWORD __OBJCOUNTER;				//物体数目计数
 
 public:
 
-    inline GComponentInterface* AttachComponent ( eComponentType type, bool canDetach = true, bool notifyEditor = true )
+    inline GComponentInterface* attachComponent ( eComponentType type, bool canDetach = true, bool notifyEditor = true )
     {
-        GComponentInterface* component = mComponentOwner.AttachComponent ( type );
-        OnComponentChange ( component, canDetach , notifyEditor );
+        GComponentInterface* component = mComponentOwner.attachComponent ( type );
+        onComponentChange ( component, canDetach , notifyEditor );
         return component;
     }
-    inline GComponentInterface* AttachComponent ( const char* name, bool canDetach = true, bool notifyEditor = true )
+    inline GComponentInterface* attachComponent ( const char* name, bool canDetach = true, bool notifyEditor = true )
     {
-        GComponentInterface* component = mComponentOwner.AttachComponent ( name );
-        OnComponentChange ( component, canDetach, notifyEditor );
-        return component;
+        GComponentInterface* component = mComponentOwner.attachComponent ( name );
+        onComponentChange ( component, canDetach, notifyEditor );
+		return component;
     }
-    inline void DetachComponent ( const char* name )
+    inline void detachComponent ( const char* name )
     {
-        mComponentOwner.DetachComponent ( name );
-        OnComponentChange ( 0, false, true );
+        mComponentOwner.detachComponent ( name );
+        onComponentChange ( 0, false, true );
     }
-    inline GComponentOwner& GetComponentOwner()
+    inline GComponentOwner& getComponentOwner()
     {
         return mComponentOwner;
     }

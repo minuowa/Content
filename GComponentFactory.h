@@ -12,22 +12,22 @@ public:
         ObjCrator mCreator;
     };
 
-    typedef CXMap<String, ComponentCreator*> ComponentCreatorMap;
+    typedef CXMap<GString, ComponentCreator*> ComponentCreatorMap;
 	~GComponentFactory();
 public:
-    void RegisterCreator ( const char* typeName, int type, ObjCrator creator );
-    GComponentInterface* Create ( const char* typeName );
-    ComponentCreator* GetCreator ( const char* typeName ) const;
-    ComponentCreator* GetCreator ( eComponentType type ) const;
+    void registerCreator ( const char* typeName, int type, ObjCrator creator );
+    GComponentInterface* create ( const char* typeName );
+    ComponentCreator* getCreator ( const char* typeName ) const;
+    ComponentCreator* getCreator ( eComponentType type ) const;
 
 private:
     ComponentCreatorMap mComponentCreatorMap;
 public:
-    const ComponentCreatorMap& GetCreators() const
+    const ComponentCreatorMap& getCreators() const
     {
         return mComponentCreatorMap;
     }
 };
 
 #define __RegisterComponentCreator(className) \
-	CXSingleton<GComponentFactory>::GetSingleton().RegisterCreator(#className,className::ComponentType,className::CreateComponent)
+	CXSingleton<GComponentFactory>::GetSingleton().registerCreator(#className,className::ComponentType,className::createComponent)

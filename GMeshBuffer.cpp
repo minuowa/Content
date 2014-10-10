@@ -1,7 +1,7 @@
 #include "GGameDemoHeader.h"
 #include "GMeshBuffer.h"
 
-#include "GTextureBuffer.h"
+#include "GTexture.h"
 #include "GMeshBaseObj.h"
 #include "GSceneMgr.h"
 #include "GD9Device.h"
@@ -110,7 +110,7 @@ GMeshBufferNode* GMeshManager::CreateFormFile ( const char* fileName )
 
         metrialData->SetMetiral ( pMatList[i].MatD3D );
         CXFileName path ( fileName );
-        String textureName = path.GetRelativePath();
+        GString textureName = path.GetRelativePath();
 
         if ( pMatList[i].pTextureFilename != NULL )
         {

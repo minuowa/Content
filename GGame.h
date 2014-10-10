@@ -10,7 +10,6 @@
 #include "GWorldCorrd.h"
 #include "GGameMap.h"
 #include "GMeshBaseObj.h"
-#include "XMeshObj.h"
 #include "GFrameWork.h"
 #include "GTimer.h"
 #include "GNode.h"
@@ -30,28 +29,28 @@ public:
 
 	virtual bool initBase(HWND mainWnd);
 
-    virtual void Loop();
+    virtual void loop();
 
-    void ShutDown();
+    void shutDown();
 
-	void Finish();
+	void finish();
 public:
 
-	GSceneMgr* GetSceneMgr( ) { return mSceneMgr;}
+	GSceneManager* getSceneMgr( ) { return mSceneMgr;}
 
 private:
 
-    void GetInput();
+    void getInput();
 
-    void Update();
+    void update();
 
-    void Render( );
+    void render( );
 
 public:
 
 	CXMultiThread mMTLoadObj;
 
-	GSceneMgr *mSceneMgr;
+	GSceneManager *mSceneMgr;
 
 	GMeshBaseObj *mpSelectObj;
 
@@ -59,12 +58,12 @@ public:
 
 private:
 
-	void GameRender(float fPass);
+	void gameRender(float fPass);
 
-	void RenderEye(float fPass);
+	void renderEye(float fPass);
 
 	bool	mFinished;
 };
 
 #define TheGame GGame::GetSingletonPtr() 
-#define TheSceneMgr GGame::GetSingleton().GetSceneMgr()
+#define TheSceneMgr GGame::GetSingleton().getSceneMgr()

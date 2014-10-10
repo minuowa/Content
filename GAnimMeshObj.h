@@ -13,8 +13,9 @@ class GAnimMeshObj: public GRenderObject
         GAnimMeshObj( void );
         ~GAnimMeshObj( void );
     public:
-		virtual bool ReCreate();
-		virtual void Update();
+		virtual bool reCreate();
+		virtual void update();
+		void setMediaFile(const char* file);
 
         VOID	UpdateFrameMatrices( LPD3DXFRAME pFrameBase, LPD3DXMATRIX pParentMatrix );
 
@@ -24,7 +25,7 @@ class GAnimMeshObj: public GRenderObject
 
         virtual eObjAnimState SetState( eObjAnimState os, bool bBack );
 
-		virtual bool Render();
+		virtual bool render();
 
         bool	Pick( ID3DXMesh *pMesh, POINT pt );
 
@@ -42,7 +43,6 @@ class GAnimMeshObj: public GRenderObject
     private:
 		GAnimationResource*	mResource;
 		ID3DXAnimationController *mCloneAnimationController;			//动画控制器
-        IDirect3DTexture9* mpFace;								//纹理
     public:
         CAmmoParticles *mpAmmo;										//炮弹对象指针
 public:

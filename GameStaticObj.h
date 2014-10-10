@@ -13,7 +13,7 @@ public:
 
 public:
 
-	bool Create(GNode *Parent,int OBJNum);
+	bool reCreate(GNode *Parent,int OBJNum);
 
 
 public:

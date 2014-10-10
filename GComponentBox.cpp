@@ -14,7 +14,7 @@ GComponentBox::~GComponentBox ( void )
 {
 }
 
-void GComponentBox::RegisterAll()
+void GComponentBox::registerAllProperty()
 {
     __RegisterProperty ( mXDim );
     __RegisterProperty ( mYDim );

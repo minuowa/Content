@@ -4,19 +4,19 @@ class GFactory
 {
 public:
     typedef T* ( *ObjCrator ) ();
-    typedef CXMap<String, ObjCrator> ObjCreatorMap;
+    typedef CXMap<GString, ObjCrator> ObjCreatorMap;
 
     //GFactory ( void );
 	virtual   ~GFactory ( void )
 	{
 	}
-    T*	Create ( const char* typeName )
+    T*	create ( const char* typeName )
     {
-        ObjCrator creator = GetCreator ( typeName );
+        ObjCrator creator = getCreator ( typeName );
         CXASSERT_RETURN_FALSE ( creator );
         return creator();
     }
-    void RegisterCreator ( const char* typeName, ObjCrator creator )
+    void registerCreator ( const char* typeName, ObjCrator creator )
     {
         if ( mCreatorMap.find ( typeName ) == mCreatorMap.end() )
         {
@@ -27,13 +27,13 @@ public:
             CXASSERT ( 0 );
         }
     }
-    ObjCrator GetCreator ( const char* typeName )
+    ObjCrator getCreator ( const char* typeName )
     {
         ObjCrator creator = 0;
         CXASSERT_RETURN_FALSE ( mCreatorMap.Get ( typeName, creator ) );
         return creator;
     }
-    const ObjCreatorMap& GetCreators() const
+    const ObjCreatorMap& getCreators() const
     {
         return mCreatorMap;
     }
@@ -42,7 +42,7 @@ protected:
 };
 
 #define __RegisterCreator(className)\
-	RegisterCreator(#className,className::CreateNode);
+	registerCreator(#className,className::CreateNode);
 
 
 #define DeclareNodeCreator(className) \

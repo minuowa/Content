@@ -33,16 +33,16 @@ GNode* GComponentInterface::GetTarget() const
 
 GComponentOwner::GComponentOwner()
 {
-    CXMemoryZeroArray ( mCompoents );
+    dMemoryZeroArray ( mCompoents );
 }
 
-GComponentInterface* GComponentOwner::GetComponent ( const char* name ) const
+GComponentInterface* GComponentOwner::getComponent ( const char* name ) const
 {
     for ( int i = 0; i < eComponentType_Count; ++i )
     {
         if ( mCompoents[i] )
         {
-            if ( !strcmp ( mCompoents[i]->CategoryName(), name ) )
+            if ( !strcmp ( mCompoents[i]->categoryName(), name ) )
             {
                 return mCompoents[i];
             }
@@ -51,7 +51,7 @@ GComponentInterface* GComponentOwner::GetComponent ( const char* name ) const
     return 0;
 }
 
-GComponentInterface* GComponentOwner::GetComponent ( eComponentType type ) const
+GComponentInterface* GComponentOwner::getComponent ( eComponentType type ) const
 {
     assert ( type < eComponentType_Count );
     return mCompoents[type];
@@ -60,28 +60,28 @@ GComponentInterface* GComponentOwner::GetComponent ( eComponentType type ) const
 
 
 
-GComponentInterface* GComponentOwner::AttachComponent ( eComponentType type )
+GComponentInterface* GComponentOwner::attachComponent ( eComponentType type )
 {
     assert ( type < eComponentType_Count );
-    if ( !GetComponent ( type ) )
+    if ( !getComponent ( type ) )
     {
         GComponentFactory::ComponentCreator* creator =
-            CXSingleton<GComponentFactory>::GetSingleton().GetCreator ( type );
+            CXSingleton<GComponentFactory>::GetSingleton().getCreator ( type );
         CXASSERT_RESULT_FALSE ( creator );
         mCompoents[type] = creator->mCreator();
     }
     return mCompoents[type];
 }
 
-GComponentInterface* GComponentOwner::AttachComponent ( const char* name )
+GComponentInterface* GComponentOwner::attachComponent ( const char* name )
 {
-    GComponentInterface* component = GetComponent ( name );
+    GComponentInterface* component = getComponent ( name );
     if ( component )
     {
         return component;
     }
     GComponentFactory::ComponentCreator* creator =
-        CXSingleton<GComponentFactory>::GetSingleton().GetCreator ( name );
+        CXSingleton<GComponentFactory>::GetSingleton().getCreator ( name );
     CXASSERT_RESULT_FALSE ( creator );
     CXASSERT_RESULT_FALSE ( !mCompoents[creator->mType] );
     mCompoents[creator->mType] = creator->mCreator();
@@ -89,20 +89,28 @@ GComponentInterface* GComponentOwner::AttachComponent ( const char* name )
 }
 
 
-void GComponentOwner::DetachComponent ( const char* name )
+void GComponentOwner::detachComponent ( const char* name )
 {
     for ( int i = 0; i < eComponentType_Count; ++i )
     {
         if ( mCompoents[i] )
         {
-            if ( !strcmp ( mCompoents[i]->CategoryName(), name ) )
+            if ( !strcmp ( mCompoents[i]->categoryName(), name ) )
             {
-                if ( mCompoents[i]->CanDetach() )
+                if ( mCompoents[i]->canDetach() )
                 {
-                    CXSafeDelete ( mCompoents[i] );
+                    dSafeDelete ( mCompoents[i] );
                 }
             }
         }
+    }
+}
+
+GComponentOwner::~GComponentOwner()
+{
+for ( GComponentInterface * component: mCompoents )
+    {
+        dSafeDelete ( component );
     }
 }
 

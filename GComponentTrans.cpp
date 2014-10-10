@@ -189,7 +189,7 @@ int GComponentTrans::Jump()
 
         mvSpeed.y = JUMP_HEIGHT / 0.5f / JUMP_TIME;
 
-        Toggle ( mbJump );
+        toggle ( mbJump );
     }
 
     return TRUE_INT;
@@ -267,7 +267,7 @@ D3DXVECTOR3 GComponentTrans::TrunToDir ( D3DXVECTOR3 vTargetDir )
 
 void GComponentTrans::Update(  )
 {
-    float fTime = TIMER.GetFrameTimems() / 1000.0f;
+    float fTime = TheTimer->getFrameTimems() / 1000.0f;
 
 
     if ( !mbAutoMove )
@@ -280,7 +280,7 @@ void GComponentTrans::Update(  )
 
     mvSpeed += D3DXVECTOR3 ( ZEROFLOAT, -GRAVITY, ZEROFLOAT ) * fTime;
 
-    D3DXVECTOR3 vDelta = mvSpeed * TIMER.GetFrameTimems() / 1000.0f;
+    D3DXVECTOR3 vDelta = mvSpeed * TheTimer->getFrameTimems() / 1000.0f;
 
     mTranslate += vDelta;
 }
@@ -290,7 +290,7 @@ const char* GComponentTrans::GetComponentName()
     throw std::exception ( "The method or operation is not implemented." );
 }
 
-void GComponentTrans::RegisterAll()
+void GComponentTrans::registerAllProperty()
 {
     __RegisterProperty ( mTranslate.x );
     __RegisterProperty ( mTranslate.y );

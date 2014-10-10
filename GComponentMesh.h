@@ -8,18 +8,19 @@ public:
 	GComponentMesh(void);
 	~GComponentMesh(void);
 
-	virtual void RegisterAll();
+	virtual void registerAllProperty();
 	virtual void OnPropertyChange(void* pre,void* changed);
 protected:
-	String mMeshFile;
+	GString mMeshFile;
 public:
-	inline const String& MeshFile() const 
+	inline const GString& MeshFile() const 
 	{
 		return mMeshFile; 
 	}
 	inline void MeshFile(const char* val) 
 	{ 
 		mMeshFile = val;
+		registerAll();
 	}
 };
 

@@ -33,17 +33,18 @@ struct D3DXMeshContainerEX: public D3DXMESHCONTAINER		//扩展的D3D网格容器
 
 	DWORD NumAttributeGroups;			//骨骼混合表中SubMesh的数量
 
+	~D3DXMeshContainerEX();
 };
 struct GBoneLinker			//悬挂物品用的骨骼信息
 {
-	String	mName;
+	GString	mName;
 	D3DXMATRIX* mTransform;
 	GBoneLinker()
 		: mTransform ( 0 )
 	{
 	}
 };
-typedef CXMap<String, GBoneLinker*> GBoneLinkerMap;
+typedef CXMap<GString, GBoneLinker*> GBoneLinkerMap;
 class GAnimationResource
 {
 public:
@@ -52,8 +53,9 @@ public:
 		, mAnimationController ( 0 )
 	{
 	}
+	~GAnimationResource();
 public:
-	bool CreateFromFile ( const char* name );
+	bool createFromFile ( const char* name );
 	void UpdateBones();
 	GBoneLinker *GetBoneInfo( CChar*sBoneName );
 protected:

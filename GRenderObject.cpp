@@ -17,7 +17,7 @@ GRenderObject::~GRenderObject(void)
 	mForceMap=NULL;
 }
 
-bool GRenderObject::Render()
+bool GRenderObject::render()
 {
 	if(!mVisible)
 		return false;

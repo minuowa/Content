@@ -7,7 +7,6 @@
 #include "GMeshBuffer.h"
 #include "GCamera.h"
 #include "GD9Device.h"
-#include "XMeshObj.h"
 #include "GFactory.h"
 
 #define SCENENUM 5		//³¡¾°ÊýÁ¿	
@@ -45,31 +44,41 @@ public:
 
 };
 
-class GSceneMgr
+class GSceneManager:public CXCallBack
 {
 public:
-    GSceneMgr ( void );
-    ~GSceneMgr ( void );
+    GSceneManager ( void );
+    ~GSceneManager ( void );
 public:
 
-    void CullObj();
+    void cull();
 	bool Init ( const GD9Device& DVC );
     void* GetInput ( float fPass );
-    void SetView();
-    void SetProj();
-    void Update ( float fPass );
+    void setView();
+    void setProj();
+    void update ( float fPass );
     void Delete ( CGameStaticObj *pObj );
     bool SaveScene ( CChar* xmlFile );
-    void AddStaticObj ( GNode* node );
-    void AddDynaObj ( GNode* node );
+    void addStaticObj ( GNode* node );
+    void addDynaObj ( GNode* node );
+	void addObj(GNode* node,GNode* parent=nullptr);
+	void addObj(const char* parentName,const char* typeName);
+
     void ProcessEvent();
-    void SelectObjByName ( const char* name );
-    GNode* GetNodeByName ( const char* name );
+    void selectObjByName ( const char* name );
+    GNode* getNodeByName ( const char* name );
+
+	const CharStringArr& getGameObjectTypes();
+	const CharStringArr& getObjectComponentTypes();
+	void setOperatorObj(int objID);
+	GNode* getSceneRoot() const;
+	GNode* createObjByTypeName(const char* typeName);
 public:
-	void EditorSetObjectProperty(GNode* node);
-	void EditorUpdatePopupMenu(GNode* node);
-    void InitNodeFactory();
-    void InitComponentFactory();
+    void initNodeFactory();
+    void initComponentFactory();
+	virtual void onCallBack( const CXDelegate& delgate );
+
+
 	//virtual bool OnNotify(const EditorEvent& event);
 
     int mRenderObjNum;
@@ -79,7 +88,12 @@ public:
 
     GNode* mSceneRootNode;
     GNode* mSceneStaticRootNode;
-    GNode* mSceneDynamiRootNode;
+    GNode* mSceneDynamicRootNode;
 
     GFactory<GNode> mGameObjFactory;
+
+	CXIndex mOperatoredObj;
+
+	CharStringArr mGameObjectTypeArray;
+	CharStringArr mObjectComponentTypeArray;
 };

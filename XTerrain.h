@@ -14,29 +14,29 @@ struct CXTerrainVertex
 class CXTerrain :
     public GNode
 {
-        CXDeclareSingleton( CXTerrain );
-    public:
-        CXTerrain( void );
-        ~CXTerrain( void );
+    CXDeclareSingleton ( CXTerrain );
+public:
+    CXTerrain ( void );
+    ~CXTerrain ( void );
 
-        bool Init();
-        XI32 GetLineWidth() const;
-        XI32 GetCellWidth() const;
-    private:
-        bool CreateIndexBuffer();
-        bool CreateVertexBuffer();
+    bool Init();
+    XI32 GetLineWidth() const;
+    XI32 GetCellWidth() const;
+private:
+    bool CreateIndexBuffer();
+    bool CreateVertexBuffer();
 
-    private:
-        int	mLevel;
-        int mWidth;
-        IDirect3DVertexBuffer9* mVertexBuffer;
-        IDirect3DIndexBuffer9*	mIndexBuffer;
-        CXTerrainNode* mRoot;
+private:
+    int	mLevel;
+    int mWidth;
+    IDirect3DVertexBuffer9* mVertexBuffer;
+    IDirect3DIndexBuffer9*	mIndexBuffer;
+    CXTerrainNode* mRoot;
 };
 inline
 XI32 CXTerrain::GetCellWidth() const
 {
-    return ::pow( 2.0f, mLevel );
+    return XI32 ( ::pow ( 2.0f, mLevel ) );
 }
 inline
 XI32 CXTerrain::GetLineWidth() const

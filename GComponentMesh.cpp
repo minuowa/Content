@@ -12,7 +12,7 @@ GComponentMesh::~GComponentMesh ( void )
 {
 }
 
-void GComponentMesh::RegisterAll()
+void GComponentMesh::registerAllProperty()
 {
     __RegisterProperty ( mMeshFile );
 }
@@ -21,12 +21,12 @@ void GComponentMesh::OnPropertyChange ( void* pre, void* changed )
 {
     if ( pre == &mMeshFile )
     {
-        String changedName;
-        CXCast ( changedName, changed );
+        GString changedName;
+        dCast ( changedName, changed );
         if ( changedName != mMeshFile && mTarget )
         {
             mMeshFile = changedName;
-            bool res = mTarget->ReCreate();
+            bool res = mTarget->reCreate();
             CXASSERT ( res );
         }
     }

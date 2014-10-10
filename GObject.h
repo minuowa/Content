@@ -2,35 +2,41 @@
 #include "XString.h"
 #include "XMap.h"
 #include "XMultimap.h"
+#include "XProp.h"
+#include "XDelegate.h"
 
-typedef String EPropertyString;
+typedef GString GString;
 
 #define DeclareCategoryName(className)\
 		public:\
-		virtual const char* CategoryName() const\
+		virtual const char* categoryName() const\
 {\
 	return #className;\
 }\
  
 struct  EPropertyVar
 {
-    void* Ptr;
-    EPropertyString CategoryName;
-    CXProp* QVar;
+	GString mCategoryName;
+	void* mPtr;
+    CXProp* mProp;
+	bool mRefOther;
+
     void ToString ( std::string& str );
     EPropertyVar();
+	~EPropertyVar();
 };
-typedef CXMap<EPropertyString, EPropertyVar*> PropertyMap;
-typedef CXMap<EPropertyString, PropertyMap*> CategoryPropertyMap;
+typedef CXMap<GString, EPropertyVar*> PropertyMap;
+typedef CXMap<GString, PropertyMap*> CategoryPropertyMap;
+
 class GObject:public CXCallBack
 {
     DeclareCategoryName ( GObject );
 public:
     GObject ( void );
-    ~GObject ( void );
+    virtual ~GObject ( void );
 public:
     template<typename T>
-    void RegisterProperty ( const char* categoryName, const char* propName, const T& var )
+    void registerProperty ( const char* categoryName, const char* propName, const T& var )
     {
         PropertyMap* propMap = 0;
         if ( !mOption.Get ( categoryName, propMap ) )
@@ -42,11 +48,11 @@ public:
         EPropertyVar* evar = 0;
         if ( !propMap->Get ( propName, evar ) )
         {
-            EPropertyVar* evar = new EPropertyVar;
-            evar->QVar = new CXPropEntity<T> ( (T*)&var,false);
-            evar->Ptr = ( void* ) &var;
-            propMap->Insert ( propName, evar );
-            evar->CategoryName = categoryName;
+            evar = new EPropertyVar;
+            evar->mProp = new CXPropEntity<T> ( (T*)&var,false);
+            evar->mPtr = ( void* ) &var;
+			evar->mCategoryName = categoryName;
+			propMap->Insert ( propName, evar );
         }
         else
         {
@@ -54,7 +60,7 @@ public:
         }
     }
     template<>
-    void RegisterProperty ( const char* categoryName, const char* propName, const EPropertyString& var )
+    void registerProperty ( const char* categoryName, const char* propName, const GString& var )
     {
         PropertyMap* propMap = 0;
         if ( !mOption.Get ( categoryName, propMap ) )
@@ -66,43 +72,49 @@ public:
         EPropertyVar* evar = 0;
         if ( !propMap->Get ( propName, evar ) )
         {
-            EPropertyVar* evar = new EPropertyVar;
-            evar->QVar = new CXPropEntity<String> ( new  String(var.c_str() ),false);
-            evar->Ptr = ( void* ) &var;
+            evar = new EPropertyVar;
+			evar->mCategoryName = categoryName;
+			//evar->mProp = new CXPropEntity<String> ( new  String(var.c_str() ),false);
+			evar->mProp = new CXPropEntity<GString> ( (GString*)&var,false);
+            evar->mPtr = ( void* ) &var;
             propMap->Insert ( propName, evar );
-            evar->CategoryName = categoryName;
         }
         else
         {
             assert ( 0 && "already exist property" );
         }
     }
-    virtual void RegisterAll();
-	void UnRegisterAll();
-    void RegisterProperty ( GObject* obj );
-    const CategoryPropertyMap& GetPropertyMap() const
+	void registerAll();
+	void unRegisterAll();
+    void registerProperty ( GObject* obj );
+    const CategoryPropertyMap& getPropertyMap() const
     {
         return mOption;
     }
-    CategoryPropertyMap& GetPropertyMap()
+    CategoryPropertyMap& getPropertyMap()
     {
         return mOption;
     }
-	virtual void OnPropertyChange(void* pre,void* changed);
+	virtual void onPropertyChange(void* pre,void* changed);
 protected:
-    EPropertyString	mNodeName;
+	virtual void registerAllProperty();
+	GString	mNodeName;
     CategoryPropertyMap mOption;
 public:
-    bool IsRegisterAll()
+	static GString mTargetName;
+	static GString mOperatorObjectName;
+	static CXDelegate mDelegateAlterName;
+
+    bool isRegist()
     {
-        return mOption.size();
+        return !mOption.empty();
     }
 
-	inline const CChar* GetObjectName() const
+	inline CChar* getObjectName() const
 	{
 		return mNodeName.c_str();
 	}
 };
 
 
-#define __RegisterProperty(mem) RegisterProperty(CategoryName(),#mem,mem)
+#define __RegisterProperty(mem) registerProperty(categoryName(),#mem,mem)

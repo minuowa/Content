@@ -22,8 +22,9 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -56,7 +57,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\CXBase;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;DIRECTINPUT_VERSION 0X80;_LIB;FiGameDemo_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_LIB;FiGameDemo_EXPORTS;TheEditor;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -79,7 +80,8 @@
       </ModuleDefinitionFile>
     </Link>
     <Lib>
-      <AdditionalDependencies>EditorSheet.lib</AdditionalDependencies>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
     </Lib>
     <Lib>
       <AdditionalLibraryDirectories>..\Debug\</AdditionalLibraryDirectories>
@@ -129,9 +131,9 @@
     <ClCompile Include="GWorldCorrd.cpp" />
     <ClCompile Include="GD8Input.cpp" />
     <ClCompile Include="GMeshBuffer.cpp" />
-    <ClCompile Include="GTextureBuffer.cpp" />
+    <ClCompile Include="GTexture.cpp" />
     <ClCompile Include="GCamera.cpp" />
-    <ClCompile Include="EyeCliper.cpp" />
+    <ClCompile Include="GCuller.cpp" />
     <ClCompile Include="GTrailEffect.cpp" />
     <ClCompile Include="GFrameWork.cpp" />
     <ClCompile Include="GGame.cpp" />
@@ -147,7 +149,6 @@
     <ClCompile Include="XEvent.cpp" />
     <ClCompile Include="GGameMap.cpp" />
     <ClCompile Include="GMeshBaseObj.cpp" />
-    <ClCompile Include="XMeshObj.cpp" />
     <ClCompile Include="XMultiThread.cpp" />
     <ClCompile Include="GNode.cpp" />
     <ClCompile Include="GComponentTrans.cpp" />
@@ -161,6 +162,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
     <ClInclude Include="GAllocateHierarchy.h" />
+    <ClInclude Include="Game.h" />
     <ClInclude Include="GAmmo.h" />
     <ClInclude Include="GAnimationResource.h" />
     <ClInclude Include="GAnimMeshObj.h" />
@@ -177,9 +179,9 @@
     <ClInclude Include="GD8Input.h" />
     <ClInclude Include="GD9Device.h" />
     <ClInclude Include="GMeshBuffer.h" />
-    <ClInclude Include="GTextureBuffer.h" />
+    <ClInclude Include="GTexture.h" />
     <ClInclude Include="GCamera.h" />
-    <ClInclude Include="EyeCliper.h" />
+    <ClInclude Include="GCuller.h" />
     <ClInclude Include="FiGameDemo.h" />
     <ClInclude Include="GTrailEffect.h" />
     <ClInclude Include="GFrameWork.h" />
@@ -197,7 +199,6 @@
     <ClInclude Include="XEvent.h" />
     <ClInclude Include="GGameMap.h" />
     <ClInclude Include="GMeshBaseObj.h" />
-    <ClInclude Include="XMeshObj.h" />
     <ClInclude Include="XMultiThread.h" />
     <ClInclude Include="GNode.h" />
     <ClInclude Include="GComponentTrans.h" />

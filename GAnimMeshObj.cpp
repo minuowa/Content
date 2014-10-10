@@ -24,13 +24,12 @@ GAnimMeshObj::GAnimMeshObj ( void )
 
     mpAnimSet = NULL;
 
-    mpFace = NULL;
-    AttachComponent ( eComponentType_Mesh, false );
+    attachComponent ( eComponentType_Mesh, false );
 }
 
 GAnimMeshObj::~GAnimMeshObj ( void )
 {
-
+    dSafeRelease ( mCloneAnimationController );
 }
 
 
@@ -110,7 +109,7 @@ void GAnimMeshObj::DrawMeshContainer ( D3DXMESHCONTAINER *pMeshContainerBase, D3
 
             if ( m_bHit )
             {
-                Toggle ( GetTrans().mbCanMoveStep );
+                toggle ( getTrans().mbCanMoveStep );
             }
         }
     }
@@ -150,7 +149,7 @@ void GAnimMeshObj::DrawMeshContainer ( D3DXMESHCONTAINER *pMeshContainerBase, D3
             else
             {
                 gCursor.SetNowCursor ( curNormal );
-                D9DEVICE->GetDvc()->SetTexture ( 0, mpFace );
+                D9DEVICE->GetDvc()->SetTexture ( 0, pMeshContainerEx->ppTexture[pBoneComb[iAttr].AttribId] );
             }
 
 
@@ -210,7 +209,7 @@ eObjAnimState GAnimMeshObj::SetState ( eObjAnimState oas, bool bBack )
         return m_ObjAnimState;
     }
 
-    GetTrans().mbBack = bBack;
+    getTrans().mbBack = bBack;
 
     if ( mCloneAnimationController == NULL )
     {
@@ -277,7 +276,7 @@ eObjAnimState GAnimMeshObj::SetState ( eObjAnimState oas, bool bBack )
     {
         //设置动作速度
 
-        if ( GetTrans().mbBack )
+        if ( getTrans().mbBack )
         {
             mCloneAnimationController->SetTrackSpeed ( 0, -1 );
         }
@@ -371,41 +370,41 @@ D3DXMATRIX GAnimMeshObj::GetWorldMatrixByBone ( char *sBoneName, bool bForTrans/
 }
 
 
-bool GAnimMeshObj::ReCreate()
+bool GAnimMeshObj::reCreate()
 {
-    if ( !__super::ReCreate() )
+    if ( !__super::reCreate() )
     {
         return false;
     }
-    GComponentMesh* componentMesh = ( GComponentMesh* ) mComponentOwner.GetComponent ( eComponentType_Mesh );
+    GComponentMesh* componentMesh = ( GComponentMesh* ) mComponentOwner.getComponent ( eComponentType_Mesh );
     CXASSERT_RESULT_FALSE ( componentMesh );
-    mResource = GAnimationManager::GetSingleton().GetResource ( componentMesh->MeshFile().c_str() );
+    mResource = GAnimationManager::GetSingleton().getResource ( componentMesh->MeshFile().c_str() );
     //                             if ( !IsStrEmpty ( m_sTextureName ) )
     //{
     //    D3DXCreateTextureFromFileA ( D9DEVICE->GetDvc(), m_sTextureName, &mpFace );
     //}
     CXASSERT_RETURN_FALSE ( mResource );
     ID3DXAnimationController* orginal = mResource->mAnimationController;
-	if (orginal)
-	{
-		CXASSERT_RESULT_FALSE ( orginal->CloneAnimationController
-			(
-			orginal->GetMaxNumAnimationOutputs(), orginal->GetMaxNumAnimationSets(),
-			orginal->GetMaxNumTracks(), orginal->GetMaxNumEvents(), &mCloneAnimationController
-			)
-			);
-	}
+    if ( orginal )
+    {
+        CXASSERT_RESULT_FALSE ( orginal->CloneAnimationController
+                                (
+                                    orginal->GetMaxNumAnimationOutputs(), orginal->GetMaxNumAnimationSets(),
+                                    orginal->GetMaxNumTracks(), orginal->GetMaxNumEvents(), &mCloneAnimationController
+                                )
+                              );
+    }
 
     SetState ( oasStandBy, false );
 
     return true;
 }
 
-void GAnimMeshObj::Update()
+void GAnimMeshObj::update()
 {
     if ( mCloneAnimationController )
     {
-        mCloneAnimationController->AdvanceTime ( TIMER.GetFrameTimeSec(), NULL );
+        mCloneAnimationController->AdvanceTime ( TheTimer->GetFrameTimeSec(), NULL );
 
         if ( mpAnimSet != NULL )
         {
@@ -429,16 +428,16 @@ void GAnimMeshObj::Update()
     {
         UpdateFrameMatrices ( mResource->mFrameRoot, &_matWorld );
     }
-	if ( mpAmmo != NULL )
-	{
-		mpAmmo->Update();
-	}
+    if ( mpAmmo != NULL )
+    {
+        mpAmmo->update();
+    }
 }
 
 
-bool GAnimMeshObj::Render()
+bool GAnimMeshObj::render()
 {
-    if ( !__super::Render() )
+    if ( !__super::render() )
         return false;
 
     if ( mResource && mResource->mFrameRoot )
@@ -446,9 +445,9 @@ bool GAnimMeshObj::Render()
         DrawFrame ( mResource->mFrameRoot );
         if ( mpAmmo != NULL )
         {
-            mpAmmo->Render();
+            mpAmmo->render();
 
-            if ( !mpAmmo->GetTrans().mbAutoMove )
+            if ( !mpAmmo->getTrans().mbAutoMove )
             {
                 SAFED_ELETE ( mpAmmo );
             }
@@ -457,5 +456,12 @@ bool GAnimMeshObj::Render()
         m_bHit = false;
     }
     return true;
+}
+
+void GAnimMeshObj::setMediaFile ( const char* file )
+{
+    GComponentMesh* componentMesh = ( GComponentMesh* ) mComponentOwner.getComponent ( eComponentType_Mesh );
+    CXASSERT_RETURN ( componentMesh );
+    componentMesh->MeshFile ( file );
 }
 

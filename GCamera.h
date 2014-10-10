@@ -2,7 +2,7 @@
 
 
 
-#include "EyeCliper.h"
+#include "GCuller.h"
 #include "GD8Input.h"
 
 #include "GNode.h"
@@ -23,15 +23,15 @@ public:
 
 public:
 
-	virtual bool Create();
+	virtual bool reCreate();
 
 	virtual void GetInput(DWORD frameTimeMs); 
 
-    void SetView();
+    void setView();
 
-    void SetProj();
+    void setProj();
 
-	virtual void Update();
+	virtual void update();
 	virtual void onCallBack(const CXDelegate& delgate);
 public:
 
@@ -51,7 +51,7 @@ public:
 
 	D3DXMATRIX matView;
 
-	CEyeCliper *mpEyeCliper;
+	GCuller *mpEyeCliper;
 
 private:
 

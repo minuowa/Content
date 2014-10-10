@@ -21,9 +21,9 @@ class GGameMap :
         GGameMap( void );
         ~GGameMap( void );
 
-		bool Create();
+		bool reCreate();
 
-		bool Render(  );
+		bool render(  );
 
         void LoadFromFile( char *sConfigName );
 
@@ -55,5 +55,5 @@ class GGameMap :
 
         int AfterCreate();
 
-        bool StrToMapObjInfo( char *str, MapObjInfo *pObjInfo );
+		bool StrToMapObjInfo( const char *str, MapObjInfo *pObjInfo );
 };

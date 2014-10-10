@@ -1,12 +1,12 @@
 #include "GGameDemoHeader.h"
-#include "EyeCliper.h"
+#include "GCuller.h"
 
-CEyeCliper::CEyeCliper(void)
+GCuller::GCuller(void)
 {
 
 }
 
-CEyeCliper::CEyeCliper( float fn,float angle, float wh )
+GCuller::GCuller( float fn,float angle, float wh )
 {
 	float y=fn*tanf(angle);
 
@@ -23,12 +23,12 @@ CEyeCliper::CEyeCliper( float fn,float angle, float wh )
 
 }
 
-CEyeCliper::~CEyeCliper(void)
+GCuller::~GCuller(void)
 {
 
 }
 
-void CEyeCliper::Update( D3DXMATRIX *pMat )
+void GCuller::Update( D3DXMATRIX *pMat )
 {
 	D3DXVECTOR3 Vec[5];
 
@@ -56,7 +56,7 @@ void CEyeCliper::Update( D3DXMATRIX *pMat )
 	D3DXPlaneFromPoints(&mPlane[4],&Vec[1],&Vec[2],&Vec[3]);
 }
 
-bool CEyeCliper::IsInEye( D3DXVECTOR3 vPos )
+bool GCuller::IsInEye( D3DXVECTOR3 vPos )
 {
 
 	for (int i=0;i<5;i++)

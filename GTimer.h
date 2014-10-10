@@ -10,7 +10,7 @@ public:
 
     DWORD GetAccuTime();
 
-    DWORD GetFrameTimems();	    //两次获取当前时间的间隔
+    DWORD getFrameTimems();	    //两次获取当前时间的间隔
 
 	float GetFrameTimeSec();
 
@@ -24,4 +24,4 @@ private:
     DWORD mLastTime;		    //上一次时间
 };
 
-#define TIMER GTimer::GetSingleton()
+#define TheTimer GTimer::GetSingletonPtr()

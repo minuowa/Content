@@ -24,7 +24,7 @@
 #include <assert.h>
 
 //Direct9所需头文件及库文件
-
+#define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
 #include <d3d9.h>
 #include <d3dx9math.h>
@@ -40,6 +40,7 @@
 
 #include "XBase.h"
 
+typedef CXDynaArray<GString> CharStringArr;
 
 //////////////////////////引擎文件需要的宏////////////////////////////////////
 
@@ -66,12 +67,12 @@
 
 #define SAFE_DELETE_ARRAY(p) { if(p!=NULL) { delete[] (p);   (p)=NULL; } }
 
-inline void Toggle ( bool b )
+inline void toggle ( bool b )
 {
     b = !b;
 }
 template<typename T1, typename T2>
-void CXCast ( T1& dst, T2* src )
+void dCast ( T1& dst, T2* src )
 {
     dst = * ( ( T1* ) src );
 }
@@ -168,13 +169,7 @@ void DebugMsgBox ( HRESULT hr, const char *StrDebug );
 ID3DXMesh *SetNormal ( ID3DXMesh *pMesh, IDirect3DDevice9 *DVC );
 
 //获取子字符串个数
-int GetSubCharCount ( char* Sourc, char* Dev );
-
-//获取指定位置的子字符串
-int GetSubString ( char* Sourc, char* Dev, int Index, char*sOut );
-
-//获取指定位置的子字符
-int GetSubCharIndexByCount ( char* Sourc, char* Dev, int Count );
+int GetSubCharCount ( const char* Sourc,const char* Dev );
 
 //从文件名字中获取路径
 void  GetFilePath ( char* sFileName, char* path );
@@ -183,7 +178,7 @@ void  GetFilePath ( char* sFileName, char* path );
 void GetFileName ( char *sPathName, char* sFileName );
 
 //判断字符串是否存在，是否是空值
-bool IsStrEmpty ( char * str );
+bool IsStrEmpty ( const char * str );
 
 //生成指定范围的整数随机数
 int RandIntEx ( int nMin, int nMax );
@@ -195,10 +190,10 @@ float RandFloatEx ( float fMin, float fMax );
 void PreRandom();
 
 //判断文件是否存在
-bool IsFileExist ( char * sFileName );
+bool IsFileExist ( const char * sFileName );
 
 //将一个字符串转换成D3DXVECTOR3
-D3DXVECTOR3 StrToVector3 ( char *str );	//将一个含三维向量的字符串的值取出来
+void StrToVector3 ( const char *str ,D3DXVECTOR3& v);	//将一个含三维向量的字符串的值取出来
 
 //判断点是否在一个矩形区域中
 bool IsPointInRect ( POINT pt, RECT *rc );

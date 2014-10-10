@@ -19,15 +19,15 @@ GCamera::GCamera ( void )
 
     matView = NORMALMATRIX;
 
-	D9DEVICE->mOnResstDevice+=this;
+    D9DEVICE->mOnResetDevice += this;
 }
 
 GCamera::~GCamera ( void )
 {
-
+    dSafeDelete ( mpEyeCliper );
 }
 
-void GCamera::SetProj()
+void GCamera::setProj()
 {
     float aspect = ( ( float ) ( D9DEVICE->mWidth ) ) / ( ( float ) ( D9DEVICE->mHeight ) );
 
@@ -37,25 +37,25 @@ void GCamera::SetProj()
     {
         D9DEVICE->GetDvc()->SetTransform ( D3DTS_PROJECTION, &matProj );
     }
-
-    mpEyeCliper = new CEyeCliper ( Max_Eye_Distance, D3DX_PI / 4.0f, aspect );
+    if ( mpEyeCliper == nullptr )
+        mpEyeCliper = new GCuller ( Max_Eye_Distance, D3DX_PI / 4.0f, aspect );
 
 }
 
 
-bool GCamera::Create()
+bool GCamera::reCreate()
 {
-    if ( !__super::Create() )
+    if ( !__super::reCreate() )
         return false;
 
     return true;
 }
 
-void GCamera::SetView()
+void GCamera::setView()
 {
-    D3DXVECTOR3 vLookAtPos = GetTrans().mTranslate + GetTrans().mvDir * 100;
+    D3DXVECTOR3 vLookAtPos = getTrans().mTranslate + getTrans().mvDir * 100;
 
-    D3DXMatrixLookAtLH ( &matView, &GetTrans().mTranslate, &vLookAtPos, &GetTrans().mvUpon );
+    D3DXMatrixLookAtLH ( &matView, &getTrans().mTranslate, &vLookAtPos, &getTrans().mvUpon );
 
     if ( D9DEVICE != NULL )
     {
@@ -66,10 +66,10 @@ void GCamera::SetView()
 void GCamera::GetInput ( DWORD frameTimeMs )
 {
     if ( INPUTSYSTEM.IsPressKey ( DIK_ADD ) )
-        GetTrans().mfSpeedMove += 0.03f * frameTimeMs;
+        getTrans().mfSpeedMove += 0.03f * frameTimeMs;
 
     if ( INPUTSYSTEM.IsPressKey ( DIK_SUBTRACT ) )
-        GetTrans().mfSpeedMove -= 0.03f * frameTimeMs;
+        getTrans().mfSpeedMove -= 0.03f * frameTimeMs;
 
     POINT pt = INPUTSYSTEM.GetMousePoint();
 
@@ -102,13 +102,13 @@ void GCamera::GetInput ( DWORD frameTimeMs )
 
     }
 
-    GetTrans().MoveStep ( vMove.z / 120 * 5.0f );
+    getTrans().MoveStep ( vMove.z / 120 * 5.0f );
 
     if ( INPUTSYSTEM.IsPressingButton ( eButtonType_RightButton ) )
     {
-        GetTrans().TrunStepLeftRightWithUp ( -vMove.x / 800.0f );
+        getTrans().TrunStepLeftRightWithUp ( -vMove.x / 800.0f );
 
-        GetTrans().TrunWithRight ( -vMove.y / 800.0f );
+        getTrans().TrunWithRight ( -vMove.y / 800.0f );
     }
 }
 
@@ -120,33 +120,33 @@ void GCamera::TraceMan(  )
         return;
     }
 
-    if ( !mpTransMan->GetTrans().mbCanMoveStep )
+    if ( !mpTransMan->getTrans().mbCanMoveStep )
     {
         return;
     }
 
     D3DXVECTOR3 Pos = ZEROVECTOR3;
 
-    Pos = mpTransMan->GetTrans().mTranslate - mpTransMan->GetTrans().mvDir * mfLenTransMan * 2;
+    Pos = mpTransMan->getTrans().mTranslate - mpTransMan->getTrans().mvDir * mfLenTransMan * 2;
 
-    Pos += mpTransMan->GetTrans().mvUpon * mfLenTransMan;
+    Pos += mpTransMan->getTrans().mvUpon * mfLenTransMan;
 
-    D3DXVECTOR3 vDist = Pos - GetTrans().mTranslate;
+    D3DXVECTOR3 vDist = Pos - getTrans().mTranslate;
 
 
-    D3DXVECTOR3 Dir = mpTransMan->GetTrans().mTranslate - Pos;
+    D3DXVECTOR3 Dir = mpTransMan->getTrans().mTranslate - Pos;
 
-    GetTrans().mTranslate = Pos;
+    getTrans().mTranslate = Pos;
 
-    GetTrans().mvDir = Dir;
+    getTrans().mvDir = Dir;
 
-    D3DXVec3Cross ( &GetTrans().mvRight, & ( D3DXVECTOR3 ( 0, 1, 0 ) ), &GetTrans().mvDir );
+    D3DXVec3Cross ( &getTrans().mvRight, & ( D3DXVECTOR3 ( 0, 1, 0 ) ), &getTrans().mvDir );
 
-    D3DXVec3Cross ( &GetTrans().mvUpon, &GetTrans().mvDir, &GetTrans().mvRight );
+    D3DXVec3Cross ( &getTrans().mvUpon, &getTrans().mvDir, &getTrans().mvRight );
 
-    D3DXVec3Normalize ( &GetTrans().mvDir, &GetTrans().mvDir );
-    D3DXVec3Normalize ( &GetTrans().mvUpon, &GetTrans().mvUpon );
-    D3DXVec3Normalize ( &GetTrans().mvRight, &GetTrans().mvRight );
+    D3DXVec3Normalize ( &getTrans().mvDir, &getTrans().mvDir );
+    D3DXVec3Normalize ( &getTrans().mvUpon, &getTrans().mvUpon );
+    D3DXVec3Normalize ( &getTrans().mvRight, &getTrans().mvRight );
 
 }
 
@@ -165,19 +165,19 @@ bool GCamera::InitTrack ( GNode *pWorldObj )
     }
 }
 
-void GCamera::Update()
+void GCamera::update()
 {
-    __super::Update();
+    __super::update();
     if ( mpEyeCliper )
         mpEyeCliper->Update ( & ( GetWorldMatrix ( false ) ) );
 }
 
-void GCamera::onCallBack( const CXDelegate& delgate )
+void GCamera::onCallBack ( const CXDelegate& delgate )
 {
-	if (delgate==D9DEVICE->mOnResstDevice)
-	{
-		SetProj();
-	}
+    if ( delgate == D9DEVICE->mOnResetDevice )
+    {
+        setProj();
+    }
 }
 
 

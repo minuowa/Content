@@ -11,9 +11,9 @@ class GMeshBaseObj :
         GMeshBaseObj( void );
         ~GMeshBaseObj( void );
 
-		virtual void RegisterAll();
+		virtual void registerAllProperty();
 
-		bool Render();
+		bool render();
 
         ID3DXMesh *GetMeshByUsage( eMeshUsage mu );
 
@@ -29,7 +29,4 @@ protected:
         //渲染所需参数
         GMeshBufferNode* mMeshBufferNode;
 		ID3DXMesh*	mpMeshForVector;
-public:
-
-		bool Create();
 };

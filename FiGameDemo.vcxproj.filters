@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="EyeCliper.cpp" />
     <ClCompile Include="GameStaticObj.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Particles.cpp" />
@@ -10,7 +9,6 @@
     <ClCompile Include="XCursor.cpp" />
     <ClCompile Include="XEffect.cpp" />
     <ClCompile Include="XEvent.cpp" />
-    <ClCompile Include="XMeshObj.cpp" />
     <ClCompile Include="XMultiThread.cpp" />
     <ClCompile Include="XTerrain.cpp" />
     <ClCompile Include="XTerrainNode.cpp" />
@@ -24,7 +22,6 @@
     <ClCompile Include="GD8Input.cpp" />
     <ClCompile Include="GMeshBuffer.cpp" />
     <ClCompile Include="GBound.cpp" />
-    <ClCompile Include="GTextureBuffer.cpp" />
     <ClCompile Include="GTimer.cpp" />
     <ClCompile Include="GNode.cpp" />
     <ClCompile Include="GFrameWork.cpp" />
@@ -57,9 +54,10 @@
     </ClCompile>
     <ClCompile Include="GComponentFactory.cpp" />
     <ClCompile Include="GObject.cpp" />
+    <ClCompile Include="GCuller.cpp" />
+    <ClCompile Include="GTexture.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="EyeCliper.h" />
     <ClInclude Include="GameStaticObj.h" />
     <ClInclude Include="Particles.h" />
     <ClInclude Include="resource.h" />
@@ -68,7 +66,6 @@
     <ClInclude Include="XCursor.h" />
     <ClInclude Include="XEffect.h" />
     <ClInclude Include="XEvent.h" />
-    <ClInclude Include="XMeshObj.h" />
     <ClInclude Include="XMultiThread.h" />
     <ClInclude Include="XTerrain.h" />
     <ClInclude Include="XTerrainNode.h" />
@@ -83,7 +80,6 @@
     <ClInclude Include="GD8Input.h" />
     <ClInclude Include="GMeshBuffer.h" />
     <ClInclude Include="GBound.h" />
-    <ClInclude Include="GTextureBuffer.h" />
     <ClInclude Include="GTimer.h" />
     <ClInclude Include="GNode.h" />
     <ClInclude Include="GFrameWork.h" />
@@ -120,6 +116,9 @@
       <Filter>Animation</Filter>
     </ClInclude>
     <ClInclude Include="GObject.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="GCuller.h" />
+    <ClInclude Include="GTexture.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Animation">
