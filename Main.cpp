@@ -5,7 +5,7 @@ extern "C"
 {
     FiGameDemo_API int FiGameDemo_Init ( HWND mainWnd )
     {
-        return TheGame->initBase ( mainWnd);
+        return TheGame->init ( mainWnd);
     }
     FiGameDemo_API void FiGameDemo_Update()
     {

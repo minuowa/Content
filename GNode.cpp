@@ -81,11 +81,11 @@ void GNode::GetInput ( DWORD frameTimeMs )
             SetState ( oasBeAttack, false );
         }
 
-        if ( INPUTSYSTEM.GetKeyAction ( DIK_2 ) == DI_BUTTONUP )
+        if ( INPUTSYSTEM.getKeyAction ( DIK_2 ) == DI_BUTTONUP )
         {
             SetState ( oasAttack, false );
         }
-        else if ( INPUTSYSTEM.GetKeyAction ( DIK_3 ) == DI_BUTTONUP )
+        else if ( INPUTSYSTEM.getKeyAction ( DIK_3 ) == DI_BUTTONUP )
         {
             SetState ( oasRunAttack, false );
         }
@@ -157,7 +157,7 @@ GNode::GNode()
 
     m_bBeSelected = false;
 
-    m_bCanSelect = true;										//是否可选择
+    mCanSelect = true;										//是否可选择
 
     m_bBlock = false;
 
@@ -322,12 +322,12 @@ IntersectInfo * GNode::UpdateForForceOnMap()
 
             //向下的射线与地图碰撞，肯定能撞到
 
-            bool bHit = pMap->CheckIntersect ( vPos, vDir, true );
+            bool bHit = pMap->checkIntersect ( vPos, vDir, true );
 
             if ( bHit )
             {
 
-                SetDir ( pMap->m_InsectInfo.vNormal );
+                setDir ( pMap->m_InsectInfo.vNormal );
 
                 getTrans().mTranslate = pMap->m_InsectInfo.vHitPos;
 
@@ -343,7 +343,7 @@ IntersectInfo * GNode::UpdateForForceOnMap()
     return NULL;
 }
 
-void GNode::SetDir ( D3DXVECTOR3 vNormal )
+void GNode::setDir ( D3DXVECTOR3 vNormal )
 {
     if ( m_ForceType == ftUpAlways )
     {
@@ -369,7 +369,7 @@ IntersectInfo * GNode::UpdateForForceOnObj ( void *pObj )
 
     //向下的射线与地图碰撞，肯定能撞到
 
-    bool bHit = lpObj->CheckIntersect ( vPos, vDir, true );
+    bool bHit = lpObj->checkIntersect ( vPos, vDir, true );
 
     if ( bHit )
     {
@@ -379,7 +379,7 @@ IntersectInfo * GNode::UpdateForForceOnObj ( void *pObj )
 
         //if (fAngle>0.1)
         //{
-        SetDir ( lpObj->m_InsectInfo.vNormal );
+        setDir ( lpObj->m_InsectInfo.vNormal );
 
         getTrans().mTranslate = lpObj->m_InsectInfo.vHitPos;
 
@@ -455,7 +455,7 @@ void GNode::endRender()
 
 
 
-bool GNode::reCreate()
+bool GNode::recreate()
 {
     this->clear();
     return true;
@@ -626,7 +626,7 @@ void GNode::updateTrans()
 
     IntersectInfo *pIntersectFinalHit = NULL;		//最终碰撞信息（可能是地图或者是物体）
 
-    if ( !m_bForceOnMap || !m_bBeSelected || !m_bCanSelect )
+    if ( !m_bForceOnMap || !m_bBeSelected || !mCanSelect )
     {
         return;
     }
@@ -661,7 +661,7 @@ void GNode::updateTrans()
 
         D3DXVECTOR4 vPos ( getTrans().mvLastPos.x, getTrans().mvLastPos.y, getTrans().mvLastPos.z, 1 );
 
-        bool bHit = pMap->CheckIntersect ( vPos, vDir, true );
+        bool bHit = pMap->checkIntersect ( vPos, vDir, true );
 
         if ( bHit )
         {
@@ -720,12 +720,12 @@ void GNode::updateTrans()
                     getTrans().mvDir = cXPos.mvDir;
 
                     D3DXVECTOR3 vDirTmp = getTrans().mvUpon + pIntersectObj->vNormal;
-                    SetDir ( vDirTmp / 2.0f );
+                    setDir ( vDirTmp / 2.0f );
                 }
                 else if ( fTmpAng >= 0.5f )
                 {
                     getTrans().mvDir = cXPos.mvDir;
-                    SetDir ( pIntersectObj->vNormal );
+                    setDir ( pIntersectObj->vNormal );
                 }
                 else
                 {
@@ -759,7 +759,7 @@ void GNode::updateTrans()
 
                     getTrans().mTranslate = pIntersect->vHitPos + D3DXVECTOR3 ( 0, m_fForceHeight, 0 );
 
-                    SetDir ( pIntersect->vNormal );
+                    setDir ( pIntersect->vNormal );
                 }
 
 
@@ -927,7 +927,7 @@ void GNode::updateTrans()
 
         getTrans().mvSpeed = ZEROVECTOR3;
 
-        SetDir ( pIntersectFinalHit->vNormal );
+        setDir ( pIntersectFinalHit->vNormal );
     }
 }
 
@@ -963,6 +963,24 @@ void GNode::onPropertyChange ( void* pre, void* changed )
 void GNode::clear()
 {
 
+}
+
+void GNode::setWorldTranslate ( D3DXVECTOR3& v )
+{
+    getTrans().mTranslate = v;
+}
+
+void GNode::onPropertyChangeEnd ( void* cur )
+{
+    __super::onPropertyChangeEnd ( cur );
+
+    for ( int i = 0; i < eComponentType_Count; ++i )
+    {
+        if ( mComponentOwner.getComponent ( eComponentType ( i ) ) )
+        {
+            mComponentOwner.getComponent ( eComponentType ( i ) )->onPropertyChangeEnd ( cur );
+        }
+    }
 }
 
 CXDelegate GNode::mDelegateComponentChange;

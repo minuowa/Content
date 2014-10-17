@@ -9,7 +9,6 @@ public:
 	virtual bool render();
 public:
 	bool mVisible;
-	bool mLighting;
-	bool mChangeWhenHit;
+	bool mChangeWhenPicked;
 };
 

@@ -34,9 +34,9 @@ public:
 
 
     ////////¶¯×÷
-    bool IsPressingButton ( eButtonType bt );
+    bool isPressingButton ( eButtonType bt );
     byte GetButtonAction ( eButtonType bt ) const;
-    byte GetKeyAction ( int key );
+    byte getKeyAction ( int key );
     bool IsLeftButtonUp() const;
     bool IsMiddleButtonUp() const;
     bool IsRightButtonUp() const;
@@ -47,7 +47,7 @@ public:
     POINT GetMousePoint();
     POINT GetMouseMove();
     D3DVECTOR GetMouseMoveEX();
-    int GetMouseWheel();
+    int getMouseWheel();
 
     void FreezeMouse ( bool bFreeze );
     void Update();

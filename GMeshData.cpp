@@ -4,21 +4,22 @@
 #include "GTexture.h"
 
 
-void GMetrialData::Render()
+void GMetrialData::set()
 {
     D9DEVICE->GetDvc()->SetTexture ( 0, mTexture->getTexture() );
     D9DEVICE->GetDvc()->SetMaterial ( &mMat );
 }
 
-void GMetrialData::SetTexture ( const char* fileName )
+void GMetrialData::setTexture ( const char* fileName )
 {
     mTexture = TextureMgr->getResource ( fileName );
     CXASSERT ( mTexture );
 }
 
-void GMetrialData::SetMetiral ( const D3DMATERIAL9& d9matrial )
+void GMetrialData::setMetiral ( const D3DMATERIAL9& d9matrial )
 {
-    dMemoryCopy ( &mMat, ( void* ) &d9matrial, sizeof ( d9matrial ) );
+    mMat = d9matrial;
+    //dMemoryCopy ( &mMat, ( void* ) &d9matrial, sizeof ( d9matrial ) );
 }
 
 GMetrialData::GMetrialData ( void )

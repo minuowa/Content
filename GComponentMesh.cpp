@@ -26,7 +26,7 @@ void GComponentMesh::OnPropertyChange ( void* pre, void* changed )
         if ( changedName != mMeshFile && mTarget )
         {
             mMeshFile = changedName;
-            bool res = mTarget->reCreate();
+            bool res = mTarget->recreate();
             CXASSERT ( res );
         }
     }

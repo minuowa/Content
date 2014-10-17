@@ -122,6 +122,7 @@
     <ClCompile Include="GComponentInterface.cpp" />
     <ClCompile Include="GComponentMesh.cpp" />
     <ClCompile Include="GD9Device.cpp" />
+    <ClCompile Include="GGameOption.cpp" />
     <ClCompile Include="GMeshData.cpp" />
     <ClCompile Include="GObject.cpp" />
     <ClCompile Include="GRenderObject.cpp" />
@@ -141,7 +142,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Particles.cpp" />
     <ClCompile Include="GSceneMgr.cpp" />
-    <ClCompile Include="Sea.cpp" />
+    <ClCompile Include="GWater.cpp" />
     <ClCompile Include="GGameDemoHeader.cpp" />
     <ClCompile Include="XArea.cpp" />
     <ClCompile Include="XCursor.cpp" />
@@ -171,7 +172,10 @@
     <ClInclude Include="GComponentFactory.h" />
     <ClInclude Include="GComponentInterface.h" />
     <ClInclude Include="GComponentMesh.h" />
+    <ClInclude Include="GEnums.h" />
+    <ClInclude Include="GEnumTypesStrings.h" />
     <ClInclude Include="GFactory.h" />
+    <ClInclude Include="GGameOption.h" />
     <ClInclude Include="GMeshData.h" />
     <ClInclude Include="GObject.h" />
     <ClInclude Include="GResourceManager.h" />
@@ -191,7 +195,7 @@
     <ClInclude Include="Particles.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="GSceneMgr.h" />
-    <ClInclude Include="Sea.h" />
+    <ClInclude Include="GWater.h" />
     <ClInclude Include="GGameDemoHeader.h" />
     <ClInclude Include="XArea.h" />
     <ClInclude Include="XCursor.h" />
@@ -206,6 +210,9 @@
     <ClInclude Include="XTerrainNode.h" />
     <ClInclude Include="XText.h" />
     <ClInclude Include="GTimer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="GEnums.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

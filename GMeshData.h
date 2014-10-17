@@ -45,10 +45,9 @@ class GMetrialData
 {
 public:
 	GMetrialData(void);
-	~GMetrialData(void);
-	void	SetTexture(const char* fileName);
-	void	SetMetiral(const D3DMATERIAL9& d9matrial);
-	void	Render();
+	void	setTexture(const char* fileName);
+	void	setMetiral(const D3DMATERIAL9& d9matrial);
+	void	set();
 private:
 	GTexture*			mTexture;
 	D3DMATERIAL9		mMat;

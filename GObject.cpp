@@ -89,6 +89,31 @@ void GObject::registerAll()
     registerAllProperty();
 }
 
+void GObject::onPropertyChangeEnd( void* cur )
+{
+
+}
+
+const CategoryPropertyMap& GObject::getPropertyMap() const
+{
+	return mOption;
+}
+
+CategoryPropertyMap& GObject::getPropertyMap()
+{
+	return mOption;
+}
+
+bool GObject::isRegist()
+{
+	return !mOption.empty();
+}
+
+CChar* GObject::getObjectName() const
+{
+	return mNodeName.c_str();
+}
+
 GString GObject::mTargetName;
 
 GString GObject::mOperatorObjectName;

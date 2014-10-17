@@ -62,7 +62,7 @@ void GGame::getInput()
 
     case  gsGame:
 
-        if ( INPUTSYSTEM.GetKeyAction ( DIK_F9 ) == DI_BUTTONUP )
+        if ( INPUTSYSTEM.getKeyAction ( DIK_F9 ) == DI_BUTTONUP )
         {
         }
 
@@ -134,7 +134,7 @@ void GGame::getInput()
                 mpSelectObj->getTrans().mfSpeedMove -= 0.8f;
             }
 
-            if ( DI_BUTTONUP == INPUTSYSTEM.GetKeyAction ( DIK_DELETE ) )
+            if ( DI_BUTTONUP == INPUTSYSTEM.getKeyAction ( DIK_DELETE ) )
             {
                 mSceneMgr->Delete ( ( CGameStaticObj* ) mpSelectObj );
 
@@ -172,7 +172,7 @@ void GGame::getInput()
 
         }
 
-        if ( INPUTSYSTEM.GetKeyAction ( DIK_F2 ) == DI_BUTTONUP )
+        if ( INPUTSYSTEM.getKeyAction ( DIK_F2 ) == DI_BUTTONUP )
         {
 
             if ( bFlag )
@@ -189,7 +189,7 @@ void GGame::getInput()
             //OPENCLOSE( mpNowMap->mLighting );
         }
 
-        if ( INPUTSYSTEM.GetKeyAction ( DIK_F3 ) == DI_BUTTONUP )
+        if ( INPUTSYSTEM.getKeyAction ( DIK_F3 ) == DI_BUTTONUP )
         {
             //gAnimMesh[0].mXPos.mvPos = D3DXVECTOR3( 0, 0, 0 );
             //gAnimMesh[0].UpdateForForceOnMap();
@@ -287,9 +287,9 @@ void GGame::render( )
 
 }
 
-bool GGame::initBase ( HWND mainWnd )
+bool GGame::init ( HWND mainWnd )
 {
-    //setlocale( LC_ALL, "zh_CN.UTF-8" );
+	//setlocale( LC_ALL, "zh_CN.UTF-8" );
 
     //初始化大概500ms
     HRESULT hr = NULL;
@@ -306,8 +306,8 @@ bool GGame::initBase ( HWND mainWnd )
     gCursor.SetNowCursor ( curNormal );
 
     //初始化框架
-    CXASSERT_RETURN_FALSE ( __super::initBase ( mainWnd ) );
-    //初始化D3D设备
+    CXASSERT_RETURN_FALSE ( __super::init ( mainWnd ) );
+	//初始化D3D设备
     CXASSERT_RETURN_FALSE (
         GSingletonD9Device::GetSingletonPtr()->Init ( mMainWin )
     );
@@ -351,13 +351,12 @@ bool GGame::initBase ( HWND mainWnd )
 
     CoUninitialize();
 
-
     gEvent.Create ( "Load" );
 
     //gEvent.SetUsed();
 
     //mMTLoadObj.Init(&LoadObj,(LPVOID)this,true);
-    LoadObj ( this );
+    loadObj ( this );
 
     mSceneMgr->mSceneMachine.ChangeToScene ( gsGame );
 
@@ -370,7 +369,7 @@ void GGame::shutDown()
 
 }
 
-DWORD WINAPI LoadObj ( LPVOID pParam )
+DWORD WINAPI loadObj ( LPVOID pParam )
 {
     CoInitialize ( NULL );
 
@@ -384,26 +383,36 @@ DWORD WINAPI LoadObj ( LPVOID pParam )
     //设置投影矩阵
     TheSceneMgr->setProj();
 
-    //创建世界坐标系
-	GWorldCorrd* corrd = new GWorldCorrd();
-	corrd->setNodeName ( "World Corrd" );
-	CXASSERT_RETURN_FALSE ( corrd->reCreate() );
-	TheSceneMgr->addStaticObj ( corrd );
+	if ( 1 )
+	{
+		//创建世界坐标系
+		GWorldCorrd* corrd = new GWorldCorrd();
+		corrd->setNodeName ( "World Corrd" );
+		CXASSERT_RETURN_FALSE ( corrd->reCreate() );
+		TheSceneMgr->addStaticObj ( corrd );
+	}
 
-	MeshPara seaPara( 0, 80.0f, 0, 64, "..\\Data\\res\\water\\BlueShort\\A21C_000.jpg", NULL );
-	
-	//CSea* sea=new CSea;
-	//sea->setParam(seaPara);
-	//sea->mLighting = true;
-	//sea->m_bCanSelect = false;
-	//sea->AddQuakePoint( 0, 0, 10.0f, 0.5f );
-	//sea->reCreate();
-	//TheSceneMgr->addDynaObj ( sea );
+    if ( 1 )
+    {
+        MeshPara seaPara (  80.0f, 0, 64, "..\\Data\\res\\water\\BlueShort\\A21C_000.jpg", NULL );
 
-	GAnimMeshObj *pAnimMesh = new GAnimMeshObj;
-	pAnimMesh->setMediaFile ( "..\\Data\\res\\Anim\\AnimMesh0002\\A0002.X" );
-	CXASSERT_RETURN_FALSE ( pAnimMesh->reCreate() );
-	TheSceneMgr->addDynaObj ( pAnimMesh );
+        GWater* sea = new GWater;
+        sea->setParam ( seaPara );
+        sea->mCanSelect = false;
+		//sea->addQuakePoint ( -50, 0, 10.0f, 2.8f );
+		//sea->addQuakePoint ( 50, 0, 10.0f, 2.8f );
+        sea->recreate();
+        sea->setWorldTranslate ( D3DXVECTOR3 ( 0, 5000, 0 ) );
+        TheSceneMgr->addDynaObj ( sea );
+    }
+
+	if ( 1 )
+	{
+		GAnimMeshObj *pAnimMesh = new GAnimMeshObj;
+		pAnimMesh->setMediaFile ( "..\\Data\\res\\Anim\\AnimMesh0002\\A0002.X" );
+		CXASSERT_RETURN_FALSE ( pAnimMesh->reCreate() );
+		TheSceneMgr->addDynaObj ( pAnimMesh );
+	}
 
     //TheSceneMgr->mEye.InitTrack( &gAnimMesh[0] );
 

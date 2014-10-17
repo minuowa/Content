@@ -45,7 +45,7 @@ void GCamera::setProj()
 
 bool GCamera::reCreate()
 {
-    if ( !__super::reCreate() )
+    if ( !__super::recreate() )
         return false;
 
     return true;
@@ -104,7 +104,7 @@ void GCamera::GetInput ( DWORD frameTimeMs )
 
     getTrans().MoveStep ( vMove.z / 120 * 5.0f );
 
-    if ( INPUTSYSTEM.IsPressingButton ( eButtonType_RightButton ) )
+    if ( INPUTSYSTEM.isPressingButton ( eButtonType_RightButton ) )
     {
         getTrans().TrunStepLeftRightWithUp ( -vMove.x / 800.0f );
 

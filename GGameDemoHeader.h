@@ -76,7 +76,11 @@ void dCast ( T1& dst, T2* src )
 {
     dst = * ( ( T1* ) src );
 }
-
+template<typename T1, typename T2>
+void dCast ( T1* dst, T2 src )
+{
+    * ( ( T2* ) dst ) = src;
+}
 //游戏中定义参数
 
 #define Default_Force_Height 1.0f				//物体默认在地图上的高度
@@ -166,10 +170,10 @@ D3DVECTOR Vector ( float x, float y, float z );
 void DebugMsgBox ( HRESULT hr, const char *StrDebug );
 
 //给Mesh设置法线
-ID3DXMesh *SetNormal ( ID3DXMesh *pMesh, IDirect3DDevice9 *DVC );
+ID3DXMesh *dSetMeshNormal ( ID3DXMesh *pMesh, IDirect3DDevice9 *DVC );
 
 //获取子字符串个数
-int GetSubCharCount ( const char* Sourc,const char* Dev );
+int GetSubCharCount ( const char* Sourc, const char* Dev );
 
 //从文件名字中获取路径
 void  GetFilePath ( char* sFileName, char* path );
@@ -193,7 +197,7 @@ void PreRandom();
 bool IsFileExist ( const char * sFileName );
 
 //将一个字符串转换成D3DXVECTOR3
-void StrToVector3 ( const char *str ,D3DXVECTOR3& v);	//将一个含三维向量的字符串的值取出来
+void StrToVector3 ( const char *str , D3DXVECTOR3& v );	//将一个含三维向量的字符串的值取出来
 
 //判断点是否在一个矩形区域中
 bool IsPointInRect ( POINT pt, RECT *rc );
@@ -308,19 +312,17 @@ struct MeshPara
 {
 public:
 
-    int	  LnID;				//模型的ID
     float mfCellWidth;	    //地图中格子宽度
     float mfMaxHeight;	    //地图的最大高度
     int	  LnCellCount;	    //地图中格子数量
-    char* mstrFileName;     //纹理文件名字，X文件名字
-    char* mstrHeightMap;    //高度图文件名字
+    GString mstrFileName;     //纹理文件名字，X文件名字
+    GString mstrHeightMap;    //高度图文件名字
 
 public:
     MeshPara() {};
 
-    MeshPara ( int nID, float CellWidth, float MaxHight, int CellCount, char *strFileName, char *strHeightMap )
+    MeshPara ( float CellWidth, float MaxHight, int CellCount, const char *strFileName, const  char *strHeightMap )
     {
-        LnID = nID;
         mfCellWidth = CellWidth;
         mfMaxHeight = MaxHight;
         LnCellCount = CellCount;

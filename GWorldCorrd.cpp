@@ -34,7 +34,7 @@ GWorldCorrd::~GWorldCorrd ( void )
 
 bool GWorldCorrd::reCreate()
 {
-    if ( !__super::reCreate() )
+    if ( !__super::recreate() )
         return false;
     return recreate();
 }

@@ -5,7 +5,7 @@
 #include "Particles.h"
 #include "XCursor.h"
 #include "GAnimMeshObj.h"
-#include "Sea.h"
+#include "GWater.h"
 #include "GMeshBuffer.h"
 #include "GWorldCorrd.h"
 #include "GGameMap.h"
@@ -17,17 +17,19 @@
 #include "GSceneMgr.h"
 #include "XMultiThread.h"
 
-extern DWORD WINAPI LoadObj(LPVOID pParam);
+extern DWORD WINAPI loadObj(LPVOID pParam);
+
 class GGame:public GFrameWork
 {
 public:
 	typedef GFrameWork Super;
+
 	FiDeclareSingleton( GGame );
 public:
     GGame(void);
     ~GGame(void);
 
-	virtual bool initBase(HWND mainWnd);
+	virtual bool init(HWND mainWnd);
 
     virtual void loop();
 

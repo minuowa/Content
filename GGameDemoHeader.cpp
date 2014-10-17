@@ -22,7 +22,7 @@ void DebugMsgBox ( HRESULT hr, const char* StrDebug )
 #endif
 }
 
-ID3DXMesh * SetNormal ( ID3DXMesh *pMesh, IDirect3DDevice9 *DVC )
+ID3DXMesh * dSetMeshNormal ( ID3DXMesh *pMesh, IDirect3DDevice9 *DVC )
 {
 
     HRESULT hr = S_FALSE;

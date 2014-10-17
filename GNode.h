@@ -13,18 +13,19 @@ public:
     GNode();
 
     virtual ~GNode();
+
     void setNodeName ( CChar* name );
+    GNode* getNodeByName ( const char* name );
 
     void linkTo ( CXRapidxmlNode* parent );
-    GNode* getNodeByName ( const char* name );
     virtual void clear();
-    virtual bool reCreate();
+    virtual bool recreate();
 public:
     DWORD getObjCount();					//获取所有创建的物体总数，包括已经销毁的对象
-	void setParentBone ( GNode *Parent, const char *sName );
+    void setParentBone ( GNode *Parent, const char *sName );
     int getObjID() const;
-	GNode* addChild ( GNode* c);
-    bool	removeChild ( GNode* child );
+    GNode* addChild ( GNode* c );
+    bool removeChild ( GNode* child );
 
     virtual bool draw();
     virtual void GetInput ( DWORD frameTimeMs );
@@ -37,20 +38,22 @@ public:
     IntersectInfo *UpdateForForceOnObj ( void *pObj );
     D3DXMATRIX GetWorldMatrix ( bool bForTrans );
     virtual eObjAnimState SetState ( eObjAnimState oas, bool bBack ) ;
-	virtual D3DXMATRIX GetWorldMatrixByBone (const char *sBoneName, bool bForTrans = false );
+    virtual D3DXMATRIX GetWorldMatrixByBone ( const char *sBoneName, bool bForTrans = false );
+    void setWorldTranslate ( D3DXVECTOR3& v );
+	void setDir ( D3DXVECTOR3 vNormal );
 
-    void ForceOnMap ( void *pMap, float fForceHeight, eForceType ft );
+	void ForceOnMap ( void *pMap, float fForceHeight, eForceType ft );
 
     IntersectInfo *GetBlockPoint();
 
-    void SetDir ( D3DXVECTOR3 vNormal );
 
     GComponentTrans& getTrans() const;
     void updateTrans();
     void onComponentChange ( GComponentInterface* component, bool canDetach, bool notifyEditor );
     virtual void onPropertyChange ( void* pre, void* changed );
+    virtual void onPropertyChangeEnd ( void* cur );
 protected:
-	virtual void registerAllProperty();
+    virtual void registerAllProperty();
 protected:
     virtual void beginRender();
     virtual void endRender();
@@ -58,14 +61,14 @@ protected:
     void	MakeXMLNode ( CXRapidxmlNode& node );
 
 public:
-	static CXDelegate mDelegateCreateObj;
-	static CXDelegate mDelegateDesotoryObj;
+    static CXDelegate mDelegateCreateObj;
+    static CXDelegate mDelegateDesotoryObj;
 
-	static GNode* mOperatorParentObj;
-	static GNode* mOperatorObj;
-	static CXDelegate mDelegateAddObj;
+    static GNode* mOperatorParentObj;
+    static GNode* mOperatorObj;
+    static CXDelegate mDelegateAddObj;
 
-	static CXDelegate mDelegateComponentChange;
+    static CXDelegate mDelegateComponentChange;
 
     CXDynaArray<GNode*> mChildren;
 
@@ -98,7 +101,7 @@ public:
 
     bool m_bBehaviour;					//是否产生过动作，没有产生过动作LastPos和Pos不能与地图做碰撞，否则不准确
 
-    bool m_bCanSelect;					//是否可选择并控制
+    bool mCanSelect;					//是否可选择并控制
 
     bool m_bBeSelected;					//被选中了
 
@@ -150,7 +153,7 @@ public:
     {
         GComponentInterface* component = mComponentOwner.attachComponent ( name );
         onComponentChange ( component, canDetach, notifyEditor );
-		return component;
+        return component;
     }
     inline void detachComponent ( const char* name )
     {

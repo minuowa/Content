@@ -101,7 +101,7 @@ void GAnimMeshObj::DrawMeshContainer ( D3DXMESHCONTAINER *pMeshContainerBase, D3
 
     bool bHit = false;
 
-    if ( INPUTSYSTEM.IsPressingButton ( eButtonType_LeftButton ) )
+    if ( INPUTSYSTEM.isPressingButton ( eButtonType_LeftButton ) )
     {
         if ( pMeshContainerEx != NULL && pMeshContainerEx->MeshData.pMesh != NULL && !m_bHit )
         {
@@ -372,7 +372,7 @@ D3DXMATRIX GAnimMeshObj::GetWorldMatrixByBone ( char *sBoneName, bool bForTrans/
 
 bool GAnimMeshObj::reCreate()
 {
-    if ( !__super::reCreate() )
+    if ( !__super::recreate() )
     {
         return false;
     }

@@ -18,13 +18,13 @@ GFrameWork::~GFrameWork ( void )
 }
 
 
-bool GFrameWork::initBase ( HWND mainWnd )
+bool GFrameWork::init ( HWND mainWnd )
 {
-    mInst = GetModuleHandle ( NULL );
-	DWORD errorCode=0;
-	if ( !mainWnd )
+	mInst = GetModuleHandle ( NULL );
+    DWORD errorCode = 0;
+    if ( !mainWnd )
     {
-		const TCHAR* className=_T ( "1GameDemo" );
+        const TCHAR* className = _T ( "1GameDemo" );
         //获取本实例的进程
         WNDCLASSEX wcex;
         wcex.cbClsExtra = 0;
@@ -52,24 +52,24 @@ bool GFrameWork::initBase ( HWND mainWnd )
         wcex.style = CS_HREDRAW | CS_VREDRAW;
         if ( !RegisterClassEx ( &wcex ) )
         {
-			DWORD errorCode=GetLastError();
+            DWORD errorCode = GetLastError();
             return false;
         }
 
         mainWnd = CreateWindowEx ( NULL, className, _T ( "GameDemo" ), WS_OVERLAPPEDWINDOW | WS_VISIBLE, 0, 0,
-                                WINDOW_WIDTH, WINDOW_HEIGHT, NULL, NULL, mInst, NULL );
-		errorCode=GetLastError();
-	}
+                                   WINDOW_WIDTH, WINDOW_HEIGHT, NULL, NULL, mInst, NULL );
+        errorCode = GetLastError();
+    }
 
-	if (mainWnd)
-	{
-		mMainWin = mainWnd;
-		ShowWindow ( mMainWin, SW_NORMAL );
-		UpdateWindow ( mMainWin );
-	}
+    if ( mainWnd )
+    {
+        mMainWin = mainWnd;
+        ShowWindow ( mMainWin, SW_NORMAL );
+        UpdateWindow ( mMainWin );
+    }
     else
     {
-		CXASSERT(0);
+        CXASSERT ( 0 );
         return false;
     }
 
@@ -89,57 +89,57 @@ bool GFrameWork::isActive() const
     return mIsActive;
 }
 
-void GFrameWork::resize( int w,int h )
+void GFrameWork::resize ( int w, int h )
 {
-	D9DEVICE->OnResize(w,h);
+    D9DEVICE->OnResize ( w, h );
 }
 
-LRESULT CALLBACK GFrameWork::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
+LRESULT CALLBACK GFrameWork::WndProc ( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
 {
-	switch ( message )
-	{
-	case WM_CLOSE:
-		PostMessage(hWnd,WM_DESTROY,0,0);
-		break;
-	case WM_KILLFOCUS:
-	case WA_INACTIVE:
-		TheGame->active ( false );
-		break;
-	case WM_SETFOCUS:
-	case WM_ACTIVATE:
-		TheGame->active ( true );
-		break;
-	case WM_DESTROY:
-		PostQuitMessage(0);
-		break;
+    switch ( message )
+    {
+    case WM_CLOSE:
+        PostMessage ( hWnd, WM_DESTROY, 0, 0 );
+        break;
+    case WM_KILLFOCUS:
+    case WA_INACTIVE:
+        TheGame->active ( false );
+        break;
+    case WM_SETFOCUS:
+    case WM_ACTIVATE:
+        TheGame->active ( true );
+        break;
+    case WM_DESTROY:
+        PostQuitMessage ( 0 );
+        break;
 
-	case WM_SIZE:
-		{
-			TheGame->resize(LOWORD(lParam),HIWORD(lParam));
-		}
-		break;
-	case WM_IME_COMPOSITION:
+    case WM_SIZE:
+    {
+        TheGame->resize ( LOWORD ( lParam ), HIWORD ( lParam ) );
+    }
+    break;
+    case WM_IME_COMPOSITION:
 
-		//if (lParam & GCS_RESULTSTR)
-		//{
-		//	hIMC = ImmGetContext(hWnd);
+        //if (lParam & GCS_RESULTSTR)
+        //{
+        //	hIMC = ImmGetContext(hWnd);
 
-		//	dwSize = ImmGetCompositionString(hIMC, GCS_RESULTSTR, NULL, 0);
+        //	dwSize = ImmGetCompositionString(hIMC, GCS_RESULTSTR, NULL, 0);
 
-		//	dwSize += sizeof(WCHAR);
+        //	dwSize += sizeof(WCHAR);
 
-		//	ImmGetCompositionString(hIMC, GCS_RESULTSTR, lpstr, dwSize);
+        //	ImmGetCompositionString(hIMC, GCS_RESULTSTR, lpstr, dwSize);
 
-		//	ImmReleaseContext(hWnd, hIMC);
-		//}
+        //	ImmReleaseContext(hWnd, hIMC);
+        //}
 
-		break;
+        break;
 
-	default:
-		return DefWindowProc(hWnd, message, wParam, lParam);
-		break;
-	}
+    default:
+        return DefWindowProc ( hWnd, message, wParam, lParam );
+        break;
+    }
 
-	return 0;
+    return 0;
 }
 

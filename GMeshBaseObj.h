@@ -15,18 +15,16 @@ class GMeshBaseObj :
 
 		bool render();
 
-        ID3DXMesh *GetMeshByUsage( eMeshUsage mu );
+        ID3DXMesh *getMeshByUsage( eMeshUsage mu );
 
-        bool Pick( POINT pt );
+		bool pick( const POINT& pt );
 
-        bool CheckIntersect(
-            D3DXVECTOR4 vPos,	//世界坐标系中的点
-            D3DXVECTOR4 vDir,	//世界坐标系中的向量
-            bool bInsectInfo	//是否需要碰撞信息
-        );
-		ID3DXMesh* ResetVectorMesh();
+		bool checkIntersect(const D3DXVECTOR4& vPos, /*世界坐标系中的点 */ const D3DXVECTOR4& vDir, /*世界坐标系中的向量 */ bool bInsectInfo /*是 裥枰鲎残畔?*/ );
+		
+		/** @brief 生成碰撞mesh **/
+		ID3DXMesh* recreateInsectMesh();
 protected:
         //渲染所需参数
         GMeshBufferNode* mMeshBufferNode;
-		ID3DXMesh*	mpMeshForVector;
+		ID3DXMesh*	mMeshForInsect;
 };

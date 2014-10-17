@@ -7,7 +7,7 @@ public:
     GFrameWork(void);
     virtual ~GFrameWork(void);
 public:
-	virtual bool initBase(HWND mainWnd);//初始化游戏  
+	virtual bool init(HWND mainWnd);//初始化游戏  
 	void active(bool active);
 	bool isActive() const;
 	HWND getMainWin() const { return mMainWin; }

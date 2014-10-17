@@ -4,7 +4,6 @@
     <ClCompile Include="GameStaticObj.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Particles.cpp" />
-    <ClCompile Include="Sea.cpp" />
     <ClCompile Include="XArea.cpp" />
     <ClCompile Include="XCursor.cpp" />
     <ClCompile Include="XEffect.cpp" />
@@ -56,12 +55,13 @@
     <ClCompile Include="GObject.cpp" />
     <ClCompile Include="GCuller.cpp" />
     <ClCompile Include="GTexture.cpp" />
+    <ClCompile Include="GWater.cpp" />
+    <ClCompile Include="GGameOption.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameStaticObj.h" />
     <ClInclude Include="Particles.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="Sea.h" />
     <ClInclude Include="XArea.h" />
     <ClInclude Include="XCursor.h" />
     <ClInclude Include="XEffect.h" />
@@ -119,6 +119,10 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GCuller.h" />
     <ClInclude Include="GTexture.h" />
+    <ClInclude Include="GWater.h" />
+    <ClInclude Include="GGameOption.h" />
+    <ClInclude Include="GEnumTypesStrings.h" />
+    <ClInclude Include="GEnums.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Animation">
@@ -127,5 +131,8 @@
     <Filter Include="Component">
       <UniqueIdentifier>{2edb1787-a609-4ce7-b921-47f01164ad44}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="GEnums.inl" />
   </ItemGroup>
 </Project>

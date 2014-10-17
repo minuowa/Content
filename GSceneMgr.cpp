@@ -142,7 +142,8 @@ void GSceneManager::initNodeFactory()
     __RegisterGameObjCreator ( GNode );
     __RegisterGameObjCreator ( GAnimMeshObj );
     __RegisterGameObjCreator ( GMeshBaseObj );
-    __RegisterGameObjCreator ( GRenderObject );
+	__RegisterGameObjCreator ( GRenderObject );
+	__RegisterGameObjCreator ( GWater );
 
 #if TheEditor
     typedef GFactory<GNode>::ObjCreatorMap GNodeCreatorMap;

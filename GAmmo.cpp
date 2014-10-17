@@ -22,7 +22,7 @@ void GAmmo::Shoot()
 
 bool GAmmo::reCreate()
 {
-    if ( !__super::reCreate() )
+    if ( !__super::recreate() )
         return false;
 
     return true;

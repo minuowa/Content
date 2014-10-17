@@ -8,4 +8,7 @@
 #include "GGameDemoHeader.h"
 #include "GSceneMgr.h"
 #include "GGame.h"
+#include "GGameOption.h"
+#include "GEnums.h"
+#include "GEnumTypesStrings.h"
 #endif // Game_h__

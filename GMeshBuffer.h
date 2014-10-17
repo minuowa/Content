@@ -23,22 +23,20 @@ class GMeshBufferNode
 
         ~GMeshBufferNode();
 
-        HRESULT LoadFromFile( int nID );
-
         HRESULT MakeLod( DWORD* pAdj );
 
-		bool Render();
+		bool draw();
 
 		void Add(GMetrialData* data)
 		{
 			mRenderData.push_back(data);
 		}
-		WORD SubSetCount() const { return mSubSetCount; }
-		void SubSetCount(WORD val) { mSubSetCount = val; }
+		WORD getSubCount() const { return mSubSetCount; }
+		void setSubCount(WORD val) { mSubSetCount = val; }
     public:
 		ID3DXMesh*		mMesh;
-		ID3DXMesh* Mesh() const { return mMesh; }
-		void Mesh(ID3DXMesh* val) { mMesh = val; }
+		ID3DXMesh* getMesh() const { return mMesh; }
+		void setMesh(ID3DXMesh* val) { mMesh = val; }
 		WORD			mSubSetCount;
 		GRenderDataArr	mRenderData;
 		GString		mFileName;

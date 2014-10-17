@@ -10,11 +10,12 @@
 GMeshBaseObj::GMeshBaseObj ( void )
     : mMeshBufferNode ( 0 )
 {
-    mpMeshForVector = nullptr;
+    mMeshForInsect = nullptr;
 }
 
 GMeshBaseObj::~GMeshBaseObj ( void )
 {
+    dSafeRelease ( mMeshForInsect );
 }
 
 
@@ -24,7 +25,7 @@ bool GMeshBaseObj::render()
         return false;
 
     if ( mMeshBufferNode )
-        return mMeshBufferNode->Render();
+        return mMeshBufferNode->draw();
     return true;
     //D9DEVICE->OpenAllLightEx(m_bLightOn,mfDiffuseIntensity,ZEROFLOAT,m_bUseMatrialColor);
 
@@ -152,24 +153,23 @@ bool GMeshBaseObj::render()
 
 
 
-ID3DXMesh * GMeshBaseObj::ResetVectorMesh()
+ID3DXMesh * GMeshBaseObj::recreateInsectMesh()
 {
+    dSafeRelease ( mMeshForInsect );
 
-    SAFERELEASE ( mpMeshForVector );
-
-    if ( mMeshBufferNode->Mesh() != NULL )
+    if ( mMeshBufferNode->getMesh() != NULL )
     {
-        mMeshBufferNode->Mesh()->CloneMeshFVF (
-            mMeshBufferNode->Mesh()->GetOptions(),
-            D3DFVF_XYZ, D9DEVICE->GetDvc(), &mpMeshForVector
+        mMeshBufferNode->getMesh()->CloneMeshFVF (
+            mMeshBufferNode->getMesh()->GetOptions(),
+            D3DFVF_XYZ, D9DEVICE->GetDvc(), &mMeshForInsect
         );
     }
 
-    return mpMeshForVector;
+    return mMeshForInsect;
 }
 
 
-bool GMeshBaseObj::CheckIntersect ( D3DXVECTOR4 vPos, D3DXVECTOR4 vDir, bool bInsectInfo )
+bool GMeshBaseObj::checkIntersect ( const D3DXVECTOR4& vPos, /*世界坐标系中的点 */ const D3DXVECTOR4& vDir, /*世界坐标系中的向量 */ bool bInsectInfo /*是 裥枰鲎残畔?*/ )
 {
     HRESULT hr = S_FALSE;
 
@@ -177,19 +177,19 @@ bool GMeshBaseObj::CheckIntersect ( D3DXVECTOR4 vPos, D3DXVECTOR4 vDir, bool bIn
     D3DXMATRIX matWorld = GetWorldMatrix ( false );
     D3DXMatrixInverse ( &matWorld, NULL, &matWorld );
 
-    D3DXVec4Transform ( &vDir, &vDir, &matWorld );
+    D3DXVec4Transform ( ( D3DXVECTOR4 * ) &vDir, ( D3DXVECTOR4 * ) &vDir, &matWorld );
     D3DXVec3Normalize ( ( D3DXVECTOR3* ) &vDir, ( D3DXVECTOR3* ) &vDir );
-    D3DXVec4Transform ( &vPos, &vPos, &matWorld );
+    D3DXVec4Transform ( ( D3DXVECTOR4 * ) &vPos, ( D3DXVECTOR4 * ) &vPos, &matWorld );
 
-    if ( mpMeshForVector == NULL )
+    if ( mMeshForInsect == NULL )
     {
-        ResetVectorMesh();
+        recreateInsectMesh();
     }
 
     BOOL bHit = FALSE;
 
     hr = D3DXIntersect (
-             mpMeshForVector, ( D3DXVECTOR3* ) &vPos, ( D3DXVECTOR3* ) &vDir, &bHit,
+             mMeshForInsect, ( D3DXVECTOR3* ) &vPos, ( D3DXVECTOR3* ) &vDir, &bHit,
              &m_InsectInfo.dwFaceIndex, &m_InsectInfo.u, &m_InsectInfo.v, &m_InsectInfo.fDist,
              NULL, NULL
          );
@@ -210,7 +210,7 @@ bool GMeshBaseObj::CheckIntersect ( D3DXVECTOR4 vPos, D3DXVECTOR4 vDir, bool bIn
 
         //先要获取索引缓冲区格式
         LPDIRECT3DINDEXBUFFER9 pI = NULL;
-        mpMeshForVector->GetIndexBuffer ( &pI );
+        mMeshForInsect->GetIndexBuffer ( &pI );
 
         D3DINDEXBUFFER_DESC indexDesc;
         ZeroMemory ( &indexDesc, sizeof ( D3DINDEXBUFFER_DESC ) );
@@ -224,7 +224,7 @@ bool GMeshBaseObj::CheckIntersect ( D3DXVECTOR4 vPos, D3DXVECTOR4 vDir, bool bIn
         {
             WORD *pIndexData16;
 
-            hr = mpMeshForVector->LockIndexBuffer ( D3DLOCK_READONLY, ( void** ) &pIndexData16 );
+            hr = mMeshForInsect->LockIndexBuffer ( D3DLOCK_READONLY, ( void** ) &pIndexData16 );
 
             dwIndex[0] = pIndexData16[m_InsectInfo.dwFaceIndex * 3 + 0];
             dwIndex[1] = pIndexData16[m_InsectInfo.dwFaceIndex * 3 + 1];
@@ -234,7 +234,7 @@ bool GMeshBaseObj::CheckIntersect ( D3DXVECTOR4 vPos, D3DXVECTOR4 vDir, bool bIn
         {
             DWORD *pIndexData32;
 
-            hr = mpMeshForVector->LockIndexBuffer ( D3DLOCK_READONLY, ( void** ) &pIndexData32 );
+            hr = mMeshForInsect->LockIndexBuffer ( D3DLOCK_READONLY, ( void** ) &pIndexData32 );
 
             dwIndex[0] = pIndexData32[m_InsectInfo.dwFaceIndex * 3 + 0];
             dwIndex[1] = pIndexData32[m_InsectInfo.dwFaceIndex * 3 + 1];
@@ -242,17 +242,17 @@ bool GMeshBaseObj::CheckIntersect ( D3DXVECTOR4 vPos, D3DXVECTOR4 vDir, bool bIn
         }
 
 
-        mpMeshForVector->UnlockIndexBuffer();
+        mMeshForInsect->UnlockIndexBuffer();
 
         D3DXVECTOR3 *pVertexData;
 
-        hr = mpMeshForVector->LockVertexBuffer ( D3DLOCK_READONLY, ( void** ) &pVertexData );
+        hr = mMeshForInsect->LockVertexBuffer ( D3DLOCK_READONLY, ( void** ) &pVertexData );
 
         v[0] = pVertexData[dwIndex[0]];
         v[1] = pVertexData[dwIndex[1]];
         v[2] = pVertexData[dwIndex[2]];
 
-        mpMeshForVector->UnlockVertexBuffer();
+        mMeshForInsect->UnlockVertexBuffer();
 
         D3DXVECTOR4 vNormal ( ZEROFLOAT, ZEROFLOAT, ZEROFLOAT, ZEROFLOAT );
         D3DXVECTOR4 vHitPos ( ZEROFLOAT, ZEROFLOAT, ZEROFLOAT, ZEROFLOAT );
@@ -283,7 +283,7 @@ bool GMeshBaseObj::CheckIntersect ( D3DXVECTOR4 vPos, D3DXVECTOR4 vDir, bool bIn
 
 }
 
-bool GMeshBaseObj::Pick ( POINT pt )
+bool GMeshBaseObj::pick ( const POINT& pt )
 {
 
     D3DXMATRIX	matView, matProj;
@@ -311,7 +311,7 @@ bool GMeshBaseObj::Pick ( POINT pt )
 
     D3DXVec4Transform ( &vOrigin, &vOrigin, &matView );
 
-    return CheckIntersect ( vOrigin, vDir, false );
+    return checkIntersect ( vOrigin, vDir, false );
 
 }
 

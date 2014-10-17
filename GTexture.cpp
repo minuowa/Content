@@ -19,5 +19,5 @@ bool GTexture::createFromFile ( const char* name )
 
 GTexture::~GTexture()
 {
-    dSafeRelease ( mD3DTexture );
+    //dSafeRelease ( mD3DTexture );
 }

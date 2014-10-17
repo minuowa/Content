@@ -28,7 +28,7 @@ GGameMap::~GGameMap ( void )
 
 bool GGameMap::reCreate()
 {
-    if ( !__super::reCreate(  ) )
+    if ( !__super::recreate(  ) )
         return false;
 
     //获取参数
@@ -282,21 +282,20 @@ int GGameMap::AfterCreate()
     DWORD *pAdj = new DWORD[_pMesh->GetNumFaces() * 3];
 
     mMeshBufferNode = new GMeshBufferNode();
-    mMeshBufferNode->SubSetCount ( 1 );
-    mMeshBufferNode->Mesh ( _pMesh );
-    mLighting = true;
+    mMeshBufferNode->setSubCount ( 1 );
+    mMeshBufferNode->setMesh ( _pMesh );
 
     GMetrialData* data = new GMetrialData;
-    data->SetTexture ( mstrFileName );
-    data->SetMetiral ( *_pMat );
+    data->setTexture ( mstrFileName );
+    data->setMetiral ( *_pMat );
     mMeshBufferNode->Add ( data );
     _pMesh->GenerateAdjacency ( 1.0f, pAdj );
 
     mMeshBufferNode->MakeLod ( pAdj );
 
-    SetNormal ( mMeshBufferNode->Mesh(), D9DEVICE->GetDvc() );
+    dSetMeshNormal ( mMeshBufferNode->getMesh(), D9DEVICE->GetDvc() );
 
-    ResetVectorMesh();
+    recreateInsectMesh();
 
     return _nID;
 }

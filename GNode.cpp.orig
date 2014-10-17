@@ -157,7 +157,7 @@ GNode::GNode()
 
     m_bBeSelected = false;
 
-    m_bCanSelect = true;										//是否可选择
+    mCanSelect = true;										//是否可选择
 
     m_bBlock = false;
 
@@ -301,15 +301,10 @@ void GNode::update(  )
     {
         updateTrans();
     }
-	for (GNode* child:mChildren)
-	{
-		child->update();
-	}
-    GNodeArr::iterator iBegin = mChildren.begin();
-    GNodeArr::iterator iEnd = mChildren.end();
-    for ( ; iBegin != iEnd; ++iBegin )
+
+for ( GNode * child: mChildren )
     {
-        GNode* n = *iBegin;
+        child->update();
     }
 }
 
@@ -327,7 +322,7 @@ IntersectInfo * GNode::UpdateForForceOnMap()
 
             //向下的射线与地图碰撞，肯定能撞到
 
-            bool bHit = pMap->CheckIntersect ( vPos, vDir, true );
+            bool bHit = pMap->checkIntersect ( vPos, vDir, true );
 
             if ( bHit )
             {
@@ -374,7 +369,7 @@ IntersectInfo * GNode::UpdateForForceOnObj ( void *pObj )
 
     //向下的射线与地图碰撞，肯定能撞到
 
-    bool bHit = lpObj->CheckIntersect ( vPos, vDir, true );
+    bool bHit = lpObj->checkIntersect ( vPos, vDir, true );
 
     if ( bHit )
     {
@@ -631,7 +626,7 @@ void GNode::updateTrans()
 
     IntersectInfo *pIntersectFinalHit = NULL;		//最终碰撞信息（可能是地图或者是物体）
 
-    if ( !m_bForceOnMap || !m_bBeSelected || !m_bCanSelect )
+    if ( !m_bForceOnMap || !m_bBeSelected || !mCanSelect )
     {
         return;
     }
@@ -666,7 +661,7 @@ void GNode::updateTrans()
 
         D3DXVECTOR4 vPos ( getTrans().mvLastPos.x, getTrans().mvLastPos.y, getTrans().mvLastPos.z, 1 );
 
-        bool bHit = pMap->CheckIntersect ( vPos, vDir, true );
+        bool bHit = pMap->checkIntersect ( vPos, vDir, true );
 
         if ( bHit )
         {
@@ -968,6 +963,24 @@ void GNode::onPropertyChange ( void* pre, void* changed )
 void GNode::clear()
 {
 
+}
+
+void GNode::setWorldTranslate ( D3DXVECTOR3& v )
+{
+    getTrans().mTranslate = v;
+}
+
+void GNode::onPropertyChangeEnd( void* cur )
+{
+	__super::onPropertyChangeEnd(cur);
+
+	for ( int i = 0; i < eComponentType_Count; ++i )
+	{
+		if ( mComponentOwner.getComponent ( eComponentType ( i ) ) )
+		{
+			mComponentOwner.getComponent ( eComponentType ( i ) )->onPropertyChangeEnd ( cur );
+		}
+	}
 }
 
 CXDelegate GNode::mDelegateComponentChange;

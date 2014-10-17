@@ -6,9 +6,7 @@ GRenderObject::GRenderObject(void)
 {
 	mVisible=true;
 
-	mLighting=false;
-
-	mChangeWhenHit=false;
+	mChangeWhenPicked=false;
 }
 
 

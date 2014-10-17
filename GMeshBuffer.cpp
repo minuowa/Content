@@ -100,7 +100,7 @@ GMeshBufferNode* GMeshManager::CreateFormFile ( const char* fileName )
     GMeshBufferNode* node = new GMeshBufferNode;
     node->mFileName = fileName;
     node->mMesh = rootMesh;
-    node->SubSetCount ( LnAttrNum );
+    node->setSubCount ( LnAttrNum );
 
     D3DXMATERIAL *pMatList = ( D3DXMATERIAL * ) pMat->GetBufferPointer();
 
@@ -108,23 +108,17 @@ GMeshBufferNode* GMeshManager::CreateFormFile ( const char* fileName )
     {
         GMetrialData* metrialData = new GMetrialData;
 
-        metrialData->SetMetiral ( pMatList[i].MatD3D );
+        metrialData->setMetiral ( pMatList[i].MatD3D );
         CXFileName path ( fileName );
         GString textureName = path.GetRelativePath();
 
         if ( pMatList[i].pTextureFilename != NULL )
         {
             textureName.append ( pMatList[i].pTextureFilename );
-            metrialData->SetTexture ( textureName );
+            metrialData->setTexture ( textureName );
         }
     }
     return node;
-}
-
-
-HRESULT GMeshBufferNode::LoadFromFile ( int nID )
-{
-    return S_OK;
 }
 
 GMeshBufferNode::GMeshBufferNode()
@@ -134,7 +128,7 @@ GMeshBufferNode::GMeshBufferNode()
 
 
 
-bool GMeshBufferNode::Render()
+bool GMeshBufferNode::draw()
 {
     CXASSERT_RESULT_FALSE ( mRenderData.size() == mSubSetCount );
     CXASSERT_RETURN_FALSE ( mMesh );
@@ -142,7 +136,7 @@ bool GMeshBufferNode::Render()
     for ( int i = 0; i < mSubSetCount; ++i )
     {
         GMetrialData* renderData = mRenderData[i];
-        renderData->Render();
+        renderData->set();
         mMesh->DrawSubset ( i );
     }
     return true;
@@ -151,4 +145,10 @@ bool GMeshBufferNode::Render()
 HRESULT GMeshBufferNode::MakeLod ( DWORD* pAdj )
 {
     return S_OK;
+}
+
+GMeshBufferNode::~GMeshBufferNode()
+{
+    dSafeRelease ( mMesh );
+    dSafeDeleteVector ( mRenderData );
 }

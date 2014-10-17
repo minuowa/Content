@@ -119,7 +119,7 @@ POINT GD8Input::GetMousePoint()
     return pt;
 }
 
-int GD8Input::GetMouseWheel()
+int GD8Input::getMouseWheel()
 {
     return mMouseData.lZ;
 }
@@ -129,7 +129,7 @@ byte GD8Input::GetButtonAction ( eButtonType bt ) const
     return mMouseButtonState[bt];
 }
 
-bool GD8Input::IsPressingButton ( eButtonType bt )
+bool GD8Input::isPressingButton ( eButtonType bt )
 {
     if ( bt == eButtonType_LeftButton )
     {
@@ -145,14 +145,14 @@ bool GD8Input::IsPressingButton ( eButtonType bt )
     }
 }
 
-byte GD8Input::GetKeyAction ( int key )
+byte GD8Input::getKeyAction ( int key )
 {
     return mKBoardState[key];
 }
 
 bool GD8Input::IskeyUp ( byte key )
 {
-    return GetKeyAction ( key ) == DI_BUTTONUP;
+    return getKeyAction ( key ) == DI_BUTTONUP;
 }
 
 bool GD8Input::IsLeftButtonUp() const
