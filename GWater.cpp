@@ -276,6 +276,7 @@ void QuakePoint::init ( float _x, float _z, float amplitude, float AngVelocity, 
 
     mInitTime = _t;
 }
+#define QUAKE_SPEED 180.0f						//波在水中传播的速度
 
 float QuakePoint::getPointEffect ( float _x, float _z, float _t )
 {

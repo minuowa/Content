@@ -67,6 +67,12 @@ private:
     void recreateMetrialInfo();
 
     virtual void registerAllProperty();
+
+	virtual void onCallBack( const CXDelegate& ) 
+	{
+		throw std::exception("The method or operation is not implemented.");
+	}
+
 private:
     float mCellWidth;	    //地图中格子宽度
     float mMaxHeight;	    //地图的最大高度

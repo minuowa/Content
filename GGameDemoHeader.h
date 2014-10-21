@@ -71,16 +71,7 @@ inline void toggle ( bool b )
 {
     b = !b;
 }
-template<typename T1, typename T2>
-void dCast ( T1& dst, T2* src )
-{
-    dst = * ( ( T1* ) src );
-}
-template<typename T1, typename T2>
-void dCast ( T1* dst, T2 src )
-{
-    * ( ( T2* ) dst ) = src;
-}
+
 //游戏中定义参数
 
 #define Default_Force_Height 1.0f				//物体默认在地图上的高度
@@ -124,7 +115,6 @@ void dCast ( T1* dst, T2 src )
 #define DEFAULT_SPEED_MOVE 100.0f
 #define DEAULT_SPEED_TRUN 1.5f
 
-#define QUAKE_SPEED 80.0f						//波在水中传播的速度
 
 #define MAX_QUAKE_COUNT 8							//海水振动源的最大个数
 

@@ -4,9 +4,10 @@
 #include "GD9Device.h"
 
 GGameOption::GGameOption ( void )
+    : RenderBloom ( false )
 {
-    mFillMode = FillSolid;
-
+    FillMode = FillSolid;
+    D9DEVICE->mOnResetDevice += this;
     updateRenderState();
 }
 
@@ -18,14 +19,15 @@ GGameOption::~GGameOption ( void )
 void GGameOption::registerAllProperty()
 {
     //__super::registerAllProperty();
-    __RegisterPropertyEnum ( mFillMode );
+    __RegisterPropertyEnum ( FillMode );
+    __RegisterProperty ( RenderBloom );
 }
 
 void GGameOption::onPropertyChangeEnd ( void* cur )
 {
     __super::onPropertyChangeEnd ( cur );
 
-    if ( &mFillMode == cur )
+    if ( &FillMode == cur )
     {
         updateRenderState();
     }
@@ -33,7 +35,7 @@ void GGameOption::onPropertyChangeEnd ( void* cur )
 
 void GGameOption::updateRenderState()
 {
-    switch ( mFillMode )
+    switch ( FillMode )
     {
     case FillPoint:
         D9DEVICE->GetDvc()->SetRenderState ( D3DRS_FILLMODE, D3DFILL_POINT );
@@ -46,5 +48,13 @@ void GGameOption::updateRenderState()
         break;
     default:
         break;
+    }
+}
+
+void GGameOption::onCallBack ( const CXDelegate& delegate )
+{
+    if ( delegate == D9DEVICE->mOnResetDevice )
+    {
+        updateRenderState();
     }
 }

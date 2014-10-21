@@ -19,8 +19,11 @@ public:
 
 	void updateRenderState();
 
+	virtual void onCallBack( const CXDelegate& );
+
 protected:
-	FillMode mFillMode;
+	eFillMode FillMode;
+	bool RenderBloom;
 };
 
 typedef CXSingleton<GGameOption> GGameOptionSingleton;

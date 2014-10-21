@@ -1,4 +1,4 @@
-GEnum ( FillMode )
+GEnum ( eFillMode )
 {
 	GEle ( FillPoint )
 	GEle ( FillWire )

@@ -243,7 +243,7 @@ void GD9Device::ResetRenderState()
 
     //填充模式
     //D9DEVICE->SetRenderState(D3DRS_FILLMODE,D3DFILL_POINT);//点填充
-    mD9Device->SetRenderState ( D3DRS_FILLMODE, D3DFILL_SOLID ); //多边形填充
+    //mD9Device->SetRenderState ( D3DRS_FILLMODE, D3DFILL_SOLID ); //多边形填充
     //D9DEVICE->SetRenderState(D3DRS_FILLMODE,D3DFILL_WIREFRAME);//线框填充
 
     //关闭Alpha混合
