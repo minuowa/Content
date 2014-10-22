@@ -11,8 +11,8 @@
 	CXDefineOnce CXEnumStructHelper<type> GCatCount(__gEnumHelper);\
 	template<> inline void CXEnumStructHelper<type>::regist() 
 
-#define GEle(ele)		mStructList.push_back(CXEnumStruct(ele,#ele));
-#define GEleV(ele,n)	mStructList.push_back(CXEnumStruct(n,#ele));
+#define GEle(ele)		getStructList().push_back(new CXEnumStruct(ele,#ele));
+#define GEleV(ele,n)	getStructList().push_back(new CXEnumStruct(n,#ele));
 
 #include "GEnums.inl"
 #endif // 

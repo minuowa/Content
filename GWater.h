@@ -21,8 +21,8 @@ struct QuakePoint
     float mAngVelocity;	//角速度，=f*2*PI
     float mfX, mfZ;		//振动源的位置
 public:
-    float getPointEffect ( float _x, float _z, float _t );
-    void init ( float _x, float _z, float amplitude, float AngVelocity, float _t );
+	float getPointEffect ( float _x, float _z, DWORD _t );
+	void init ( float _x, float _z, float amplitude, float AngVelocity, DWORD _t );
 };
 class GQuakePointManager
 {
@@ -34,7 +34,7 @@ public:
     void recreate ( CXIndex cnt );
     void setRangeX ( float fmin, float fmax );
     void setRangeZ ( float fmin, float fmax );
-	float getPointEffect ( float _x, float _z, float _t );
+	float getPointEffect ( float _x, float _z,DWORD  _t );
 private:
     float mMinX;
     float mMaxX;
@@ -72,6 +72,8 @@ private:
 	{
 		throw std::exception("The method or operation is not implemented.");
 	}
+
+	virtual bool render();
 
 private:
     float mCellWidth;	    //地图中格子宽度

@@ -152,3 +152,8 @@ GMeshBufferNode::~GMeshBufferNode()
     dSafeRelease ( mMesh );
     dSafeDeleteVector ( mRenderData );
 }
+
+GMetrialData* GMeshBufferNode::getMaterial( CXIndex idx ) const
+{
+	return mRenderData[idx];
+}

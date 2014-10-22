@@ -6,7 +6,7 @@
 
 GWater::GWater ( void )
 {
-    mQuakeCount = 1;
+    mQuakeCount = 3;
 
     mpFace = NULL;
 
@@ -86,7 +86,7 @@ void GWater::update()
         {
             dwIndex = i * ( mCellCount + 1 ) + j;
 
-            float fDelta = mQuakeManager.getPointEffect ( pVertexBuffer[dwIndex].vertex.x, pVertexBuffer[dwIndex].vertex.z, ( float ) timeGetTime() / 1000.0f );
+            float fDelta = mQuakeManager.getPointEffect ( pVertexBuffer[dwIndex].vertex.x, pVertexBuffer[dwIndex].vertex.z, timeGetTime() );
 
             pVertexBuffer[dwIndex].vertex.y = fDelta;
         }
@@ -98,11 +98,11 @@ void GWater::update()
     //sprintf(sFileName,"res\\water\\BlueShort\\A21C_%03d.jpg",);
 
     GString sFileName;
-    sFileName.Format ( "..\\Data\\res\\water\\BlueShort\\A21C_%03d.jpg", dwTime % SEAPICNUM );
+    sFileName.Format ( "..\\Data\\res\\water\\BlueShort\\A21C_%03d.jpg", dwTime / 100 % SEAPICNUM );
 
-    GTexture* gtext = TextureMgr->getResource ( sFileName );
-    if ( gtext )
-        mpFace[0] = gtext->getTexture();
+    GMetrialData* metrial = mMeshBufferNode->getMaterial ( 0 );
+    CXASSERT ( metrial );
+    metrial->setTexture ( sFileName );
 }
 
 
@@ -235,22 +235,22 @@ void GWater::recreateMetrialInfo()
     D3DMATERIAL9 mtrl;
     ZeroMemory ( &mtrl, sizeof ( mtrl ) );
 
-    mtrl.Diffuse.r = 0.4f;
-    mtrl.Diffuse.g = 0.4f;
-    mtrl.Diffuse.b = 1.0f;
-    mtrl.Diffuse.a = 0.6f;
-    mtrl.Ambient.r = 0.2f;
-    mtrl.Ambient.g = 0.2f;
-    mtrl.Ambient.b = 0.2f;
-    mtrl.Ambient.a = 0.5f;
-    mtrl.Specular.r = 0.8f;
-    mtrl.Specular.g = 0.8f;
-    mtrl.Specular.b = 0.8f;
-    mtrl.Specular.a = 0.5f;
-    mtrl.Emissive.r = 0.2f;
-    mtrl.Emissive.g = 0.2f;
-    mtrl.Emissive.b = 0.6f;
-    mtrl.Emissive.a = 0.5f;
+    mtrl.Diffuse.r = 0;
+    mtrl.Diffuse.g = 1;
+    mtrl.Diffuse.b = 0;
+    mtrl.Diffuse.a = 0;
+    mtrl.Ambient.r = 0;
+    mtrl.Ambient.g = 0;
+    mtrl.Ambient.b = 0;
+    mtrl.Ambient.a = 0;
+    mtrl.Specular.r = 0;
+    mtrl.Specular.g = 0;
+    mtrl.Specular.b = 0;
+    mtrl.Specular.a = 0;
+    mtrl.Emissive.r = 0;
+    mtrl.Emissive.g = 1;
+    mtrl.Emissive.b = 0.8;
+    mtrl.Emissive.a = 0;
 
     mtrl.Power = 9.0f;
     material->setMetiral ( mtrl );
@@ -262,11 +262,17 @@ void GWater::setPointCount ( unsigned int cnt )
     recreateQuakeInfo();
 }
 
+bool GWater::render()
+{
+    D9DEVICE->OpenAllLight ( true,false );
+    return __super::render();
+}
 
 
 
 
-void QuakePoint::init ( float _x, float _z, float amplitude, float AngVelocity, float _t )
+
+void QuakePoint::init ( float _x, float _z, float amplitude, float AngVelocity, DWORD _t )
 {
     mfZ = _z;
     mfX = _x;
@@ -278,13 +284,17 @@ void QuakePoint::init ( float _x, float _z, float amplitude, float AngVelocity, 
 }
 #define QUAKE_SPEED 180.0f						//波在水中传播的速度
 
-float QuakePoint::getPointEffect ( float _x, float _z, float _t )
+float QuakePoint::getPointEffect ( float _x, float _z, DWORD _t )
 {
     float len = D3DXVec3Length ( & ( D3DXVECTOR3 ( mfX, 0, mfZ ) - D3DXVECTOR3 ( _x, 0, _z ) ) );
 
     float dt = len / QUAKE_SPEED;
-
-    float fDeltaY = mAmplitude * sinf ( mAngVelocity * ( _t - mInitTime ) - dt );
+    static int maxDistancte = 8000;
+    float reduceFactor = len / maxDistancte;
+    float res = ( 1 - reduceFactor * reduceFactor );
+    float fDeltaY = 0;
+    if ( res > 0 )
+        fDeltaY = res * mAmplitude * sinf ( mAngVelocity * ( _t - mInitTime ) * 0.001f - dt );
 
     return fDeltaY;
 }
@@ -296,10 +306,12 @@ void GQuakePointManager::addPoint ( QuakePoint* point )
 
 void GQuakePointManager::recreate ( CXIndex cnt )
 {
+    destory();
+
     for ( CXIndex i = 0; i < cnt; ++i )
     {
         QuakePoint* quake = new QuakePoint;
-        quake->init ( gRandom.randF ( mMinX, mMaxX ), gRandom.randF ( mMinZ, mMaxZ ), 50, 3.8f, timeGetTime() );
+        quake->init ( gRandom.randF ( mMinX, mMaxX ), gRandom.randF ( mMinZ, mMaxZ ), 30, 2 * D3DX_PI * 0.5, timeGetTime() );
         addPoint ( quake );
     }
 }
@@ -309,7 +321,7 @@ void GQuakePointManager::destory()
     dSafeDeleteVector ( mPointList );
 }
 
-float GQuakePointManager::getPointEffect ( float _x, float _z, float _t )
+float GQuakePointManager::getPointEffect ( float _x, float _z, DWORD _t )
 {
     float sum = 0;
 for ( QuakePoint * quake: mPointList )

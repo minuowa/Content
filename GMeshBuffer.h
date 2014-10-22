@@ -33,6 +33,7 @@ class GMeshBufferNode
 		}
 		WORD getSubCount() const { return mSubSetCount; }
 		void setSubCount(WORD val) { mSubSetCount = val; }
+		GMetrialData* getMaterial(CXIndex idx) const;
     public:
 		ID3DXMesh*		mMesh;
 		ID3DXMesh* getMesh() const { return mMesh; }

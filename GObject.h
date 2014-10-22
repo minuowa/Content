@@ -64,32 +64,31 @@ public:
 
 
 template<typename T>
-void GObject::registerEnumProperty( const char* categoryName, const char* propName, const T& var )
+void GObject::registerEnumProperty ( const char* categoryName, const char* propName, const T& var )
 {
-	PropertyMap* propMap = 0;
-	if ( !mOption.Get ( categoryName, propMap ) )
-	{
-		propMap = new PropertyMap;
-		mOption.Insert ( categoryName, propMap );
-	}
+    PropertyMap* propMap = 0;
+    if ( !mOption.Get ( categoryName, propMap ) )
+    {
+        propMap = new PropertyMap;
+        mOption.Insert ( categoryName, propMap );
+    }
 
-	EPropertyVar* evar = 0;
-	if ( !propMap->Get ( propName, evar ) )
-	{
-		evar = new EPropertyVar;
-		CXPropEnum* penum = new CXPropEnum ( ( int* ) &var, false );
-		if ( CXEnumStructHelper<T>::mStructList.empty() )
-			CXEnumStructHelper<T>::regist();
-		penum->init ( CXEnumStructHelper<T>::mStructList );
-		evar->mProp = penum;
-		evar->mPtr = ( void* ) &var;
-		evar->mCategoryName = categoryName;
-		propMap->Insert ( propName, evar );
-	}
-	else
-	{
-		assert ( 0 && "already exist property" );
-	}
+    EPropertyVar* evar = 0;
+    if ( !propMap->Get ( propName, evar ) )
+    {
+        evar = new EPropertyVar;
+        //if ( CXEnumStructHelper<T>::mStructList.empty() )
+        //    CXEnumStructHelper<T>::regist();
+        CXPropEnum* penum = new CXPropEnum ( ( int* ) &var, CXEnumStructHelper<T>::getStructList(), false );
+        evar->mProp = penum;
+        evar->mPtr = ( void* ) &var;
+        evar->mCategoryName = categoryName;
+        propMap->Insert ( propName, evar );
+    }
+    else
+    {
+        assert ( 0 && "already exist property" );
+    }
 }
 
 template<typename T>
