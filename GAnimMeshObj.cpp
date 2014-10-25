@@ -370,7 +370,7 @@ D3DXMATRIX GAnimMeshObj::GetWorldMatrixByBone ( char *sBoneName, bool bForTrans/
 }
 
 
-bool GAnimMeshObj::reCreate()
+bool GAnimMeshObj::recreate()
 {
     if ( !__super::recreate() )
     {
@@ -395,43 +395,15 @@ bool GAnimMeshObj::reCreate()
                               );
     }
 
-    SetState ( oasStandBy, false );
+    //SetState ( oasStandBy, false );
 
     return true;
 }
 
 void GAnimMeshObj::update()
 {
-    if ( mCloneAnimationController )
-    {
-        mCloneAnimationController->AdvanceTime ( TheTimer->GetFrameTimeSec(), NULL );
+	return;
 
-        if ( mpAnimSet != NULL )
-        {
-            D3DXTRACK_DESC trackDesc;
-
-            mCloneAnimationController->GetTrackDesc ( 0, &trackDesc );
-
-            double dbPassTime = mpAnimSet->GetPeriodicPosition ( trackDesc.Position );
-
-            mdwCurAnimSetFrame = dbPassTime * 300000;
-
-            if ( mdwCurAnimSetFrame < mdwOldAnimSetFrame )
-            {
-                mbPlayDone = true;
-            }
-
-            mdwOldAnimSetFrame = mdwCurAnimSetFrame;
-        }
-    }
-    if ( mResource && mResource->mFrameRoot )
-    {
-        UpdateFrameMatrices ( mResource->mFrameRoot, &_matWorld );
-    }
-    if ( mpAmmo != NULL )
-    {
-        mpAmmo->update();
-    }
 }
 
 
@@ -439,7 +411,7 @@ bool GAnimMeshObj::render()
 {
     if ( !__super::render() )
         return false;
-
+	updateWorldInfo();
     if ( mResource && mResource->mFrameRoot )
     {
         DrawFrame ( mResource->mFrameRoot );
@@ -463,5 +435,39 @@ void GAnimMeshObj::setMediaFile ( const char* file )
     GComponentMesh* componentMesh = ( GComponentMesh* ) mComponentOwner.getComponent ( eComponentType_Mesh );
     CXASSERT_RETURN ( componentMesh );
     componentMesh->MeshFile ( file );
+}
+
+void GAnimMeshObj::updateWorldInfo()
+{
+	if ( mCloneAnimationController )
+	{
+		mCloneAnimationController->AdvanceTime ( TheTimer->getFrameTimeSec(), NULL );
+
+		if ( mpAnimSet != NULL )
+		{
+			D3DXTRACK_DESC trackDesc;
+
+			mCloneAnimationController->GetTrackDesc ( 0, &trackDesc );
+
+			double dbPassTime = mpAnimSet->GetPeriodicPosition ( trackDesc.Position );
+
+			mdwCurAnimSetFrame = dbPassTime * 300000;
+
+			if ( mdwCurAnimSetFrame < mdwOldAnimSetFrame )
+			{
+				mbPlayDone = true;
+			}
+
+			mdwOldAnimSetFrame = mdwCurAnimSetFrame;
+		}
+	}
+	if ( mResource && mResource->mFrameRoot )
+	{
+		UpdateFrameMatrices ( mResource->mFrameRoot, &_matWorld );
+	}
+	if ( mpAmmo != NULL )
+	{
+		mpAmmo->update();
+	}
 }
 

@@ -8,13 +8,13 @@ public:
     GTimer(void);
     ~GTimer(void);
 
-    DWORD GetAccuTime();
+    DWORD getAccuTime();
 
     DWORD getFrameTimems();	    //两次获取当前时间的间隔
 
-	float GetFrameTimeSec();
+	float getFrameTimeSec();
 
-	void Update();
+	void update();
 private:
 
 	DWORD mAccuTime;

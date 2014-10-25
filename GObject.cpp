@@ -68,7 +68,7 @@ void GObject::unRegisterAll()
         PropertyMap* propMap = walk->second;
         dSafeDeleteMap2 ( *propMap );
     }
-	dSafeDeleteMap2 ( mOption );
+    dSafeDeleteMap2 ( mOption );
 }
 
 void GObject::onPropertyChange ( void* pre, void* changed )
@@ -89,29 +89,39 @@ void GObject::registerAll()
     registerAllProperty();
 }
 
-void GObject::onPropertyChangeEnd( void* cur )
+void GObject::onPropertyChangeEnd ( void* cur )
 {
 
 }
 
 const CategoryPropertyMap& GObject::getPropertyMap() const
 {
-	return mOption;
+    return mOption;
 }
 
 CategoryPropertyMap& GObject::getPropertyMap()
 {
-	return mOption;
+    return mOption;
 }
 
 bool GObject::isRegist()
 {
-	return !mOption.empty();
+    return !mOption.empty();
 }
 
 CChar* GObject::getObjectName() const
 {
-	return mNodeName.c_str();
+    return mNodeName.c_str();
+}
+
+void GObject::setProperty ( const char* categoryName, const char* propName, const char* var )
+{
+    PropertyMap* propMap = 0;
+    CXASSERT_RETURN ( mOption.Get ( categoryName, propMap ) );
+
+    EPropertyVar* evar = 0;
+    CXASSERT_RETURN ( propMap->Get ( propName, evar )  );
+    evar->mProp->setValue ( var );
 }
 
 GString GObject::mTargetName;

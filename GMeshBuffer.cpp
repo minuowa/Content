@@ -6,7 +6,6 @@
 #include "GSceneMgr.h"
 #include "GD9Device.h"
 //////////////////////////////////////////////////////////////////////////
-CXImpleteSingleton ( GMeshManager );
 GMeshManager::GMeshManager ( void )
 {
 }

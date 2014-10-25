@@ -16,6 +16,7 @@ public:
 
     void setNodeName ( CChar* name );
     GNode* getNodeByName ( const char* name );
+	GNode* getFirstNodeByCategoryName(const char* category);
 
     void linkTo ( CXRapidxmlNode* parent );
     virtual void clear();
@@ -26,7 +27,7 @@ public:
     int getObjID() const;
     GNode* addChild ( GNode* c );
     bool removeChild ( GNode* child );
-
+	GNode* getParent() const;
     virtual bool draw();
     virtual void GetInput ( DWORD frameTimeMs );
     virtual void update();

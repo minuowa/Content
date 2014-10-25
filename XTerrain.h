@@ -7,14 +7,13 @@ struct CXTerrainVertex
 {
     CXVector3	Pos;
     XI32		Color;
-    XF32		TU;
-    XF32		TV;
+    f32		TU;
+    f32		TV;
     static const XI32 FVF = D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX1;
 };
 class CXTerrain :
     public GNode
 {
-    CXDeclareSingleton ( CXTerrain );
 public:
     CXTerrain ( void );
     ~CXTerrain ( void );

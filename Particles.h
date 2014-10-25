@@ -43,7 +43,7 @@ class CRectMesh: public GRenderObject
 
     public:
 
-		bool reCreate();
+		bool recreate();
 
         void update();
 

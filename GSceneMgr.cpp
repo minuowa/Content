@@ -6,6 +6,11 @@
 #include "GComponentMesh.h"
 #include "GComponentFactory.h"
 #include "GComponentBox.h"
+#include <fstream>
+
+static const char* gRootNodeName = "SceneRootNode";
+static const char* gRootDynamicNodeName = "SceneRootDynamicNode";
+static const char* gRootStaticNodeName = "SceneRootStaticNode";
 
 GSceneManager::GSceneManager ( void )
     : mSceneDynamicRootNode ( 0 )
@@ -21,24 +26,24 @@ GSceneManager::~GSceneManager ( void )
     dSafeDelete ( mSceneRootNode );
 }
 
-bool GSceneManager::Init ( const GD9Device& DVC )
+bool GSceneManager::init()
 {
     initNodeFactory();
     initComponentFactory();
 
     mSceneRootNode = new GNode();
-    mSceneRootNode->setNodeName ( "Scene Root" );
+    mSceneRootNode->setNodeName ( gRootNodeName );
 
     mSceneStaticRootNode = new GNode();
     mSceneDynamicRootNode = new GNode();
-    mSceneStaticRootNode->setNodeName ( "Scene Static Root" );
-    mSceneDynamicRootNode->setNodeName ( "Scene Dyna Root" );
+    mSceneStaticRootNode->setNodeName ( gRootStaticNodeName );
+    mSceneDynamicRootNode->setNodeName ( gRootDynamicNodeName  );
     mSceneRootNode->addChild ( mSceneStaticRootNode );
     mSceneRootNode->addChild ( mSceneDynamicRootNode );
 
     mCurCamera = new GCamera;
     mCurCamera->setNodeName ( "Current Camera" );
-    if ( mCurCamera->reCreate()  )
+    if ( mCurCamera->recreate()  )
     {
         //GComponentTrans* trans = get
         mCurCamera->getTrans().mvDir = D3DXVECTOR3 ( ZEROFLOAT, -200.0f, 200.0f );
@@ -59,7 +64,7 @@ bool GSceneManager::Init ( const GD9Device& DVC )
     return false;
 }
 
-void* GSceneManager::GetInput ( float fPass )
+void* GSceneManager::getInput ( float fPass )
 {
     mSceneDynamicRootNode->GetInput ( fPass );
     return 0;
@@ -85,7 +90,7 @@ void GSceneManager::update ( float fPass )
     }
 }
 
-void GSceneManager::Delete ( CGameStaticObj *pObj )
+void GSceneManager::destroy ( CGameStaticObj *pObj )
 {
     GString sConfigFile;
     sConfigFile.Format ( "Data\\StaticObj\\Save\\StaticObj%03d.txt", pObj->m_nObjID );
@@ -97,7 +102,7 @@ void GSceneManager::Delete ( CGameStaticObj *pObj )
 
 }
 
-bool GSceneManager::SaveScene ( CChar* xmlFile )
+bool GSceneManager::saveScene ( CChar* xmlFile )
 {
     //version="1.0" encoding="UTF-8"
     CXRapidxmlDocument doc;
@@ -142,8 +147,10 @@ void GSceneManager::initNodeFactory()
     __RegisterGameObjCreator ( GNode );
     __RegisterGameObjCreator ( GAnimMeshObj );
     __RegisterGameObjCreator ( GMeshBaseObj );
-	__RegisterGameObjCreator ( GRenderObject );
-	__RegisterGameObjCreator ( GWater );
+    __RegisterGameObjCreator ( GRenderObject );
+    __RegisterGameObjCreator ( GWater );
+    __RegisterGameObjCreator ( GWorldCorrd );
+    __RegisterGameObjCreator ( GCamera );
 
 #if TheEditor
     typedef GFactory<GNode>::ObjCreatorMap GNodeCreatorMap;
@@ -222,6 +229,115 @@ void GSceneManager::addObj ( const char* parentName, const char* typeName )
 GNode* GSceneManager::createObjByTypeName ( const char* typeName )
 {
     return mGameObjFactory.create ( typeName );
+}
+GNode* getNodeByName ( CXDynaArray<GNode*>& list, const char* name )
+{
+for ( auto n: list )
+    {
+        if ( !strcmp ( n->getObjectName(), name ) )
+        {
+            return n;
+        }
+    }
+    return nullptr;
+}
+GNode* getRootNode ( CXDynaArray<GNode*>& list )
+{
+for ( auto n: list )
+    {
+        if ( n->getParent() == nullptr )
+        {
+            return n;
+        }
+    }
+    return nullptr;
+}
+bool GSceneManager::loadScene ( const char* xmlFile )
+{
+    CXDynaArray<GNode*> objList;
+
+    xml_load ( xmlFile );
+    xml_get_node ( "Object" )
+    {
+        GString stype;
+        xml_get_attr ( "Type", stype );
+        GString sparent;
+        xml_get_attr ( "Parent", sparent );
+        GNode* n = createObjByTypeName ( stype.c_str() );
+        objList.push_back ( n );
+
+        n->registerAll();
+
+        xml_get_node ( "Category" )
+        {
+            xml_get_attr ( "Type", stype );
+            xml_get_node ( "Property" )
+            {
+                GString propName, propVar;
+                xml_get_attr ( "Name", propName );
+                xml_get_attr ( "Value", propVar );
+                n->setProperty ( stype.c_str(), propName.c_str(), propVar.c_str() );
+            }
+        }
+
+        CXASSERT_RETURN_FALSE ( n->recreate() );
+
+        GNode* parent = ::getNodeByName ( objList, sparent.c_str() );
+        if ( parent )
+            parent->addChild ( n );
+    }
+
+    GNode* newRoot = getRootNode ( objList );
+    CXASSERT_RETURN_FALSE ( newRoot );
+    dSafeDelete ( mSceneRootNode );
+    setInnerNode ( newRoot );
+    mDelegateReloadScene.trigger();
+    return true;
+}
+//CXRapidxmlLoader doc ( xmlFile );
+//CXASSERT_RETURN_FALSE ( doc.loadFile() );
+
+//CXRapidxmlNode* root = doc.getRootNode();
+//CXXMLNodeStack nodestack;
+//CXRapidxmlNode* node = root;
+//for ( CXXMLHelper helper ( nodestack, node, "Object" ); node != nullptr; node = node->next_sibling ( "Object" ) )
+//{
+//    GString stype;
+
+//    xml_get_attribute ( node, "Type", stype );
+
+//    for ( CXXMLHelper helper ( nodestack, node, "Category" ); node != 0; node = node->next_sibling ( "Category" ) )
+//    {
+//        OutputDebugStringA ( node->first_attribute()->name() );
+//    }
+//}
+
+
+//return  true;
+//}
+
+bool GSceneManager::setInnerNode ( GNode* rootNode )
+{
+    CXASSERT_RETURN_FALSE ( rootNode );
+    mSceneRootNode = rootNode;
+    GNode* dynaRoot = mSceneRootNode->getNodeByName ( gRootDynamicNodeName );
+    GNode* staticRoot = mSceneRootNode->getNodeByName ( gRootStaticNodeName );
+    CXASSERT_RETURN_FALSE ( dynaRoot );
+    CXASSERT_RETURN_FALSE ( staticRoot );
+    mSceneDynamicRootNode = dynaRoot;
+    mSceneStaticRootNode = staticRoot;
+
+    mCurCamera = nullptr;
+    mCurCamera = findFirstCameraInScene ( mSceneRootNode );
+    CXASSERT_RETURN_FALSE ( mCurCamera );
+    setProj();
+    return mCurCamera != nullptr;
+}
+
+GCamera* GSceneManager::findFirstCameraInScene ( GNode* n )
+{
+    GCamera camera;
+    return ( GCamera* ) mSceneRootNode->getFirstNodeByCategoryName ( camera.categoryName() );
 }
 
 //bool GSceneMgr::OnNotify ( const EditorEvent& event )

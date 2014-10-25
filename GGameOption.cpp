@@ -14,6 +14,7 @@ GGameOption::GGameOption ( void )
 
 GGameOption::~GGameOption ( void )
 {
+	D9DEVICE->mOnResetDevice -= this;
 }
 
 void GGameOption::registerAllProperty()

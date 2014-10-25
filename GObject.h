@@ -43,6 +43,7 @@ public:
     void registerEnumProperty ( const char* categoryName, const char* propName, const T& var );
     void registerAll();
     void unRegisterAll();
+	void setProperty(const char* categoryName,const char* propName,const char* var);
     void registerProperty ( GObject* obj );
     const CategoryPropertyMap& getPropertyMap() const;
     CategoryPropertyMap& getPropertyMap();

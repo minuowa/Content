@@ -20,7 +20,7 @@ void GAmmo::Shoot()
 }
 
 
-bool GAmmo::reCreate()
+bool GAmmo::recreate()
 {
     if ( !__super::recreate() )
         return false;
@@ -51,12 +51,12 @@ void GAmmo::SetShooter ( GNode *pShooter )
 }
 
 
-bool CAmmoParticles::reCreate()
+bool CAmmoParticles::recreate()
 {
-    if ( !GAmmo::reCreate() )
+    if ( !GAmmo::recreate() )
         return false;
 
-    mParticles.reCreate();
+    mParticles.recreate();
 
     //ForceOnMap(pForceMap,1.0f,ftUpWithMap);
 

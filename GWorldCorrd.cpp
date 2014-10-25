@@ -30,13 +30,16 @@ GWorldCorrd::~GWorldCorrd ( void )
     dSafeRelease ( mIBLines );
     dSafeRelease ( mVBCoord );
     dSafeRelease ( mVBLines );
+
+	D9DEVICE->mOnLostDevice -= this;
+	D9DEVICE->mOnResetDevice -= this;
 }
 
-bool GWorldCorrd::reCreate()
+bool GWorldCorrd::recreate()
 {
     if ( !__super::recreate() )
         return false;
-    return recreate();
+    return recreateAll();
 }
 
 bool GWorldCorrd::render()
@@ -80,7 +83,7 @@ void GWorldCorrd::onCallBack ( const CXDelegate& delgate )
     }
 }
 
-bool GWorldCorrd::recreate()
+bool GWorldCorrd::recreateAll()
 {
     VertexXYZAndColor aCoord[6] =
     {

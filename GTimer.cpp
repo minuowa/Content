@@ -22,7 +22,7 @@ DWORD GTimer::getFrameTimems()
 	return mFrameTime;
 }
 
-void GTimer::Update()
+void GTimer::update()
 {
 	DWORD now =timeGetTime();
 	mFrameTime = now - mLastTime;
@@ -30,9 +30,9 @@ void GTimer::Update()
 	mLastTime = now;
 }
 
-float GTimer::GetFrameTimeSec()
+float GTimer::getFrameTimeSec()
 {
-	return mFrameTime/1000.0f;
+	return mFrameTime*0.001f;
 }
 
 

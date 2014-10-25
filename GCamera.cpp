@@ -25,6 +25,7 @@ GCamera::GCamera ( void )
 GCamera::~GCamera ( void )
 {
     dSafeDelete ( mpEyeCliper );
+	D9DEVICE->mOnResetDevice -= this;
 }
 
 void GCamera::setProj()
@@ -43,7 +44,7 @@ void GCamera::setProj()
 }
 
 
-bool GCamera::reCreate()
+bool GCamera::recreate()
 {
     if ( !__super::recreate() )
         return false;

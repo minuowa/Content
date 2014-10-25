@@ -17,7 +17,7 @@ void GComponentMesh::registerAllProperty()
     __RegisterProperty ( mMeshFile );
 }
 
-void GComponentMesh::OnPropertyChange ( void* pre, void* changed )
+void GComponentMesh::onPropertyChange ( void* pre, void* changed )
 {
     if ( pre == &mMeshFile )
     {

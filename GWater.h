@@ -31,7 +31,7 @@ public:
     ~GQuakePointManager();
     void destory();
     void addPoint ( QuakePoint* point );
-    void recreate ( CXIndex cnt );
+	void recreate ( CXIndex cnt ,float angVelocity);
     void setRangeX ( float fmin, float fmax );
     void setRangeZ ( float fmin, float fmax );
 	float getPointEffect ( float _x, float _z,DWORD  _t );
@@ -79,6 +79,8 @@ private:
     float mCellWidth;	    //地图中格子宽度
     float mMaxHeight;	    //地图的最大高度
     int	  mCellCount;	    //地图中每行格子数量
+	/** @brief 震动角速度 **/
+	float mQuakeAngleVelocity;	
     GString mTextureFile;    //纹理文件名字，X文件名字
 
     LPDIRECT3DTEXTURE9 *mpFace;

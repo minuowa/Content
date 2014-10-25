@@ -13,8 +13,9 @@ class GAnimMeshObj: public GRenderObject
         GAnimMeshObj( void );
         ~GAnimMeshObj( void );
     public:
-		virtual bool reCreate();
+		virtual bool recreate()override;
 		virtual void update();
+		void updateWorldInfo();
 		void setMediaFile(const char* file);
 
         VOID	UpdateFrameMatrices( LPD3DXFRAME pFrameBase, LPD3DXMATRIX pParentMatrix );

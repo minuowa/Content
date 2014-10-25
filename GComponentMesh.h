@@ -9,7 +9,7 @@ public:
 	~GComponentMesh(void);
 
 	virtual void registerAllProperty();
-	virtual void OnPropertyChange(void* pre,void* changed);
+	virtual void onPropertyChange(void* pre,void* changed) override;
 protected:
 	GString mMeshFile;
 public:

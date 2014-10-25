@@ -1,6 +1,5 @@
 #include "GGameDemoHeader.h"
 #include "GD9Device.h"
-#include <assert.h>
 
 GD9Device::GD9Device ( void )
 {

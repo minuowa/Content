@@ -21,7 +21,7 @@ class GGameMap :
         GGameMap( void );
         ~GGameMap( void );
 
-		bool reCreate();
+		bool recreate();
 
 		bool render(  );
 

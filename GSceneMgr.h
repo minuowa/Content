@@ -44,7 +44,7 @@ public:
 
 };
 
-class GSceneManager:public CXCallBack
+class GSceneManager: public CXCallBack
 {
 public:
     GSceneManager ( void );
@@ -52,36 +52,41 @@ public:
 public:
 
     void cull();
-	bool Init ( const GD9Device& DVC );
-    void* GetInput ( float fPass );
+	bool init ();
+    void* getInput ( float fPass );
     void setView();
     void setProj();
     void update ( float fPass );
-    void Delete ( CGameStaticObj *pObj );
-    bool SaveScene ( CChar* xmlFile );
+    void destroy ( CGameStaticObj *pObj );
+    bool saveScene ( CChar* xmlFile );
+    bool loadScene ( const char* xmlFile );
     void addStaticObj ( GNode* node );
     void addDynaObj ( GNode* node );
-	void addObj(GNode* node,GNode* parent=nullptr);
-	void addObj(const char* parentName,const char* typeName);
+    void addObj ( GNode* node, GNode* parent = nullptr );
+    void addObj ( const char* parentName, const char* typeName );
 
     void ProcessEvent();
     void selectObjByName ( const char* name );
     GNode* getNodeByName ( const char* name );
 
-	const CharStringArr& getGameObjectTypes();
-	const CharStringArr& getObjectComponentTypes();
-	void setOperatorObj(int objID);
-	GNode* getSceneRoot() const;
-	GNode* createObjByTypeName(const char* typeName);
+    const CharStringArr& getGameObjectTypes();
+    const CharStringArr& getObjectComponentTypes();
+    void setOperatorObj ( int objID );
+    GNode* getSceneRoot() const;
+    GNode* createObjByTypeName ( const char* typeName );
+	GCamera* findFirstCameraInScene(GNode* n);
 public:
+	bool setInnerNode(GNode* rootNode);
     void initNodeFactory();
     void initComponentFactory();
-	virtual void onCallBack( const CXDelegate& delgate );
+    virtual void onCallBack ( const CXDelegate& delgate );
 
 
-	//virtual bool OnNotify(const EditorEvent& event);
+    //virtual bool OnNotify(const EditorEvent& event);
 
     int mRenderObjNum;
+
+	CXDelegate mDelegateReloadScene;
 
     GCamera* mCurCamera;
     CSceneMachine mSceneMachine;
@@ -92,8 +97,8 @@ public:
 
     GFactory<GNode> mGameObjFactory;
 
-	CXIndex mOperatoredObj;
+    CXIndex mOperatoredObj;
 
-	CharStringArr mGameObjectTypeArray;
-	CharStringArr mObjectComponentTypeArray;
+    CharStringArr mGameObjectTypeArray;
+    CharStringArr mObjectComponentTypeArray;
 };

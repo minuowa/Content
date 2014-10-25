@@ -3,6 +3,9 @@
 #include "XString.h"
 #include <locale.h>
 #include "XEvent.h"
+#include "GGameOption.h"
+#include "GComponentFactory.h"
+#include "GResourceManager.h"
 
 /******************************************************************/
 //天空在MeshBuffer中，海面和地图不在
@@ -21,11 +24,19 @@ GGame::GGame ( void )
 GGame::~GGame ( void )
 {
     dSafeDelete ( mSceneMgr );
+	CXSingleton<GResourceManager<GTexture>>::destoryInstance();
+	CXSingleton<GResourceManager<GAnimationResource>>::destoryInstance();
+	CXSingleton<GMeshManager>::destoryInstance();
+	CXSingleton<GGameOption>::destoryInstance();
+	CXSingleton<GComponentFactory>::destoryInstance();
+
+	CXSingleton<GD8Input>::destoryInstance();
+	CXSingleton<GD9Device>::destoryInstance();
 }
 
 void GGame::loop()
 {
-    TheTimer->Update();
+    TheTimer->update();
 
     if ( mIsActive )
     {
@@ -40,7 +51,7 @@ void GGame::loop()
 
 void GGame::getInput()
 {
-    float fPass = TheTimer->GetFrameTimeSec();
+    float fPass = TheTimer->getFrameTimeSec();
 
 
     if ( INPUTSYSTEM.IskeyUp ( DIK_ESCAPE ) )
@@ -136,7 +147,7 @@ void GGame::getInput()
 
             if ( DI_BUTTONUP == INPUTSYSTEM.getKeyAction ( DIK_DELETE ) )
             {
-                mSceneMgr->Delete ( ( CGameStaticObj* ) mpSelectObj );
+                mSceneMgr->destroy ( ( CGameStaticObj* ) mpSelectObj );
 
             }
 
@@ -195,7 +206,7 @@ void GGame::getInput()
             //gAnimMesh[0].UpdateForForceOnMap();
         }
 
-        mSceneMgr->GetInput ( fPass );
+        mSceneMgr->getInput ( fPass );
         break;
     }
 
@@ -206,7 +217,7 @@ void GGame::update( )
 
     if ( INPUTSYSTEM.IskeyUp ( DIK_TAB ) )
     {
-        mSceneMgr->SaveScene ( "gameSceneEditor.xml" );
+        mSceneMgr->saveScene ( "gameSceneEditor.xml" );
         //DWORD FillMode = 0;
         //D9DEVICE->GetDvc()->GetRenderState( D3DRS_FILLMODE, &FillMode );
         //D9DEVICE->GetDvc()->SetRenderState( D3DRS_FILLMODE, FillMode == D3DFILL_WIREFRAME ? D3DFILL_SOLID : D3DFILL_WIREFRAME );
@@ -215,7 +226,7 @@ void GGame::update( )
 
     eGameScene gs = mSceneMgr->mSceneMachine.GetNowScene();
 
-    float fPass = TheTimer->GetFrameTimeSec();
+    float fPass = TheTimer->getFrameTimeSec();
 
     switch ( gs )
     {
@@ -237,7 +248,7 @@ void GGame::update( )
 
 void GGame::render( )
 {
-    float fPass = TheTimer->GetFrameTimeSec();
+    float fPass = TheTimer->getFrameTimeSec();
 
     eGameScene gs = mSceneMgr->mSceneMachine.GetNowScene();
 
@@ -289,7 +300,7 @@ void GGame::render( )
 
 bool GGame::init ( HWND mainWnd )
 {
-	//setlocale( LC_ALL, "zh_CN.UTF-8" );
+    //setlocale( LC_ALL, "zh_CN.UTF-8" );
 
     //初始化大概500ms
     HRESULT hr = NULL;
@@ -307,7 +318,7 @@ bool GGame::init ( HWND mainWnd )
 
     //初始化框架
     CXASSERT_RETURN_FALSE ( __super::init ( mainWnd ) );
-	//初始化D3D设备
+    //初始化D3D设备
     CXASSERT_RETURN_FALSE (
         GSingletonD9Device::GetSingletonPtr()->Init ( mMainWin )
     );
@@ -319,12 +330,12 @@ bool GGame::init ( HWND mainWnd )
     //初始化场景管理器
     mSceneMgr = new GSceneManager;
 
-    bSuccess = mSceneMgr->Init ( GSingletonD9Device::GetSingleton() );
+    bSuccess = mSceneMgr->init ();
 
     if ( !bSuccess )
         return false;
 
-    GMeshManager::GetSingleton().Init();
+    MeshMgr.Init();
 
     D9DEVICE->ResetRenderState();
 
@@ -381,17 +392,26 @@ DWORD WINAPI loadObj ( LPVOID pParam )
     }
 
     //设置投影矩阵
-    TheSceneMgr->setProj();
-
+	//TheSceneMgr->loadScene("gameSceneEditor.xml");
+	TheSceneMgr->setProj();
 	if ( 1 )
-	{
-		//创建世界坐标系
-		GWorldCorrd* corrd = new GWorldCorrd();
-		corrd->setNodeName ( "World Corrd" );
-		CXASSERT_RETURN_FALSE ( corrd->reCreate() );
-		TheSceneMgr->addStaticObj ( corrd );
-	}
+    {
+        //创建世界坐标系
+        GWorldCorrd* corrd = new GWorldCorrd();
+        corrd->setNodeName ( "World Corrd" );
+        CXASSERT_RETURN_FALSE ( corrd->recreate() );
+        TheSceneMgr->addStaticObj ( corrd );
+    }
 
+
+
+    if ( 1 )
+    {
+        GAnimMeshObj *pAnimMesh = new GAnimMeshObj;
+        pAnimMesh->setMediaFile ( "..\\Data\\res\\Anim\\AnimMesh0002\\A0002.X" );
+        CXASSERT_RETURN_FALSE ( pAnimMesh->recreate() );
+        TheSceneMgr->addDynaObj ( pAnimMesh );
+    }
     if ( 1 )
     {
         MeshPara seaPara (  80.0f, 0, 64, "..\\Data\\res\\water\\BlueShort\\A21C_000.jpg", NULL );
@@ -399,21 +419,12 @@ DWORD WINAPI loadObj ( LPVOID pParam )
         GWater* sea = new GWater;
         sea->setParam ( seaPara );
         sea->mCanSelect = false;
-		//sea->addQuakePoint ( -50, 0, 10.0f, 2.8f );
-		//sea->addQuakePoint ( 50, 0, 10.0f, 2.8f );
+        //sea->addQuakePoint ( -50, 0, 10.0f, 2.8f );
+        //sea->addQuakePoint ( 50, 0, 10.0f, 2.8f );
         sea->recreate();
-        sea->setWorldTranslate ( D3DXVECTOR3 ( 0, 5000, 0 ) );
+        sea->setWorldTranslate ( D3DXVECTOR3 ( 0, 1, 0 ) );
         TheSceneMgr->addDynaObj ( sea );
     }
-
-	if ( 1 )
-	{
-		GAnimMeshObj *pAnimMesh = new GAnimMeshObj;
-		pAnimMesh->setMediaFile ( "..\\Data\\res\\Anim\\AnimMesh0002\\A0002.X" );
-		CXASSERT_RETURN_FALSE ( pAnimMesh->reCreate() );
-		TheSceneMgr->addDynaObj ( pAnimMesh );
-	}
-
     //TheSceneMgr->mEye.InitTrack( &gAnimMesh[0] );
 
     //gEvent.WaitForUse(-1);

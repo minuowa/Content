@@ -46,7 +46,6 @@ class GMeshBufferNode
 typedef CXMap<GString,GMeshBufferNode*> GMeshBufferNodeMap;
 class GMeshManager
 {
-        CXDeclareSingleton( GMeshManager );
     public:
         GMeshManager( void );
         ~GMeshManager( void );
@@ -56,4 +55,4 @@ public:
 	GMeshBufferNode*	CreateFormFile( const char* fileName );
         GMeshBufferNodeMap	mMeshMap;
 };
-#define MeshMgr GMeshManager::GetSingleton()
+#define MeshMgr CXSingleton<GMeshManager>::GetSingleton()

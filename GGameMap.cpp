@@ -26,7 +26,7 @@ GGameMap::~GGameMap ( void )
     SAFED_ELETE ( _pMat );
 }
 
-bool GGameMap::reCreate()
+bool GGameMap::recreate()
 {
     if ( !__super::recreate(  ) )
         return false;

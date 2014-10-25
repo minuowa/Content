@@ -983,6 +983,26 @@ void GNode::onPropertyChangeEnd ( void* cur )
     }
 }
 
+GNode* GNode::getParent() const
+{
+    return mParent;
+}
+
+GNode* GNode::getFirstNodeByCategoryName ( const char* category )
+{
+    if ( dStrEqual ( this->categoryName(), category ) )
+        return this;
+    
+    GNode* res = 0;
+for ( auto child: mChildren )
+    {
+        res = child->getFirstNodeByCategoryName ( category );
+        if ( res )
+            return res;
+    }
+    return nullptr;
+}
+
 CXDelegate GNode::mDelegateComponentChange;
 
 CXDelegate GNode::mDelegateAddObj;

@@ -15,9 +15,9 @@ private:
 public:
 	GWorldCorrd(void);
 	virtual void onCallBack(const CXDelegate& delgate);
-	virtual bool reCreate();
-	virtual bool render();
 	virtual bool recreate();
+	virtual bool render();
+	virtual bool recreateAll();
 	WORD mLineCount;
 	float mWidth;
 	void operator=(GWorldCorrd cd);

@@ -14,7 +14,7 @@
 class GCamera :
     public GNode
 {
-
+	DeclareEditorType(GCamera)
 public:
 
     GCamera(void);
@@ -23,7 +23,7 @@ public:
 
 public:
 
-	virtual bool reCreate();
+	virtual bool recreate();
 
 	virtual void GetInput(DWORD frameTimeMs); 
 

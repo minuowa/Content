@@ -8,11 +8,10 @@ GWater::GWater ( void )
 {
     mQuakeCount = 3;
 
-    mpFace = NULL;
-
     mCellCount = 0;
     mMaxHeight = 0;
     mCellWidth = 0;
+    mQuakeAngleVelocity = 1;
 }
 
 GWater::~GWater ( void )
@@ -118,7 +117,6 @@ void GWater::setParam ( const MeshPara& val )
 
 void GWater::clear()
 {
-    dSafeDelete ( mpFace );
     dSafeDelete ( mMeshBufferNode );
 }
 
@@ -131,6 +129,7 @@ void GWater::registerAllProperty()
     __RegisterProperty ( mCellWidth );
     __RegisterProperty ( mTextureFile );
     __RegisterProperty ( mQuakeCount );
+    __RegisterProperty ( mQuakeAngleVelocity );
 }
 
 
@@ -142,6 +141,7 @@ void GWater::onPropertyChangeEnd ( void* cur )
         cur == &mCellCount
         || cur == &mCellWidth
         || cur == &mQuakeCount
+        || cur == &mQuakeAngleVelocity
     )
     {
         recreate();
@@ -154,7 +154,7 @@ void GWater::recreateQuakeInfo()
     mQuakeManager.setRangeX ( -dim / 2, dim / 2 );
     mQuakeManager.setRangeZ ( -dim / 2, dim / 2 );
 
-    mQuakeManager.recreate ( mQuakeCount );
+    mQuakeManager.recreate ( mQuakeCount, mQuakeAngleVelocity );
 }
 
 void GWater::recreateGraphInfo()
@@ -229,7 +229,6 @@ void GWater::recreateMetrialInfo()
 {
     GMetrialData* material = new GMetrialData;
     mMeshBufferNode->Add ( material );
-    mpFace = new LPDIRECT3DTEXTURE9[1];
     material->setTexture ( mTextureFile );
 
     D3DMATERIAL9 mtrl;
@@ -238,19 +237,19 @@ void GWater::recreateMetrialInfo()
     mtrl.Diffuse.r = 0;
     mtrl.Diffuse.g = 1;
     mtrl.Diffuse.b = 0;
-    mtrl.Diffuse.a = 0;
+    mtrl.Diffuse.a = 0.5;
     mtrl.Ambient.r = 0;
     mtrl.Ambient.g = 0;
     mtrl.Ambient.b = 0;
-    mtrl.Ambient.a = 0;
+    mtrl.Ambient.a = 0.5;
     mtrl.Specular.r = 0;
     mtrl.Specular.g = 0;
     mtrl.Specular.b = 0;
-    mtrl.Specular.a = 0;
+    mtrl.Specular.a = 0.5;
     mtrl.Emissive.r = 0;
     mtrl.Emissive.g = 1;
     mtrl.Emissive.b = 0.8;
-    mtrl.Emissive.a = 0;
+    mtrl.Emissive.a = 0.5;
 
     mtrl.Power = 9.0f;
     material->setMetiral ( mtrl );
@@ -264,7 +263,8 @@ void GWater::setPointCount ( unsigned int cnt )
 
 bool GWater::render()
 {
-    D9DEVICE->OpenAllLight ( true,false );
+    D9DEVICE->OpenAllLight ( true, false );
+	D9DEVICE->OpenAlphaBlend(true);
     return __super::render();
 }
 
@@ -304,14 +304,14 @@ void GQuakePointManager::addPoint ( QuakePoint* point )
     mPointList.push_back ( point );
 }
 
-void GQuakePointManager::recreate ( CXIndex cnt )
+void GQuakePointManager::recreate ( CXIndex cnt , float angVelocity )
 {
     destory();
 
     for ( CXIndex i = 0; i < cnt; ++i )
     {
         QuakePoint* quake = new QuakePoint;
-        quake->init ( gRandom.randF ( mMinX, mMaxX ), gRandom.randF ( mMinZ, mMaxZ ), 30, 2 * D3DX_PI * 0.5, timeGetTime() );
+        quake->init ( gRandom.randF ( mMinX, mMaxX ), gRandom.randF ( mMinZ, mMaxZ ), 30, angVelocity, timeGetTime() );
         addPoint ( quake );
     }
 }

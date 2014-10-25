@@ -24,7 +24,7 @@ CRectMesh::~CRectMesh( void )
 
 
 
-bool CRectMesh::reCreate()
+bool CRectMesh::recreate()
 {
 
     HRESULT hr = S_FALSE;
