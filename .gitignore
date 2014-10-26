@@ -4,3 +4,4 @@ Debug
 *.orig
 /*.orig
 *.pch
+*.cpp~HEAD

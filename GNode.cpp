@@ -196,6 +196,11 @@ GNode::GNode()
 GNode::~GNode()
 {
     dSafeDeleteVector ( mChildren );
+//   if ( mParent )
+    //{
+    //	mParent->removeChild(this);
+    //	mParent = nullptr;
+    //}
 }
 
 eObjAnimState GNode::SetState ( eObjAnimState oas, bool bBack )
@@ -429,7 +434,8 @@ bool GNode::removeChild ( GNode* child )
             mChildren.erase ( iBegin );
             return true;
         }
-        return n->removeChild ( child );
+        if ( n->removeChild ( child ) )
+            return true;
     }
     return false;
 }
@@ -992,7 +998,7 @@ GNode* GNode::getFirstNodeByCategoryName ( const char* category )
 {
     if ( dStrEqual ( this->categoryName(), category ) )
         return this;
-    
+
     GNode* res = 0;
 for ( auto child: mChildren )
     {
@@ -1003,6 +1009,16 @@ for ( auto child: mChildren )
     return nullptr;
 }
 
+void GNode::deleteChild ( GNode* node )
+{
+    removeChild ( node );
+    mOperatorObj = node;
+	mDelegateDeleteObj.trigger();
+    dSafeDelete ( node );
+}
+
+CXDelegate GNode::mDelegateDeleteObj;
+
 CXDelegate GNode::mDelegateComponentChange;
 
 CXDelegate GNode::mDelegateAddObj;
@@ -1011,7 +1027,6 @@ GNode* GNode::mOperatorObj = nullptr;
 
 GNode* GNode::mOperatorParentObj = nullptr;
 
-CXDelegate GNode::mDelegateDesotoryObj;
 
 CXDelegate GNode::mDelegateCreateObj;
 

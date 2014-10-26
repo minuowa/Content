@@ -64,6 +64,7 @@ public:
     void addDynaObj ( GNode* node );
     void addObj ( GNode* node, GNode* parent = nullptr );
     void addObj ( const char* parentName, const char* typeName );
+	void deleteObj(const char* name);
 
     void ProcessEvent();
     void selectObjByName ( const char* name );

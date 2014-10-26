@@ -27,6 +27,7 @@ public:
     int getObjID() const;
     GNode* addChild ( GNode* c );
     bool removeChild ( GNode* child );
+	void deleteChild(GNode* node);
 	GNode* getParent() const;
     virtual bool draw();
     virtual void GetInput ( DWORD frameTimeMs );
@@ -63,11 +64,11 @@ protected:
 
 public:
     static CXDelegate mDelegateCreateObj;
-    static CXDelegate mDelegateDesotoryObj;
 
     static GNode* mOperatorParentObj;
     static GNode* mOperatorObj;
-    static CXDelegate mDelegateAddObj;
+	static CXDelegate mDelegateAddObj;
+	static CXDelegate mDelegateDeleteObj;
 
     static CXDelegate mDelegateComponentChange;
 

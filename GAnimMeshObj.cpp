@@ -379,10 +379,6 @@ bool GAnimMeshObj::recreate()
     GComponentMesh* componentMesh = ( GComponentMesh* ) mComponentOwner.getComponent ( eComponentType_Mesh );
     CXASSERT_RESULT_FALSE ( componentMesh );
     mResource = GAnimationManager::GetSingleton().getResource ( componentMesh->MeshFile().c_str() );
-    //                             if ( !IsStrEmpty ( m_sTextureName ) )
-    //{
-    //    D3DXCreateTextureFromFileA ( D9DEVICE->GetDvc(), m_sTextureName, &mpFace );
-    //}
     CXASSERT_RETURN_FALSE ( mResource );
     ID3DXAnimationController* orginal = mResource->mAnimationController;
     if ( orginal )
@@ -402,8 +398,7 @@ bool GAnimMeshObj::recreate()
 
 void GAnimMeshObj::update()
 {
-	return;
-
+    return;
 }
 
 
@@ -411,7 +406,7 @@ bool GAnimMeshObj::render()
 {
     if ( !__super::render() )
         return false;
-	updateWorldInfo();
+    updateWorldInfo();
     if ( mResource && mResource->mFrameRoot )
     {
         DrawFrame ( mResource->mFrameRoot );
@@ -439,35 +434,35 @@ void GAnimMeshObj::setMediaFile ( const char* file )
 
 void GAnimMeshObj::updateWorldInfo()
 {
-	if ( mCloneAnimationController )
-	{
-		mCloneAnimationController->AdvanceTime ( TheTimer->getFrameTimeSec(), NULL );
+    if ( mCloneAnimationController )
+    {
+        mCloneAnimationController->AdvanceTime ( TheTimer->getFrameTimeSec(), NULL );
 
-		if ( mpAnimSet != NULL )
-		{
-			D3DXTRACK_DESC trackDesc;
+        if ( mpAnimSet != NULL )
+        {
+            D3DXTRACK_DESC trackDesc;
 
-			mCloneAnimationController->GetTrackDesc ( 0, &trackDesc );
+            mCloneAnimationController->GetTrackDesc ( 0, &trackDesc );
 
-			double dbPassTime = mpAnimSet->GetPeriodicPosition ( trackDesc.Position );
+            double dbPassTime = mpAnimSet->GetPeriodicPosition ( trackDesc.Position );
 
-			mdwCurAnimSetFrame = dbPassTime * 300000;
+            mdwCurAnimSetFrame = dbPassTime * 300000;
 
-			if ( mdwCurAnimSetFrame < mdwOldAnimSetFrame )
-			{
-				mbPlayDone = true;
-			}
+            if ( mdwCurAnimSetFrame < mdwOldAnimSetFrame )
+            {
+                mbPlayDone = true;
+            }
 
-			mdwOldAnimSetFrame = mdwCurAnimSetFrame;
-		}
-	}
-	if ( mResource && mResource->mFrameRoot )
-	{
-		UpdateFrameMatrices ( mResource->mFrameRoot, &_matWorld );
-	}
-	if ( mpAmmo != NULL )
-	{
-		mpAmmo->update();
-	}
+            mdwOldAnimSetFrame = mdwCurAnimSetFrame;
+        }
+    }
+    if ( mResource && mResource->mFrameRoot )
+    {
+        UpdateFrameMatrices ( mResource->mFrameRoot, &_matWorld );
+    }
+    if ( mpAmmo != NULL )
+    {
+        mpAmmo->update();
+    }
 }
 

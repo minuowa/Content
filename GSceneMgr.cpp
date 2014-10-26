@@ -279,8 +279,11 @@ bool GSceneManager::loadScene ( const char* xmlFile )
                 n->setProperty ( stype.c_str(), propName.c_str(), propVar.c_str() );
             }
         }
-
-        CXASSERT_RETURN_FALSE ( n->recreate() );
+        if ( !n->recreate() )
+        {
+            dSafeDelete ( n );
+            continue;
+        }
 
         GNode* parent = ::getNodeByName ( objList, sparent.c_str() );
         if ( parent )
@@ -338,6 +341,13 @@ GCamera* GSceneManager::findFirstCameraInScene ( GNode* n )
 {
     GCamera camera;
     return ( GCamera* ) mSceneRootNode->getFirstNodeByCategoryName ( camera.categoryName() );
+}
+
+void GSceneManager::deleteObj ( const char* name )
+{
+    GNode* n = mSceneRootNode->getNodeByName ( name );
+    if ( n )
+        mSceneRootNode->deleteChild ( n );
 }
 
 //bool GSceneMgr::OnNotify ( const EditorEvent& event )
