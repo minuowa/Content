@@ -54,9 +54,9 @@ bool GCamera::recreate()
 
 void GCamera::setView()
 {
-    D3DXVECTOR3 vLookAtPos = getTrans().mTranslate + getTrans().mvDir * 100;
+    D3DXVECTOR3 vLookAtPos = getTrans().mTranslate + getTrans().mDir * 100;
 
-    D3DXMatrixLookAtLH ( &matView, &getTrans().mTranslate, &vLookAtPos, &getTrans().mvUpon );
+    D3DXMatrixLookAtLH ( &matView, &getTrans().mTranslate, &vLookAtPos, &getTrans().mUpon );
 
     if ( D9DEVICE != NULL )
     {
@@ -64,8 +64,11 @@ void GCamera::setView()
     }
 }
 
-void GCamera::GetInput ( DWORD frameTimeMs )
+void GCamera::getInput ( DWORD frameTimeMs )
 {
+	if (!mCanGetInput)
+		return;
+
     if ( INPUTSYSTEM.IsPressKey ( DIK_ADD ) )
         getTrans().mfSpeedMove += 0.03f * frameTimeMs;
 
@@ -128,9 +131,9 @@ void GCamera::TraceMan(  )
 
     D3DXVECTOR3 Pos = ZEROVECTOR3;
 
-    Pos = mpTransMan->getTrans().mTranslate - mpTransMan->getTrans().mvDir * mfLenTransMan * 2;
+    Pos = mpTransMan->getTrans().mTranslate - mpTransMan->getTrans().mDir * mfLenTransMan * 2;
 
-    Pos += mpTransMan->getTrans().mvUpon * mfLenTransMan;
+    Pos += mpTransMan->getTrans().mUpon * mfLenTransMan;
 
     D3DXVECTOR3 vDist = Pos - getTrans().mTranslate;
 
@@ -139,15 +142,15 @@ void GCamera::TraceMan(  )
 
     getTrans().mTranslate = Pos;
 
-    getTrans().mvDir = Dir;
+    getTrans().mDir = Dir;
 
-    D3DXVec3Cross ( &getTrans().mvRight, & ( D3DXVECTOR3 ( 0, 1, 0 ) ), &getTrans().mvDir );
+    D3DXVec3Cross ( &getTrans().mRight, & ( D3DXVECTOR3 ( 0, 1, 0 ) ), &getTrans().mDir );
 
-    D3DXVec3Cross ( &getTrans().mvUpon, &getTrans().mvDir, &getTrans().mvRight );
+    D3DXVec3Cross ( &getTrans().mUpon, &getTrans().mDir, &getTrans().mRight );
 
-    D3DXVec3Normalize ( &getTrans().mvDir, &getTrans().mvDir );
-    D3DXVec3Normalize ( &getTrans().mvUpon, &getTrans().mvUpon );
-    D3DXVec3Normalize ( &getTrans().mvRight, &getTrans().mvRight );
+    D3DXVec3Normalize ( &getTrans().mDir, &getTrans().mDir );
+    D3DXVec3Normalize ( &getTrans().mUpon, &getTrans().mUpon );
+    D3DXVec3Normalize ( &getTrans().mRight, &getTrans().mRight );
 
 }
 

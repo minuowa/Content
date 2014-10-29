@@ -92,7 +92,7 @@ void GGame::getInput()
 
         if ( mpSelectAnim != NULL )
         {
-            mpSelectAnim->GetInput ( fPass );
+            mpSelectAnim->getInput ( fPass );
         }
 
         GMeshBaseObj *pMeshBaseObj = NULL;
@@ -121,7 +121,7 @@ void GGame::getInput()
             {
                 if ( !mpSelectAnim->getTrans().mbCanMoveStep )
                 {
-                    mpSelectObj->GetInput ( fPass );
+                    mpSelectObj->getInput ( fPass );
                 }
                 else
                 {

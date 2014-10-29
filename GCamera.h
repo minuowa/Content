@@ -25,7 +25,7 @@ public:
 
 	virtual bool recreate();
 
-	virtual void GetInput(DWORD frameTimeMs); 
+	virtual void getInput(DWORD frameTimeMs); 
 
     void setView();
 

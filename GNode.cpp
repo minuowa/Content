@@ -6,7 +6,7 @@
 #include "GTimer.h"
 #include "GGame.h"
 
-void GNode::GetInput ( DWORD frameTimeMs )
+void GNode::getInput ( DWORD frameTimeMs )
 {
     if ( mCanGetInput )
     {
@@ -65,11 +65,11 @@ void GNode::GetInput ( DWORD frameTimeMs )
 
                 if ( bMoveBack )
                 {
-                    getTrans().mvSpeed = -getTrans().mvDir * getTrans().mfSpeedMove;
+                    getTrans().mvSpeed = -getTrans().mDir * getTrans().mfSpeedMove;
                 }
                 if ( bMoveFront )
                 {
-                    getTrans().mvSpeed = getTrans().mvDir * getTrans().mfSpeedMove;
+                    getTrans().mvSpeed = getTrans().mDir * getTrans().mfSpeedMove;
                 }
             }
 
@@ -101,7 +101,7 @@ void GNode::GetInput ( DWORD frameTimeMs )
     for ( ; iBegin != iEnd; ++iBegin )
     {
         GNode* n = *iBegin;
-        n->GetInput ( frameTimeMs );
+        n->getInput ( frameTimeMs );
     }
 }
 
@@ -723,14 +723,14 @@ void GNode::updateTrans()
                 float fTmpAng = D3DXVec3Dot ( &pIntersectObj->vNormal, &D3DXVECTOR3 ( 0, 1, 0 ) );
                 if ( 0 < fTmpAng && fTmpAng < 0.5f )
                 {
-                    getTrans().mvDir = cXPos.mvDir;
+                    getTrans().mDir = cXPos.mDir;
 
-                    D3DXVECTOR3 vDirTmp = getTrans().mvUpon + pIntersectObj->vNormal;
+                    D3DXVECTOR3 vDirTmp = getTrans().mUpon + pIntersectObj->vNormal;
                     setDir ( vDirTmp / 2.0f );
                 }
                 else if ( fTmpAng >= 0.5f )
                 {
-                    getTrans().mvDir = cXPos.mvDir;
+                    getTrans().mDir = cXPos.mDir;
                     setDir ( pIntersectObj->vNormal );
                 }
                 else
@@ -761,7 +761,7 @@ void GNode::updateTrans()
                 else
                 {
                     m_pOnObj = pIntersect->pObj;
-                    getTrans().mvDir = cXPos.mvDir;
+                    getTrans().mDir = cXPos.mDir;
 
                     getTrans().mTranslate = pIntersect->vHitPos + D3DXVECTOR3 ( 0, m_fForceHeight, 0 );
 
@@ -1013,8 +1013,18 @@ void GNode::deleteChild ( GNode* node )
 {
     removeChild ( node );
     mOperatorObj = node;
-	mDelegateDeleteObj.trigger();
+    mDelegateDeleteObj.trigger();
     dSafeDelete ( node );
+}
+
+CXDynaArray<GNode*>& GNode::getChildren()
+{
+    return mChildren;
+}
+
+void GNode::setCanGetInput ( bool can )
+{
+    mCanGetInput = can;
 }
 
 CXDelegate GNode::mDelegateDeleteObj;

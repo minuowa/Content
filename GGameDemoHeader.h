@@ -39,7 +39,6 @@
 #endif
 
 #include "XBase.h"
-
 typedef CXDynaArray<GString> CharStringArr;
 
 //////////////////////////引擎文件需要的宏////////////////////////////////////

@@ -11,9 +11,9 @@ GComponentTrans::GComponentTrans ( void )
 
     mvLastPos = ZEROVECTOR3;
     mTranslate = ZEROVECTOR3;
-    mvRight = D3DXVECTOR3 ( 1.0f, 0.0f, 0.0f );
-    mvUpon = D3DXVECTOR3 ( 0.0f, 1.0f, 0.0f );
-    mvDir = D3DXVECTOR3 ( 0.0f, 0.0f, 1.0f );
+    mRight = D3DXVECTOR3 ( 1.0f, 0.0f, 0.0f );
+    mUpon = D3DXVECTOR3 ( 0.0f, 1.0f, 0.0f );
+    mDir = D3DXVECTOR3 ( 0.0f, 0.0f, 1.0f );
 
     mfSpeedTrun = DEAULT_SPEED_TRUN;
     mfSpeedMove = DEFAULT_SPEED_MOVE;
@@ -67,14 +67,14 @@ D3DXMATRIX GComponentTrans::GetWorldMatrix ( bool bForTrans )
 
     }
 
-    D3DXVec3Normalize ( &mvRight, &mvRight );
-    D3DXVec3Normalize ( &mvDir, &mvDir );
-    D3DXVec3Normalize ( &mvUpon, &mvUpon );
+    D3DXVec3Normalize ( &mRight, &mRight );
+    D3DXVec3Normalize ( &mDir, &mDir );
+    D3DXVec3Normalize ( &mUpon, &mUpon );
 
     matWorld *= D3DXMATRIX (
-                    mvRight.x, mvRight.y, mvRight.z, 0,
-                    mvUpon.x, mvUpon.y, mvUpon.z, 0,
-                    mvDir.x, mvDir.y, mvDir.z, 0,
+                    mRight.x, mRight.y, mRight.z, 0,
+                    mUpon.x, mUpon.y, mUpon.z, 0,
+                    mDir.x, mDir.y, mDir.z, 0,
                     0.0f, 0.0f, 0.0f, 1.0f
                 );
 
@@ -104,11 +104,11 @@ D3DXVECTOR3 GComponentTrans::MoveStep ( float fPass )
 
     float fLen = mfSpeedMove * fPass;
 
-    D3DXVec3Normalize ( &mvDir, &mvDir );
+    D3DXVec3Normalize ( &mDir, &mDir );
 
     mvLastPos = mTranslate;
 
-    mTranslate += fLen * mvDir;
+    mTranslate += fLen * mDir;
 
     return mTranslate;
 }
@@ -116,34 +116,34 @@ D3DXVECTOR3 GComponentTrans::MoveStep ( float fPass )
 D3DXVECTOR3 GComponentTrans::TrunStepLeftRight ( float fPara )
 {
     D3DXMATRIX matRotation;
-    D3DXVECTOR3 vRotation ( mvUpon );
+    D3DXVECTOR3 vRotation ( mUpon );
     D3DXMatrixRotationAxis ( &matRotation, &vRotation, fPara );
 
-    D3DXVec3TransformCoord ( &mvRight, &mvRight, &matRotation );
-    D3DXVec3TransformCoord ( &mvDir, &mvDir, &matRotation );
+    D3DXVec3TransformCoord ( &mRight, &mRight, &matRotation );
+    D3DXVec3TransformCoord ( &mDir, &mDir, &matRotation );
 
-    D3DXVec3Normalize ( &mvRight, &mvRight );
-    D3DXVec3Normalize ( &mvUpon, &mvUpon );
-    D3DXVec3Normalize ( &mvDir, &mvDir );
+    D3DXVec3Normalize ( &mRight, &mRight );
+    D3DXVec3Normalize ( &mUpon, &mUpon );
+    D3DXVec3Normalize ( &mDir, &mDir );
 
-    return mvDir;
+    return mDir;
 }
 
 D3DXVECTOR3 GComponentTrans::TrunWithRight ( float fPara )
 {
     D3DXMATRIX matRotation;
-    D3DXVECTOR3 vRotation ( mvRight );
+    D3DXVECTOR3 vRotation ( mRight );
     D3DXMatrixRotationAxis ( &matRotation, &vRotation, fPara );
 
-    D3DXVec3TransformCoord ( &mvUpon, &mvUpon, &matRotation );
-    D3DXVec3TransformCoord ( &mvDir, &mvDir, &matRotation );
-    D3DXVec3Cross ( &mvRight, &mvUpon, &mvDir );
+    D3DXVec3TransformCoord ( &mUpon, &mUpon, &matRotation );
+    D3DXVec3TransformCoord ( &mDir, &mDir, &matRotation );
+    D3DXVec3Cross ( &mRight, &mUpon, &mDir );
 
-    D3DXVec3Normalize ( &mvRight, &mvRight );
-    D3DXVec3Normalize ( &mvUpon, &mvUpon );
-    D3DXVec3Normalize ( &mvDir, &mvDir );
+    D3DXVec3Normalize ( &mRight, &mRight );
+    D3DXVec3Normalize ( &mUpon, &mUpon );
+    D3DXVec3Normalize ( &mDir, &mDir );
 
-    return mvDir;
+    return mDir;
 
 }
 
@@ -151,15 +151,15 @@ D3DXVECTOR3 GComponentTrans::TrunWithRight ( float fPara )
 D3DXVECTOR3 GComponentTrans::SetDirWithUpon ( D3DXVECTOR3 vUpon )
 {
 
-    D3DXVec3Cross ( &mvRight, &vUpon, &mvDir );
+    D3DXVec3Cross ( &mRight, &vUpon, &mDir );
 
-    D3DXVec3Cross ( &mvDir, &mvRight, &vUpon );
+    D3DXVec3Cross ( &mDir, &mRight, &vUpon );
 
-    D3DXVec3Normalize ( &mvDir, &mvDir );
-    D3DXVec3Normalize ( &mvRight, &mvRight );
-    D3DXVec3Normalize ( &mvUpon, &vUpon );
+    D3DXVec3Normalize ( &mDir, &mDir );
+    D3DXVec3Normalize ( &mRight, &mRight );
+    D3DXVec3Normalize ( &mUpon, &vUpon );
 
-    return mvDir;
+    return mDir;
 }
 
 D3DXVECTOR3 GComponentTrans::TrunStepLeftRightWithUp ( float fpara )
@@ -168,15 +168,15 @@ D3DXVECTOR3 GComponentTrans::TrunStepLeftRightWithUp ( float fpara )
     D3DXVECTOR3 vRotation ( ZEROFLOAT, 1.0f, ZEROFLOAT );
     D3DXMatrixRotationAxis ( &matRotation, &vRotation, fpara );
 
-    D3DXVec3TransformCoord ( &mvUpon, &mvUpon, &matRotation );
-    D3DXVec3TransformCoord ( &mvDir, &mvDir, &matRotation );
-    D3DXVec3Cross ( &mvRight, &mvUpon, &mvDir );
+    D3DXVec3TransformCoord ( &mUpon, &mUpon, &matRotation );
+    D3DXVec3TransformCoord ( &mDir, &mDir, &matRotation );
+    D3DXVec3Cross ( &mRight, &mUpon, &mDir );
 
-    D3DXVec3Normalize ( &mvRight, &mvRight );
-    D3DXVec3Normalize ( &mvUpon, &mvUpon );
-    D3DXVec3Normalize ( &mvDir, &mvDir );
+    D3DXVec3Normalize ( &mRight, &mRight );
+    D3DXVec3Normalize ( &mUpon, &mUpon );
+    D3DXVec3Normalize ( &mDir, &mDir );
 
-    return mvDir;
+    return mDir;
 }
 
 int GComponentTrans::Jump()
@@ -216,9 +216,9 @@ D3DXMATRIX GComponentTrans::GetRotationMatrix ( bool bForTrans/*=false*/ )
         D3DXMatrixRotationYawPitchRoll ( &matRotation, mBodyRote.y, mBodyRote.x, mBodyRote.z );
     }
     matRotation *= D3DXMATRIX (
-                       mvRight.x, mvRight.y, mvRight.z, 0,
-                       mvUpon.x, mvUpon.y, mvUpon.z, 0,
-                       mvDir.x, mvDir.y, mvDir.z, 0,
+                       mRight.x, mRight.y, mRight.z, 0,
+                       mUpon.x, mUpon.y, mUpon.z, 0,
+                       mDir.x, mDir.y, mDir.z, 0,
                        0.0f, 0.0f, 0.0f, 1.0f
                    );
     return matRotation;
@@ -296,9 +296,21 @@ void GComponentTrans::registerAllProperty()
     __RegisterProperty ( mTranslate.y );
     __RegisterProperty ( mTranslate.z );
 
-    __RegisterProperty ( mBodyRote.x );
-    __RegisterProperty ( mBodyRote.y );
-    __RegisterProperty ( mBodyRote.z );
+	__RegisterProperty ( mDir.x );
+	__RegisterProperty ( mDir.y );
+	__RegisterProperty ( mDir.z );
+
+	__RegisterProperty ( mRight.x );
+	__RegisterProperty ( mRight.y );
+	__RegisterProperty ( mRight.z );
+
+	__RegisterProperty ( mUpon.x );
+	__RegisterProperty ( mUpon.y );
+	__RegisterProperty ( mUpon.z );
+
+    //__RegisterProperty ( mBodyRote.x );
+    //__RegisterProperty ( mBodyRote.y );
+    //__RegisterProperty ( mBodyRote.z );
 }
 
 //void CXPosition::Update( float fPass,void *pMap )

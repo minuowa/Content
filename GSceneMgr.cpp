@@ -46,13 +46,13 @@ bool GSceneManager::init()
     if ( mCurCamera->recreate()  )
     {
         //GComponentTrans* trans = get
-        mCurCamera->getTrans().mvDir = D3DXVECTOR3 ( ZEROFLOAT, -200.0f, 200.0f );
-        mCurCamera->getTrans().mvRight = D3DXVECTOR3 ( 1.0f, ZEROFLOAT, ZEROFLOAT );
-        D3DXVec3Cross ( &mCurCamera->getTrans().mvUpon, &mCurCamera->getTrans().mvDir, &mCurCamera->getTrans().mvRight );
+        mCurCamera->getTrans().mDir = D3DXVECTOR3 ( ZEROFLOAT, -200.0f, 200.0f );
+        mCurCamera->getTrans().mRight = D3DXVECTOR3 ( 1.0f, ZEROFLOAT, ZEROFLOAT );
+        D3DXVec3Cross ( &mCurCamera->getTrans().mUpon, &mCurCamera->getTrans().mDir, &mCurCamera->getTrans().mRight );
 
-        D3DXVec3Normalize ( &mCurCamera->getTrans().mvDir, &mCurCamera->getTrans().mvDir );
-        D3DXVec3Normalize ( &mCurCamera->getTrans().mvRight, &mCurCamera->getTrans().mvRight );
-        D3DXVec3Normalize ( &mCurCamera->getTrans().mvUpon, &mCurCamera->getTrans().mvUpon );
+        D3DXVec3Normalize ( &mCurCamera->getTrans().mDir, &mCurCamera->getTrans().mDir );
+        D3DXVec3Normalize ( &mCurCamera->getTrans().mRight, &mCurCamera->getTrans().mRight );
+        D3DXVec3Normalize ( &mCurCamera->getTrans().mUpon, &mCurCamera->getTrans().mUpon );
 
         mCurCamera->getTrans().mfSpeedMove = 150.0f;
 
@@ -66,7 +66,7 @@ bool GSceneManager::init()
 
 void* GSceneManager::getInput ( float fPass )
 {
-    mSceneDynamicRootNode->GetInput ( fPass );
+    mSceneDynamicRootNode->getInput ( fPass );
     return 0;
 }
 
@@ -297,27 +297,6 @@ bool GSceneManager::loadScene ( const char* xmlFile )
     mDelegateReloadScene.trigger();
     return true;
 }
-//CXRapidxmlLoader doc ( xmlFile );
-//CXASSERT_RETURN_FALSE ( doc.loadFile() );
-
-//CXRapidxmlNode* root = doc.getRootNode();
-//CXXMLNodeStack nodestack;
-//CXRapidxmlNode* node = root;
-//for ( CXXMLHelper helper ( nodestack, node, "Object" ); node != nullptr; node = node->next_sibling ( "Object" ) )
-//{
-//    GString stype;
-
-//    xml_get_attribute ( node, "Type", stype );
-
-//    for ( CXXMLHelper helper ( nodestack, node, "Category" ); node != 0; node = node->next_sibling ( "Category" ) )
-//    {
-//        OutputDebugStringA ( node->first_attribute()->name() );
-//    }
-//}
-
-
-//return  true;
-//}
 
 bool GSceneManager::setInnerNode ( GNode* rootNode )
 {
@@ -349,69 +328,39 @@ void GSceneManager::deleteObj ( const char* name )
     if ( n )
         mSceneRootNode->deleteChild ( n );
 }
+class GIsCamera
+{
+public:
+    bool operator() ( GNode*& n )
+    {
+        return dStrEqual ( n->categoryName(), mCamera.categoryName() );
+    }
+    GCamera mCamera;
+};
+GCamera* GSceneManager::changeToNextCamera()
+{
+    GNode* cur = mCurCamera;
+    GIsCamera isCamera;
+    GCamera* next = ( GCamera* ) dFindNextElementInTreeCycle ( mSceneRootNode, cur, isCamera );
+    if ( next )
+    {
+        if ( mCurCamera )
+            mCurCamera->setCanGetInput ( false );
+        mCurCamera = next;
+        mCurCamera->setCanGetInput ( true );
+        this->setProj();
+    }
+    return mCurCamera;
+}
 
-//bool GSceneMgr::OnNotify ( const EditorEvent& event )
-//{
-//    if ( !__super::OnNotify ( event ) )
-//        return false;
-//    switch ( event.mType )
-//    {
-//    case eEditorToScene_Add:
-//    {
-//        String typeName = event.mArgs[0];
-//        GNode* node = mGameObjFactory.Create ( typeName.c_str() );
-//        mSceneRootNode->AddChild ( node );
-//    }
-//    break;
-//    case eEditorToSecne_Select:
-//    {
-//        String objName = event.mArgs[0];
-//        GNode* node = GetNodeByName ( objName );
-//        EditorSetObjectProperty ( node );
-//        EditorUpdatePopupMenu ( node );
-//    }
-//    break;
-//    case eEditorToScene_PropertyChange:
-//    {
-//        String objName = event.mArgs[0];
-
-//    }
-//    break;
-//    case eEditorToScene_ComponentAttach:
-//    {
-//        String objName = event.mArgs[0];
-//        String componenttype = event.mArgs[1];
-//        GNode* node = GetNodeByName ( objName );
-//        if ( node )
-//        {
-//            node->AttachComponent ( componenttype );
-//        }
-//    }
-//    break;
-//    case eEditorToScene_ComponentDettach:
-//    {
-//        String objName = event.mArgs[0];
-//        String componenttype = event.mArgs[1];
-//        GNode* node = GetNodeByName ( objName );
-//        if ( node )
-//        {
-//            node->DetachComponent ( componenttype );
-//        }
-//    }
-//    break;
-//    }
-//    return true;
-//}
 
 CSceneMachine::CSceneMachine()
 {
     mgsNowScene = gsNull;
-    //ZeroMemory(&mgsContainer,sizeof(mgsContainer));
 }
 
 eGameScene CSceneMachine::GetNowScene()
 {
-    //return mgsContainer[0];
     return mgsNowScene;
 }
 

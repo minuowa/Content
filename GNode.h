@@ -16,7 +16,7 @@ public:
 
     void setNodeName ( CChar* name );
     GNode* getNodeByName ( const char* name );
-	GNode* getFirstNodeByCategoryName(const char* category);
+    GNode* getFirstNodeByCategoryName ( const char* category );
 
     void linkTo ( CXRapidxmlNode* parent );
     virtual void clear();
@@ -24,13 +24,14 @@ public:
 public:
     DWORD getObjCount();					//获取所有创建的物体总数，包括已经销毁的对象
     void setParentBone ( GNode *Parent, const char *sName );
-    int getObjID() const;
+	void setCanGetInput(bool can);
+	int getObjID() const;
     GNode* addChild ( GNode* c );
     bool removeChild ( GNode* child );
-	void deleteChild(GNode* node);
-	GNode* getParent() const;
+    void deleteChild ( GNode* node );
+    GNode* getParent() const;
     virtual bool draw();
-    virtual void GetInput ( DWORD frameTimeMs );
+    virtual void getInput ( DWORD frameTimeMs );
     virtual void update();
 
 
@@ -42,9 +43,9 @@ public:
     virtual eObjAnimState SetState ( eObjAnimState oas, bool bBack ) ;
     virtual D3DXMATRIX GetWorldMatrixByBone ( const char *sBoneName, bool bForTrans = false );
     void setWorldTranslate ( D3DXVECTOR3& v );
-	void setDir ( D3DXVECTOR3 vNormal );
+    void setDir ( D3DXVECTOR3 vNormal );
 
-	void ForceOnMap ( void *pMap, float fForceHeight, eForceType ft );
+    void ForceOnMap ( void *pMap, float fForceHeight, eForceType ft );
 
     IntersectInfo *GetBlockPoint();
 
@@ -54,6 +55,7 @@ public:
     void onComponentChange ( GComponentInterface* component, bool canDetach, bool notifyEditor );
     virtual void onPropertyChange ( void* pre, void* changed );
     virtual void onPropertyChangeEnd ( void* cur );
+	CXDynaArray<GNode*>& getChildren();
 protected:
     virtual void registerAllProperty();
 protected:
@@ -67,8 +69,8 @@ public:
 
     static GNode* mOperatorParentObj;
     static GNode* mOperatorObj;
-	static CXDelegate mDelegateAddObj;
-	static CXDelegate mDelegateDeleteObj;
+    static CXDelegate mDelegateAddObj;
+    static CXDelegate mDelegateDeleteObj;
 
     static CXDelegate mDelegateComponentChange;
 

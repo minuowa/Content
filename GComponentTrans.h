@@ -62,9 +62,9 @@ public:
     D3DXVECTOR3 mTranslate;
 
     //方向，右方向，上方向
-    D3DXVECTOR3 mvDir;
-    D3DXVECTOR3 mvRight;
-    D3DXVECTOR3 mvUpon;
+    D3DXVECTOR3 mDir;
+    D3DXVECTOR3 mRight;
+    D3DXVECTOR3 mUpon;
 
     //缩放系数
     D3DXVECTOR3 mvZoom;
