@@ -54,7 +54,7 @@ bool GSceneManager::init()
         D3DXVec3Normalize ( &mCurCamera->getTrans().mRight, &mCurCamera->getTrans().mRight );
         D3DXVec3Normalize ( &mCurCamera->getTrans().mUpon, &mCurCamera->getTrans().mUpon );
 
-        mCurCamera->getTrans().mfSpeedMove = 150.0f;
+        mCurCamera->getTrans().mSpeedMove = 150.0f;
 
         addDynaObj ( mCurCamera );
 
@@ -311,6 +311,7 @@ bool GSceneManager::setInnerNode ( GNode* rootNode )
 
     mCurCamera = nullptr;
     mCurCamera = findFirstCameraInScene ( mSceneRootNode );
+    mUsingCamera = mCurCamera->getObjectName();
     CXASSERT_RETURN_FALSE ( mCurCamera );
     setProj();
     return mCurCamera != nullptr;
@@ -339,18 +340,32 @@ public:
 };
 GCamera* GSceneManager::changeToNextCamera()
 {
-    GNode* cur = mCurCamera;
+	GNode* cur=mCurCamera;
     GIsCamera isCamera;
     GCamera* next = ( GCamera* ) dFindNextElementInTreeCycle ( mSceneRootNode, cur, isCamera );
     if ( next )
     {
-        if ( mCurCamera )
-            mCurCamera->setCanGetInput ( false );
-        mCurCamera = next;
-        mCurCamera->setCanGetInput ( true );
-        this->setProj();
+		if ( mCurCamera )
+			mCurCamera->setCanGetInput ( false );
+		mCurCamera = next;
+		mCurCamera->setCanGetInput ( true );
+		mUsingCamera = next->getObjectName();
+		this->setProj();
     }
     return mCurCamera;
+}
+
+void GSceneManager::moveToNextCamera()
+{
+	GNode* cur = mSceneRootNode->getNodeByName ( mUsingCamera );
+    GIsCamera isCamera;
+	GCamera* next = ( GCamera* ) dFindNextElementInTreeCycle ( mSceneRootNode, cur, isCamera );
+	if ( next )
+	{
+		mUsingCamera=next->getObjectName();
+		mCurCamera->moveTo ( next->GetWorldMatrix ( false ) );
+	}
+
 }
 
 

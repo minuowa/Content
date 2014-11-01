@@ -23,10 +23,10 @@ void GComponentMesh::onPropertyChange ( void* pre, void* changed )
     {
         GString changedName;
         dCast ( changedName, changed );
-        if ( changedName != mMeshFile && mTarget )
+        if ( changedName != mMeshFile && mAutoTargetRotation )
         {
             mMeshFile = changedName;
-            bool res = mTarget->recreate();
+            bool res = mAutoTargetRotation->recreate();
             CXASSERT ( res );
         }
     }

@@ -19,7 +19,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <WholeProgramOptimization>PGOptimize</WholeProgramOptimization>
     <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -126,18 +126,23 @@
   <ItemGroup>
     <ClCompile Include="GAllocateHierarchy.cpp" />
     <ClCompile Include="GAnimationResource.cpp" />
+    <ClCompile Include="GBitmap.cpp" />
     <ClCompile Include="GComponentBox.cpp" />
     <ClCompile Include="GComponentFactory.cpp" />
     <ClCompile Include="GComponentInterface.cpp" />
     <ClCompile Include="GComponentMesh.cpp" />
     <ClCompile Include="GD9Device.cpp" />
     <ClCompile Include="GGameOption.cpp" />
+    <ClCompile Include="GHeightMap.cpp" />
     <ClCompile Include="GMeshData.cpp" />
+    <ClCompile Include="GMoviePlayer.cpp" />
     <ClCompile Include="GObject.cpp" />
     <ClCompile Include="GRenderObject.cpp" />
     <ClCompile Include="GAmmo.cpp" />
     <ClCompile Include="GAnimMeshObj.cpp" />
     <ClCompile Include="GBound.cpp" />
+    <ClCompile Include="GTerrain.cpp" />
+    <ClCompile Include="GTerrainCommon.cpp" />
     <ClCompile Include="GWorldCorrd.cpp" />
     <ClCompile Include="GD8Input.cpp" />
     <ClCompile Include="GMeshBuffer.cpp" />
@@ -163,7 +168,6 @@
     <ClCompile Include="GNode.cpp" />
     <ClCompile Include="GComponentTrans.cpp" />
     <ClCompile Include="XTerrain.cpp" />
-    <ClCompile Include="XTerrainNode.cpp" />
     <ClCompile Include="XText.cpp" />
     <ClCompile Include="GTimer.cpp" />
   </ItemGroup>
@@ -176,6 +180,7 @@
     <ClInclude Include="GAmmo.h" />
     <ClInclude Include="GAnimationResource.h" />
     <ClInclude Include="GAnimMeshObj.h" />
+    <ClInclude Include="GBitmap.h" />
     <ClInclude Include="GBound.h" />
     <ClInclude Include="GComponentBox.h" />
     <ClInclude Include="GComponentFactory.h" />
@@ -185,9 +190,12 @@
     <ClInclude Include="GEnumTypesStrings.h" />
     <ClInclude Include="GFactory.h" />
     <ClInclude Include="GGameOption.h" />
+    <ClInclude Include="GHeightMap.h" />
     <ClInclude Include="GMeshData.h" />
+    <ClInclude Include="GMoviePlayer.h" />
     <ClInclude Include="GObject.h" />
     <ClInclude Include="GResourceManager.h" />
+    <ClInclude Include="GTerrainCommon.h" />
     <ClInclude Include="GWorldCorrd.h" />
     <ClInclude Include="GD8Input.h" />
     <ClInclude Include="GD9Device.h" />
@@ -216,12 +224,12 @@
     <ClInclude Include="GNode.h" />
     <ClInclude Include="GComponentTrans.h" />
     <ClInclude Include="XTerrain.h" />
-    <ClInclude Include="XTerrainNode.h" />
     <ClInclude Include="XText.h" />
     <ClInclude Include="GTimer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="GEnums.inl" />
+    <None Include="GTerrain.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

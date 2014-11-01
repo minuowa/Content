@@ -6,6 +6,7 @@
 #include "GGameOption.h"
 #include "GComponentFactory.h"
 #include "GResourceManager.h"
+#include "GTerrain.h"
 
 /******************************************************************/
 //天空在MeshBuffer中，海面和地图不在
@@ -119,7 +120,7 @@ void GGame::getInput()
         {
             if ( mpSelectAnim != NULL )
             {
-                if ( !mpSelectAnim->getTrans().mbCanMoveStep )
+                if ( !mpSelectAnim->getTrans().mCanMoveStep )
                 {
                     mpSelectObj->getInput ( fPass );
                 }
@@ -136,13 +137,13 @@ void GGame::getInput()
             if ( INPUTSYSTEM.IsPressKey ( DIK_COMMA ) )
             {
                 //>增加速度
-                mpSelectObj->getTrans().mfSpeedMove += 0.8f;
+                mpSelectObj->getTrans().mSpeedMove += 0.8f;
             }
 
             if ( INPUTSYSTEM.IsPressKey ( DIK_PERIOD ) )
             {
                 //<减小速度
-                mpSelectObj->getTrans().mfSpeedMove -= 0.8f;
+                mpSelectObj->getTrans().mSpeedMove -= 0.8f;
             }
 
             if ( DI_BUTTONUP == INPUTSYSTEM.getKeyAction ( DIK_DELETE ) )
@@ -159,12 +160,12 @@ void GGame::getInput()
         {
             if ( mpSelectObj != NULL )
             {
-                mpSelectObj->getTrans().mvZoom += D3DXVECTOR3 ( 0.01f, 0.01f, 0.01f );
+                mpSelectObj->getTrans().mZoom += D3DXVECTOR3 ( 0.01f, 0.01f, 0.01f );
             }
 
             if ( mpSelectAnim != NULL )
             {
-                mpSelectAnim->getTrans().mfSpeedMove += 0.5f;
+                mpSelectAnim->getTrans().mSpeedMove += 0.5f;
             }
 
         }
@@ -173,12 +174,12 @@ void GGame::getInput()
         {
             if ( mpSelectObj != NULL )
             {
-                mpSelectObj->getTrans().mvZoom -= D3DXVECTOR3 ( 0.01f, 0.01f, 0.01f );
+                mpSelectObj->getTrans().mZoom -= D3DXVECTOR3 ( 0.01f, 0.01f, 0.01f );
             }
 
             if ( mpSelectAnim != NULL )
             {
-                mpSelectAnim->getTrans().mfSpeedMove -= 0.5f;
+                mpSelectAnim->getTrans().mSpeedMove -= 0.5f;
             }
 
         }
@@ -320,7 +321,7 @@ bool GGame::init ( HWND mainWnd )
     CXASSERT_RETURN_FALSE ( __super::init ( mainWnd ) );
     //初始化D3D设备
     CXASSERT_RETURN_FALSE (
-        GSingletonD9Device::GetSingletonPtr()->Init ( mMainWin )
+        GSingletonD9Device::getInstance()->Init ( mMainWin )
     );
     CXASSERT_RETURN_FALSE (
         GSingletonD8Input::GetSingleton().Init ( GSingletonD9Device::GetSingleton(),
@@ -397,34 +398,40 @@ DWORD WINAPI loadObj ( LPVOID pParam )
 	if ( 1 )
     {
         //创建世界坐标系
-        GWorldCorrd* corrd = new GWorldCorrd();
-        corrd->setNodeName ( "World Corrd" );
-        CXASSERT_RETURN_FALSE ( corrd->recreate() );
-        TheSceneMgr->addStaticObj ( corrd );
+		//GWorldCorrd* corrd = new GWorldCorrd();
+		//corrd->setNodeName ( "World Corrd" );
+		//CXASSERT_RETURN_FALSE ( corrd->recreate() );
+		//TheSceneMgr->addStaticObj ( corrd );
     }
 
 
 
     if ( 1 )
     {
-        GAnimMeshObj *pAnimMesh = new GAnimMeshObj;
-        pAnimMesh->setMediaFile ( "..\\Data\\res\\Anim\\AnimMesh0002\\A0002.X" );
-        CXASSERT_RETURN_FALSE ( pAnimMesh->recreate() );
-        TheSceneMgr->addDynaObj ( pAnimMesh );
+		GAnimMeshObj *pAnimMesh = new GAnimMeshObj;
+		pAnimMesh->setMediaFile ( "..\\Data\\res\\Anim\\AnimMesh0002\\A0002.X" );
+		CXASSERT_RETURN_FALSE ( pAnimMesh->recreate() );
+		TheSceneMgr->addDynaObj ( pAnimMesh );
     }
     if ( 1 )
     {
-        MeshPara seaPara (  80.0f, 0, 64, "..\\Data\\res\\water\\BlueShort\\A21C_000.jpg", NULL );
+        //MeshPara seaPara (  80.0f, 0, 64, "..\\Data\\res\\water\\BlueShort\\A21C_000.jpg", NULL );
 
-        GWater* sea = new GWater;
-        sea->setParam ( seaPara );
-        sea->mCanSelect = false;
-        //sea->addQuakePoint ( -50, 0, 10.0f, 2.8f );
-        //sea->addQuakePoint ( 50, 0, 10.0f, 2.8f );
-        sea->recreate();
-        sea->setWorldTranslate ( D3DXVECTOR3 ( 0, 1, 0 ) );
-        TheSceneMgr->addDynaObj ( sea );
+        //GWater* sea = new GWater;
+        //sea->setParam ( seaPara );
+        //sea->mCanSelect = false;
+        ////sea->addQuakePoint ( -50, 0, 10.0f, 2.8f );
+        ////sea->addQuakePoint ( 50, 0, 10.0f, 2.8f );
+        //sea->recreate();
+        //sea->setWorldTranslate ( D3DXVECTOR3 ( 0, 1, 0 ) );
+        //TheSceneMgr->addDynaObj ( sea );
     }
+
+	if (1)
+	{
+		GameEditor::GxMap* xmap=new GameEditor::GxMap(5,50);
+		TheSceneMgr->addDynaObj ( xmap );
+	}
     //TheSceneMgr->mEye.InitTrack( &gAnimMesh[0] );
 
     //gEvent.WaitForUse(-1);

@@ -4,10 +4,9 @@
 
 GComponentTrans::GComponentTrans ( void )
 {
-
-    mbAutoMove = false;
-
-    mvZoom = D3DXVECTOR3 ( 1.0f, 1.0f, 1.0f );
+    mAutoMoveInfo = nullptr;
+    mAutoMove = false;
+    mZoom = D3DXVECTOR3 ( 1.0f, 1.0f, 1.0f );
 
     mvLastPos = ZEROVECTOR3;
     mTranslate = ZEROVECTOR3;
@@ -15,32 +14,32 @@ GComponentTrans::GComponentTrans ( void )
     mUpon = D3DXVECTOR3 ( 0.0f, 1.0f, 0.0f );
     mDir = D3DXVECTOR3 ( 0.0f, 0.0f, 1.0f );
 
-    mfSpeedTrun = DEAULT_SPEED_TRUN;
-    mfSpeedMove = DEFAULT_SPEED_MOVE;
+    mSpeedTrun = DEAULT_SPEED_TRUN;
+    mSpeedMove = DEFAULT_SPEED_MOVE;
 
-    mvSpeed = ZEROVECTOR3;
+    mSpeed = ZEROVECTOR3;
 
-    mvBodyPass = ZEROVECTOR3;
+    mBodyPass = ZEROVECTOR3;
     mBodyRote = ZEROVECTOR3;
 
-    mvTargetPos = ZEROVECTOR3;
+    mTargetPos = ZEROVECTOR3;
 
-    mvTargetDir = ZEROVECTOR3;
+    mTargetDir = ZEROVECTOR3;
 
-    mbAutoMoveWithTarget = false;
+    mAutoMove = false;
 
-    mbAutoTrunWithTarget = false;
+    mAutoTrun = false;
 
-    mbJump = false;
+    mJump = false;
 
-    mbCanMoveStep = true;
+    mCanMoveStep = true;
 
-    mbBack = false;
+    mBack = false;
 }
 
 GComponentTrans::~GComponentTrans ( void )
 {
-
+    dSafeDelete ( mAutoMoveInfo );
 }
 
 D3DXMATRIX GComponentTrans::GetWorldMatrix ( bool bForTrans )
@@ -58,7 +57,7 @@ D3DXMATRIX GComponentTrans::GetWorldMatrix ( bool bForTrans )
     if ( !bForTrans )
     {
         //¼ÆËãËõ·Å¾ØÕó
-        D3DXMatrixScaling ( &matScale, mvZoom.x, mvZoom.y, mvZoom.z );
+        D3DXMatrixScaling ( &matScale, mZoom.x, mZoom.y, mZoom.z );
         matWorld *= matScale;
 
         //¼ÆËãÐý×ª¾ØÕó
@@ -85,7 +84,7 @@ D3DXMATRIX GComponentTrans::GetWorldMatrix ( bool bForTrans )
     }
     else
     {
-        D3DXMatrixTranslation ( &matTranslation, mTranslate.x + mvBodyPass.x * mvZoom.x, mTranslate.y + mvBodyPass.y * mvZoom.y, mTranslate.z + mvBodyPass.z * mvZoom.z );
+        D3DXMatrixTranslation ( &matTranslation, mTranslate.x + mBodyPass.x * mZoom.x, mTranslate.y + mBodyPass.y * mZoom.y, mTranslate.z + mBodyPass.z * mZoom.z );
     }
 
     matWorld *= matTranslation;
@@ -97,12 +96,12 @@ D3DXMATRIX GComponentTrans::GetWorldMatrix ( bool bForTrans )
 D3DXVECTOR3 GComponentTrans::MoveStep ( float fPass )
 {
 
-    if ( !mbCanMoveStep )
+    if ( !mCanMoveStep )
     {
         return ZEROVECTOR3;
     }
 
-    float fLen = mfSpeedMove * fPass;
+    float fLen = mSpeedMove * fPass;
 
     D3DXVec3Normalize ( &mDir, &mDir );
 
@@ -181,15 +180,15 @@ D3DXVECTOR3 GComponentTrans::TrunStepLeftRightWithUp ( float fpara )
 
 int GComponentTrans::Jump()
 {
-    if ( !mbJump )
+    if ( !mJump )
     {
-        mbAutoMove = true;
+        mAutoMove = true;
 
-        mbCanMoveStep = false;
+        mCanMoveStep = false;
 
-        mvSpeed.y = JUMP_HEIGHT / 0.5f / JUMP_TIME;
+        mSpeed.y = JUMP_HEIGHT / 0.5f / JUMP_TIME;
 
-        toggle ( mbJump );
+        toggle ( mJump );
     }
 
     return TRUE_INT;
@@ -198,11 +197,11 @@ int GComponentTrans::Jump()
 
 D3DXVECTOR3 GComponentTrans::MoveToPos ( D3DXVECTOR3 vTarget )
 {
-    mbAutoMoveWithTarget = true;
+    mAutoMove = true;
 
-    mvTargetPos = vTarget;
+    mTargetPos = vTarget;
 
-    return mvTargetPos;
+    return mTargetPos;
 }
 
 
@@ -232,7 +231,7 @@ D3DXMATRIX GComponentTrans::GetScaleMatrix ( bool bForTrans/*=false*/ )
 
     if ( !bForTrans )
     {
-        D3DXMatrixScaling ( &matScaling, mvZoom.x, mvZoom.y, mvZoom.z );
+        D3DXMatrixScaling ( &matScaling, mZoom.x, mZoom.y, mZoom.z );
     }
 
     return matScaling;
@@ -248,7 +247,7 @@ D3DXMATRIX GComponentTrans::GetTransLation ( bool bForTrans/*=false*/ )
     }
     else
     {
-        D3DXMatrixTranslation ( &matTranslation, mTranslate.x + mvBodyPass.x * mvZoom.x, mTranslate.y + mvBodyPass.y * mvZoom.y, mTranslate.z + mvBodyPass.z * mvZoom.z );
+        D3DXMatrixTranslation ( &matTranslation, mTranslate.x + mBodyPass.x * mZoom.x, mTranslate.y + mBodyPass.y * mZoom.y, mTranslate.z + mBodyPass.z * mZoom.z );
     }
 
     return matTranslation;
@@ -257,32 +256,29 @@ D3DXMATRIX GComponentTrans::GetTransLation ( bool bForTrans/*=false*/ )
 
 D3DXVECTOR3 GComponentTrans::TrunToDir ( D3DXVECTOR3 vTargetDir )
 {
+    mAutoTrun = true;
 
-    mbAutoTrunWithTarget = true;
+    D3DXVec3Normalize ( &mTargetDir, &vTargetDir );
 
-    D3DXVec3Normalize ( &mvTargetDir, &vTargetDir );
-
-    return mvTargetDir;
+    return mTargetDir;
 }
 
-void GComponentTrans::Update(  )
+void GComponentTrans::update(  )
 {
-    float fTime = TheTimer->getFrameTimems() / 1000.0f;
-
-
-    if ( !mbAutoMove )
+    if ( mAutoMoveInfo )
     {
-        return;
+        if ( TheTimer->getAccuTime() > mAutoMoveInfo->mAutoInitTime + mAutoMoveInfo->mAutoLifeTime )
+        {
+            dSafeDelete ( mAutoMoveInfo );
+            mAutoMove = false;
+            mAutoTrun = false;
+            return;
+        }
     }
-
-    mvLastPos = mTranslate;
-
-
-    mvSpeed += D3DXVECTOR3 ( ZEROFLOAT, -GRAVITY, ZEROFLOAT ) * fTime;
-
-    D3DXVECTOR3 vDelta = mvSpeed * TheTimer->getFrameTimems() / 1000.0f;
-
-    mTranslate += vDelta;
+    if ( mAutoMove )
+        updateTranslate();
+    if ( mAutoTrun )
+        updateRotation();
 }
 
 const char* GComponentTrans::GetComponentName()
@@ -296,21 +292,84 @@ void GComponentTrans::registerAllProperty()
     __RegisterProperty ( mTranslate.y );
     __RegisterProperty ( mTranslate.z );
 
-	__RegisterProperty ( mDir.x );
-	__RegisterProperty ( mDir.y );
-	__RegisterProperty ( mDir.z );
+    __RegisterProperty ( mDir.x );
+    __RegisterProperty ( mDir.y );
+    __RegisterProperty ( mDir.z );
 
-	__RegisterProperty ( mRight.x );
-	__RegisterProperty ( mRight.y );
-	__RegisterProperty ( mRight.z );
+    __RegisterProperty ( mRight.x );
+    __RegisterProperty ( mRight.y );
+    __RegisterProperty ( mRight.z );
 
-	__RegisterProperty ( mUpon.x );
-	__RegisterProperty ( mUpon.y );
-	__RegisterProperty ( mUpon.z );
+    __RegisterProperty ( mUpon.x );
+    __RegisterProperty ( mUpon.y );
+    __RegisterProperty ( mUpon.z );
 
     //__RegisterProperty ( mBodyRote.x );
     //__RegisterProperty ( mBodyRote.y );
     //__RegisterProperty ( mBodyRote.z );
+}
+
+void GComponentTrans::moveTo ( D3DXMATRIX& target, DWORD millSeconds )
+{
+    dSafeDelete ( mAutoMoveInfo );
+    mAutoMoveInfo = new GAutoMoveInfo;
+    mAutoMoveInfo->mAutoInitTime = TheTimer->getAccuTime();
+    mAutoMoveInfo->mAutoLifeTime = millSeconds;
+
+    D3DXMATRIX rotNow (
+        mRight.x, mRight.y, mRight.z, 0,
+        mUpon.x, mUpon.y, mUpon.z, 0,
+        mDir.x, mDir.y, mDir.z, 0,
+        mTranslate.x, mTranslate.y, mTranslate.z, 1.0f
+    );
+
+    D3DXQuaternionRotationMatrix ( &mAutoMoveInfo->mAutoTargetRotation, &target );
+    D3DXQuaternionRotationMatrix ( &mAutoMoveInfo->mAutoInitRotation, &rotNow );
+
+    dGetTranslateFromMatrix ( mAutoMoveInfo->mAutoTargetTranslate, &target );
+    dGetTranslateFromMatrix ( mAutoMoveInfo->mAutoInitTranslate, &rotNow );
+
+    mAutoTrun = true;
+    mAutoMove = true;
+}
+
+void GComponentTrans::updateTranslate()
+{
+    getVector3Ease ( mTranslate
+                     , &mAutoMoveInfo->mAutoInitTranslate
+                     , &mAutoMoveInfo->mAutoTargetTranslate
+                     , mAutoMoveInfo->getElpaseTime()
+                     , mAutoMoveInfo->mAutoLifeTime
+                   );
+}
+
+void GComponentTrans::updateRotation()
+{
+    CXASSERT ( mAutoMoveInfo->getElpaseTime() <= mAutoMoveInfo->mAutoLifeTime );
+    D3DXQUATERNION now;
+    D3DXQuaternionSlerp ( &now
+                          , &mAutoMoveInfo->mAutoInitRotation
+                          , &mAutoMoveInfo->mAutoTargetRotation
+                          , ( float ) ( mAutoMoveInfo->getElpaseTime() ) / mAutoMoveInfo->mAutoLifeTime
+                        );
+    D3DXMATRIX mat;
+    dGetMatixFromQuation ( mat, now );
+    setRotation ( mat );
+}
+
+void GComponentTrans::setRotation ( D3DXMATRIX& mat )
+{
+    mRight.x = mat._11;
+    mRight.y = mat._12;
+    mRight.z = mat._13;
+
+    mUpon.x = mat._21;
+    mUpon.y = mat._22;
+    mUpon.z = mat._23;
+
+    mDir.x = mat._31;
+    mDir.y = mat._32;
+    mDir.z = mat._33;
 }
 
 //void CXPosition::Update( float fPass,void *pMap )
@@ -384,4 +443,14 @@ IntersectInfo::IntersectInfo()
     pObj = NULL;
     vNormal = D3DXVECTOR3 ( ZEROFLOAT, ZEROFLOAT, ZEROFLOAT );
     vHitPos = D3DXVECTOR3 ( ZEROFLOAT, ZEROFLOAT, ZEROFLOAT );
+}
+
+GAutoMoveInfo::GAutoMoveInfo()
+{
+    dMemoryZero ( this, sizeof ( *this ) );
+}
+
+DWORD GAutoMoveInfo::getElpaseTime()
+{
+    return TheTimer->getAccuTime() - mAutoInitTime.getMillSecond();
 }

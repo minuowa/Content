@@ -35,4 +35,9 @@ float GTimer::getFrameTimeSec()
 	return mFrameTime*0.001f;
 }
 
+DWORD GTimer::getAccuTime()
+{
+	return mAccuTime;
+}
+
 

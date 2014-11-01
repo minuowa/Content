@@ -9,7 +9,7 @@
 GComponentInterface::GComponentInterface ( void )
     : mComponentType ( eComponentType_Count )
     , mCanDetach ( true )
-    , mTarget ( 0 )
+    , mAutoTargetRotation ( 0 )
 {
 }
 
@@ -20,12 +20,12 @@ GComponentInterface::~GComponentInterface ( void )
 
 void GComponentInterface::SetTarget ( GNode* target )
 {
-    mTarget = target;
+    mAutoTargetRotation = target;
 }
 
 GNode* GComponentInterface::GetTarget() const
 {
-    return mTarget;
+    return mAutoTargetRotation;
 }
 
 

@@ -28,6 +28,6 @@ protected:
 
 typedef CXSingleton<GGameOption> GGameOptionSingleton;
 
-#define GameOption GGameOptionSingleton::GetSingletonPtr() 
+#define GameOption GGameOptionSingleton::getInstance() 
 
 #endif // GGameOption_h__

@@ -24,4 +24,4 @@ private:
     DWORD mLastTime;		    //上一次时间
 };
 
-#define TheTimer GTimer::GetSingletonPtr()
+#define TheTimer GTimer::getInstance()

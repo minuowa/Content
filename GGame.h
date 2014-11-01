@@ -67,5 +67,5 @@ private:
 	bool	mFinished;
 };
 
-#define TheGame GGame::GetSingletonPtr() 
+#define TheGame GGame::getInstance() 
 #define TheSceneMgr GGame::GetSingleton().getSceneMgr()

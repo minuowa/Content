@@ -23,7 +23,7 @@ public:
 	GNode* GetTarget() const;
 protected:
     eComponentType	mComponentType;
-	GNode*	mTarget;
+	GNode*	mAutoTargetRotation;
     bool	mCanDetach;
 public:
 	inline eComponentType GetType()

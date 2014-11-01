@@ -77,6 +77,7 @@ public:
     GNode* createObjByTypeName ( const char* typeName );
 	GCamera* findFirstCameraInScene(GNode* n);
 	GCamera* changeToNextCamera();
+	void moveToNextCamera();
 public:
 	bool setInnerNode(GNode* rootNode);
     void initNodeFactory();
@@ -91,6 +92,7 @@ public:
 	CXDelegate mDelegateReloadScene;
 
     GCamera* mCurCamera;
+	GString mUsingCamera;
     CSceneMachine mSceneMachine;
 
     GNode* mSceneRootNode;

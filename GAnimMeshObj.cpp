@@ -109,7 +109,7 @@ void GAnimMeshObj::DrawMeshContainer ( D3DXMESHCONTAINER *pMeshContainerBase, D3
 
             if ( m_bHit )
             {
-                toggle ( getTrans().mbCanMoveStep );
+                toggle ( getTrans().mCanMoveStep );
             }
         }
     }
@@ -209,7 +209,7 @@ eObjAnimState GAnimMeshObj::SetState ( eObjAnimState oas, bool bBack )
         return m_ObjAnimState;
     }
 
-    getTrans().mbBack = bBack;
+    getTrans().mBack = bBack;
 
     if ( mCloneAnimationController == NULL )
     {
@@ -276,7 +276,7 @@ eObjAnimState GAnimMeshObj::SetState ( eObjAnimState oas, bool bBack )
     {
         //设置动作速度
 
-        if ( getTrans().mbBack )
+        if ( getTrans().mBack )
         {
             mCloneAnimationController->SetTrackSpeed ( 0, -1 );
         }
@@ -414,7 +414,7 @@ bool GAnimMeshObj::render()
         {
             mpAmmo->render();
 
-            if ( !mpAmmo->getTrans().mbAutoMove )
+            if ( !mpAmmo->getTrans().mAutoMove )
             {
                 SAFED_ELETE ( mpAmmo );
             }

@@ -22,6 +22,7 @@ public:
     ~GCamera(void);
 
 public:
+	void moveTo(D3DXMATRIX& matrix);
 
 	virtual bool recreate();
 

@@ -16,7 +16,18 @@ struct IntersectInfo
     IntersectInfo();
 
 };
-
+struct GAutoMoveInfo 
+{
+	CXMillSecond mAutoLifeTime;
+	/** @brief auto move/trun time point **/
+	CXMillSecond mAutoInitTime;			
+	D3DXQUATERNION mAutoTargetRotation;
+	D3DXQUATERNION mAutoInitRotation;
+	D3DXVECTOR3 mAutoTargetTranslate;
+	D3DXVECTOR3 mAutoInitTranslate;
+	GAutoMoveInfo();
+	DWORD getElpaseTime();
+};
 class GComponentTrans: public GComponentBase<eComponentType_Trans>
 {
     DeclareComponentType ( GComponentTrans )
@@ -47,11 +58,12 @@ public:
 
     D3DXVECTOR3 SetDirWithUpon ( D3DXVECTOR3 vUpon );
 
-    void Update();
-
+    void update();
+	void updateTranslate();
+	void updateRotation();
+	void moveTo(D3DXMATRIX& target,DWORD millSeconds);
 private:
-
-    D3DXVECTOR3 AutoMoveTo ( float fPass );
+	void setRotation(D3DXMATRIX& mat);
 
     virtual const char* GetComponentName();
 
@@ -67,36 +79,30 @@ public:
     D3DXVECTOR3 mUpon;
 
     //缩放系数
-    D3DXVECTOR3 mvZoom;
+    D3DXVECTOR3 mZoom;
 
     //物体相对于自身原点的旋转角度
-    D3DXVECTOR3 mvBodyPass;
+    D3DXVECTOR3 mBodyPass;
     D3DXVECTOR3 mBodyRote;
 
     //速度
-    D3DXVECTOR3 mvSpeed;
-    float mfSpeedMove;
-    float mfSpeedTrun;
+    D3DXVECTOR3 mSpeed;
+    float mSpeedMove;
+    float mSpeedTrun;
 
-    D3DXVECTOR3 mvTargetPos;
+    D3DXVECTOR3 mTargetPos;
 
-    D3DXVECTOR3 mvTargetDir;
+    D3DXVECTOR3 mTargetDir;
 
-    bool mbAutoMoveWithTarget;
+    bool mAutoMove;
 
-    bool mbAutoTrunWithTarget;
+    bool mAutoTrun;
 
-    bool mbAutoMove;
+    bool mJump;
 
-    bool mbJump;
+    bool mCanMoveStep;					//是否可以步进移动
 
-    //IntersectInfo mInsectMapInfo;
+    bool mBack;						//是否向后行走
 
-
-
-    bool mbCanMoveStep;					//是否可以步进移动
-
-    //bool mbIsEye;						//是否是眼睛，眼睛不会受强制逻辑
-
-    bool mbBack;						//是否向后行走
+	GAutoMoveInfo* mAutoMoveInfo;
 };

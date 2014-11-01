@@ -5,11 +5,7 @@
 //µØÍ¼×ø±êÏµ
 #define FVF_XYZDIFUSE D3DFVF_XYZ|D3DFVF_DIFFUSE
 
-struct VertexXYZAndColor
-{
-    float x, y, z;
-    D3DCOLOR color;
-};
+
 
 GWorldCorrd::GWorldCorrd ( void )
     : mLineCount ( 50 )

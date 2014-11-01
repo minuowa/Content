@@ -23,4 +23,4 @@ protected:
 };
 typedef CXSingleton<GResourceManager<GTexture>> GTextureManager;
 
-#define TextureMgr	GTextureManager::GetSingletonPtr()
+#define TextureMgr	GTextureManager::getInstance()

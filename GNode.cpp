@@ -30,7 +30,7 @@ void GNode::getInput ( DWORD frameTimeMs )
 
             getTrans().MoveStep ( frameTimeMs );
 
-            getTrans().mbBack = false;
+            getTrans().mBack = false;
 
             SetState ( oasMoving, false );
 
@@ -41,7 +41,7 @@ void GNode::getInput ( DWORD frameTimeMs )
 
             getTrans().MoveStep ( -frameTimeMs );
 
-            getTrans().mbBack = true;
+            getTrans().mBack = true;
 
             SetState ( oasMoving, true );
         }
@@ -59,17 +59,17 @@ void GNode::getInput ( DWORD frameTimeMs )
 
         if ( bJump )
         {
-            if ( !getTrans().mbJump )
+            if ( !getTrans().mJump )
             {
                 m_bBehaviour = true;
 
                 if ( bMoveBack )
                 {
-                    getTrans().mvSpeed = -getTrans().mDir * getTrans().mfSpeedMove;
+                    getTrans().mSpeed = -getTrans().mDir * getTrans().mSpeedMove;
                 }
                 if ( bMoveFront )
                 {
-                    getTrans().mvSpeed = getTrans().mDir * getTrans().mfSpeedMove;
+                    getTrans().mSpeed = getTrans().mDir * getTrans().mSpeedMove;
                 }
             }
 
@@ -619,7 +619,9 @@ GComponentTrans& GNode::getTrans() const
 
 void GNode::updateTrans()
 {
-    const bool bOriginAutoMove = getTrans().mbAutoMove;
+	getTrans().update();
+
+	const bool bOriginAutoMove = getTrans().mAutoMove;
 
 
     eHitType htMap = htNull;
@@ -644,7 +646,7 @@ void GNode::updateTrans()
 
     if ( bOriginAutoMove )
     {
-        getTrans().Update();
+        getTrans().update();
     }
 
     const GComponentTrans cXPos = getTrans();
@@ -684,15 +686,15 @@ void GNode::updateTrans()
                 htMap = htAutoMoveHitMap;
 
                 //自动移动结束：
-                getTrans().mbJump = false;
+                getTrans().mJump = false;
 
-                getTrans().mbBack = false;
+                getTrans().mBack = false;
 
-                getTrans().mbAutoMove = false;
+                getTrans().mAutoMove = false;
 
-                getTrans().mbCanMoveStep = true;
+                getTrans().mCanMoveStep = true;
 
-                getTrans().mvSpeed = ZEROVECTOR3;
+                getTrans().mSpeed = ZEROVECTOR3;
 
                 pIntersectMapInfo = & ( pMap->m_InsectInfo );
             }
@@ -923,15 +925,15 @@ void GNode::updateTrans()
         m_bBehaviour = false;
 
         //自动移动结束：
-        getTrans().mbJump = false;
+        getTrans().mJump = false;
 
-        getTrans().mbBack = false;
+        getTrans().mBack = false;
 
-        getTrans().mbAutoMove = false;
+        getTrans().mAutoMove = false;
 
-        getTrans().mbCanMoveStep = true;
+        getTrans().mCanMoveStep = true;
 
-        getTrans().mvSpeed = ZEROVECTOR3;
+        getTrans().mSpeed = ZEROVECTOR3;
 
         setDir ( pIntersectFinalHit->vNormal );
     }

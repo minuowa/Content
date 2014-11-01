@@ -25,7 +25,7 @@ GCamera::GCamera ( void )
 GCamera::~GCamera ( void )
 {
     dSafeDelete ( mpEyeCliper );
-	D9DEVICE->mOnResetDevice -= this;
+    D9DEVICE->mOnResetDevice -= this;
 }
 
 void GCamera::setProj()
@@ -66,14 +66,14 @@ void GCamera::setView()
 
 void GCamera::getInput ( DWORD frameTimeMs )
 {
-	if (!mCanGetInput)
-		return;
+    if ( !mCanGetInput )
+        return;
 
     if ( INPUTSYSTEM.IsPressKey ( DIK_ADD ) )
-        getTrans().mfSpeedMove += 0.03f * frameTimeMs;
+        getTrans().mSpeedMove += 0.03f * frameTimeMs;
 
     if ( INPUTSYSTEM.IsPressKey ( DIK_SUBTRACT ) )
-        getTrans().mfSpeedMove -= 0.03f * frameTimeMs;
+        getTrans().mSpeedMove -= 0.03f * frameTimeMs;
 
     POINT pt = INPUTSYSTEM.GetMousePoint();
 
@@ -124,7 +124,7 @@ void GCamera::TraceMan(  )
         return;
     }
 
-    if ( !mpTransMan->getTrans().mbCanMoveStep )
+    if ( !mpTransMan->getTrans().mCanMoveStep )
     {
         return;
     }
@@ -182,6 +182,11 @@ void GCamera::onCallBack ( const CXDelegate& delgate )
     {
         setProj();
     }
+}
+
+void GCamera::moveTo ( D3DXMATRIX& matrix )
+{
+    getTrans().moveTo ( matrix, 3000 );
 }
 
 

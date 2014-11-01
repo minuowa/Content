@@ -10,7 +10,6 @@
     <ClCompile Include="XEvent.cpp" />
     <ClCompile Include="XMultiThread.cpp" />
     <ClCompile Include="XTerrain.cpp" />
-    <ClCompile Include="XTerrainNode.cpp" />
     <ClCompile Include="XText.cpp" />
     <ClCompile Include="GRenderObject.cpp" />
     <ClCompile Include="GWorldCorrd.cpp" />
@@ -57,6 +56,11 @@
     <ClCompile Include="GTexture.cpp" />
     <ClCompile Include="GWater.cpp" />
     <ClCompile Include="GGameOption.cpp" />
+    <ClCompile Include="GMoviePlayer.cpp" />
+    <ClCompile Include="GTerrain.cpp" />
+    <ClCompile Include="GHeightMap.cpp" />
+    <ClCompile Include="GTerrainCommon.cpp" />
+    <ClCompile Include="GBitmap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameStaticObj.h" />
@@ -68,7 +72,6 @@
     <ClInclude Include="XEvent.h" />
     <ClInclude Include="XMultiThread.h" />
     <ClInclude Include="XTerrain.h" />
-    <ClInclude Include="XTerrainNode.h" />
     <ClInclude Include="XText.h" />
     <ClInclude Include="FiGameDemo.h" />
     <ClInclude Include="GRenderObject.h" />
@@ -123,6 +126,10 @@
     <ClInclude Include="GGameOption.h" />
     <ClInclude Include="GEnumTypesStrings.h" />
     <ClInclude Include="GEnums.h" />
+    <ClInclude Include="GMoviePlayer.h" />
+    <ClInclude Include="GHeightMap.h" />
+    <ClInclude Include="GTerrainCommon.h" />
+    <ClInclude Include="GBitmap.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Animation">
@@ -134,5 +141,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="GEnums.inl" />
+    <None Include="GTerrain.h" />
   </ItemGroup>
 </Project>

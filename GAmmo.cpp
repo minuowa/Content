@@ -3,7 +3,7 @@
 
 GAmmo::GAmmo ( void )
 {
-    getTrans().mfSpeedMove = 150;
+    getTrans().mSpeedMove = 150;
 
 }
 
@@ -15,8 +15,8 @@ GAmmo::~GAmmo ( void )
 void GAmmo::Shoot()
 {
     m_bForceOnMap = true;
-    getTrans().mbAutoMove = true;
-    getTrans().mvSpeed = getTrans().mfSpeedMove * getTrans().mDir;
+    getTrans().mAutoMove = true;
+    getTrans().mSpeed = getTrans().mSpeedMove * getTrans().mDir;
 }
 
 
