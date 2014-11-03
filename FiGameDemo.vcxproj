@@ -132,6 +132,7 @@
     <ClCompile Include="GComponentInterface.cpp" />
     <ClCompile Include="GComponentMesh.cpp" />
     <ClCompile Include="GD9Device.cpp" />
+    <ClCompile Include="GFrustum.cpp" />
     <ClCompile Include="GGameOption.cpp" />
     <ClCompile Include="GHeightMap.cpp" />
     <ClCompile Include="GMeshData.cpp" />
@@ -143,6 +144,7 @@
     <ClCompile Include="GBound.cpp" />
     <ClCompile Include="GTerrain.cpp" />
     <ClCompile Include="GTerrainCommon.cpp" />
+    <ClCompile Include="GTerrainNode.cpp" />
     <ClCompile Include="GWorldCorrd.cpp" />
     <ClCompile Include="GD8Input.cpp" />
     <ClCompile Include="GMeshBuffer.cpp" />
@@ -189,6 +191,7 @@
     <ClInclude Include="GEnums.h" />
     <ClInclude Include="GEnumTypesStrings.h" />
     <ClInclude Include="GFactory.h" />
+    <ClInclude Include="GFrustum.h" />
     <ClInclude Include="GGameOption.h" />
     <ClInclude Include="GHeightMap.h" />
     <ClInclude Include="GMeshData.h" />
@@ -196,6 +199,7 @@
     <ClInclude Include="GObject.h" />
     <ClInclude Include="GResourceManager.h" />
     <ClInclude Include="GTerrainCommon.h" />
+    <ClInclude Include="GTerrainNode.h" />
     <ClInclude Include="GWorldCorrd.h" />
     <ClInclude Include="GD8Input.h" />
     <ClInclude Include="GD9Device.h" />

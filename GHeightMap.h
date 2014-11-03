@@ -1,5 +1,3 @@
-namespace GameEditor
-{
 class GxHeightMap
 {
 public:
@@ -18,5 +16,4 @@ protected:
 	float	MaxHeight;
 	GString FileName;
 };
-}
 

@@ -48,11 +48,15 @@ class GComponentBase: public GComponentInterface
 {
 public:
 	enum{ComponentType=TYPE,};
-    GComponentBase()
+	virtual void set()
+	{
+	};
+	GComponentBase()
     {
         mComponentType = TYPE;
     }
 };
+
 
 class GComponentOwner
 {

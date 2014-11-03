@@ -429,7 +429,7 @@ DWORD WINAPI loadObj ( LPVOID pParam )
 
 	if (1)
 	{
-		GameEditor::GxMap* xmap=new GameEditor::GxMap(5,50);
+		GTerrain* xmap=new GTerrain(8,20);
 		TheSceneMgr->addDynaObj ( xmap );
 	}
     //TheSceneMgr->mEye.InitTrack( &gAnimMesh[0] );

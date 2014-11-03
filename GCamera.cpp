@@ -1,11 +1,15 @@
 #include "GGameDemoHeader.h"
 #include "GCamera.h"
-//#include "GXNode.h"
 #include "GTimer.h"
-//CEye gEye;
+#include "GFrustum.h"
 
 GCamera::GCamera ( void )
 {
+    mMouseZoomFactor = 720.0F;
+    mNear = 0.01f;
+    mFieldOfView = ( float ) D3DX_PI / 4.0f;
+    mFar = 30000.0f;
+
     mCanGetInput = true;
     mpTransMan = NULL;
 
@@ -13,7 +17,7 @@ GCamera::GCamera ( void )
 
     mfLenTransMan = LEN_TRACE_MAN;
 
-    mpEyeCliper = NULL;
+    mCuller = NULL;
 
     matProj = NORMALMATRIX;
 
@@ -24,23 +28,23 @@ GCamera::GCamera ( void )
 
 GCamera::~GCamera ( void )
 {
-    dSafeDelete ( mpEyeCliper );
+    dSafeDelete ( mCuller );
     D9DEVICE->mOnResetDevice -= this;
 }
 
 void GCamera::setProj()
 {
-    float aspect = ( ( float ) ( D9DEVICE->mWidth ) ) / ( ( float ) ( D9DEVICE->mHeight ) );
+    mAspect = ( ( float ) ( D9DEVICE->mWidth ) ) / ( ( float ) ( D9DEVICE->mHeight ) );
 
-    D3DXMatrixPerspectiveFovLH ( &matProj, D3DX_PI / 4.0f, aspect, 1.0f, Max_Eye_Distance );
+    D3DXMatrixPerspectiveFovLH ( &matProj, mFieldOfView, mAspect, mNear, mFar );
 
     if ( D9DEVICE != NULL )
     {
         D9DEVICE->GetDvc()->SetTransform ( D3DTS_PROJECTION, &matProj );
     }
-    if ( mpEyeCliper == nullptr )
-        mpEyeCliper = new GCuller ( Max_Eye_Distance, D3DX_PI / 4.0f, aspect );
-
+    if ( mCuller == nullptr )
+        mCuller = new GFrustum();
+    mCuller->update ( this );
 }
 
 
@@ -172,8 +176,8 @@ bool GCamera::InitTrack ( GNode *pWorldObj )
 void GCamera::update()
 {
     __super::update();
-    if ( mpEyeCliper )
-        mpEyeCliper->Update ( & ( GetWorldMatrix ( false ) ) );
+    //if ( mCuller )
+    //    mCuller->Update ( & ( GetWorldMatrix ( false ) ) );
 }
 
 void GCamera::onCallBack ( const CXDelegate& delgate )
@@ -187,6 +191,45 @@ void GCamera::onCallBack ( const CXDelegate& delgate )
 void GCamera::moveTo ( D3DXMATRIX& matrix )
 {
     getTrans().moveTo ( matrix, 3000 );
+}
+
+void GCamera::cliper ( GNode* n )
+{
+
+}
+
+float GCamera::getNear() const
+{
+    return mNear;
+}
+
+float GCamera::getFar() const
+{
+    return mFar;
+}
+
+float GCamera::getFov() const
+{
+    return mFieldOfView;
+}
+
+float GCamera::getAspect() const
+{
+    return mAspect;
+}
+
+GFrustum* GCamera::getCuller() const
+{
+    return mCuller;
+}
+
+void GCamera::getObjectCorrdPos ( D3DXVECTOR3& out, GNode* obj )
+{
+    CXASSERT ( obj );
+    D3DXMATRIX mat = obj->getTrans().GetWorldMatrix ( false );
+    D3DXMatrixInverse ( &mat, 0, &mat );
+    out = getTrans().mTranslate;
+    D3DXVec3TransformCoord ( &out, &out, &mat );
 }
 
 

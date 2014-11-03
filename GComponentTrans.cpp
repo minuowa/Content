@@ -1,6 +1,7 @@
 #include "GGameDemoHeader.h"
 #include "GComponentTrans.h"
 #include "GTimer.h"
+#include "GD9Device.h"
 
 GComponentTrans::GComponentTrans ( void )
 {
@@ -370,6 +371,12 @@ void GComponentTrans::setRotation ( D3DXMATRIX& mat )
     mDir.x = mat._31;
     mDir.y = mat._32;
     mDir.z = mat._33;
+}
+
+void GComponentTrans::set()
+{
+    D3DXMATRIX mat = GetWorldMatrix ( false );
+    D9DEVICE->GetDvc()->SetTransform ( D3DTS_WORLD, &mat );
 }
 
 //void CXPosition::Update( float fPass,void *pMap )

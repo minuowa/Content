@@ -61,6 +61,8 @@
     <ClCompile Include="GHeightMap.cpp" />
     <ClCompile Include="GTerrainCommon.cpp" />
     <ClCompile Include="GBitmap.cpp" />
+    <ClCompile Include="GTerrainNode.cpp" />
+    <ClCompile Include="GFrustum.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameStaticObj.h" />
@@ -130,6 +132,8 @@
     <ClInclude Include="GHeightMap.h" />
     <ClInclude Include="GTerrainCommon.h" />
     <ClInclude Include="GBitmap.h" />
+    <ClInclude Include="GTerrainNode.h" />
+    <ClInclude Include="GFrustum.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Animation">

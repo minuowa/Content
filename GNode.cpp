@@ -442,7 +442,7 @@ bool GNode::removeChild ( GNode* child )
 
 void GNode::beginRender()
 {
-
+	getTrans().set();
 }
 
 void GNode::endRender()

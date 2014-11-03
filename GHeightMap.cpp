@@ -2,7 +2,7 @@
 #include "GHeightMap.h"
 
 
-GameEditor::GxHeightMap::GxHeightMap( float Width, float Length,float MinHeight,float MaxHeight, const char* FileName )
+GxHeightMap::GxHeightMap( float Width, float Length,float MinHeight,float MaxHeight, const char* FileName )
 {
 	Datas=nullptr;
 	Width = 0;
@@ -33,7 +33,7 @@ GameEditor::GxHeightMap::GxHeightMap( float Width, float Length,float MinHeight,
 	//}
 }
 
-float GameEditor::GxHeightMap::GetHeight( float X, float Z )
+float GxHeightMap::GetHeight( float X, float Z )
 {
 	//ZIndex越大越靠近高度图上边
 	int XIndex = ( int ) ( ( X + RanageX / 2.0f ) / RanageX * ( Width - 1 ) );
@@ -41,7 +41,7 @@ float GameEditor::GxHeightMap::GetHeight( float X, float Z )
 	return ( 0xff & Datas[XIndex + Width * ( Height - 1 - ZIndex )] ) * ( MaxHeight - MinHeight ) / 255.0f;
 }
 
-void GameEditor::GxHeightMap::SetHeight( float X, float Z, float Y )
+void GxHeightMap::SetHeight( float X, float Z, float Y )
 {
 	byte b = ( byte ) ( Y / ( float ) ( MaxHeight - MinHeight ) * 255.0f );
 	if ( b > 255 )
@@ -53,7 +53,7 @@ void GameEditor::GxHeightMap::SetHeight( float X, float Z, float Y )
 	//Datas[XIndex + Width * ( Height - 1 - ZIndex )] = Color.FromArgb ( 255, b, b, b ).ToArgb();
 }
 
-void GameEditor::GxHeightMap::Save()
+void GxHeightMap::Save()
 {
 	//Bitmap HeightMap = new Bitmap ( Width, Height, PixelFormat.Format32bppArgb );
 	//for ( int i = 0; i < Height; i++ )

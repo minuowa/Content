@@ -77,6 +77,7 @@ public:
     GNode* createObjByTypeName ( const char* typeName );
 	GCamera* findFirstCameraInScene(GNode* n);
 	GCamera* changeToNextCamera();
+	GCamera* getCurCamera()const;
 	void moveToNextCamera();
 public:
 	bool setInnerNode(GNode* rootNode);

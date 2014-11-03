@@ -368,6 +368,11 @@ void GSceneManager::moveToNextCamera()
 
 }
 
+GCamera* GSceneManager::getCurCamera() const
+{
+	return mCurCamera;
+}
+
 
 CSceneMachine::CSceneMachine()
 {

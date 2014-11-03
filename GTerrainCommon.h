@@ -8,7 +8,7 @@ struct EXVertex
     int Color;
     float Tu;
     float Tv;
-    D3DXVECTOR4 Txt1;
+    //D3DXVECTOR4 Txt1;
 	EXVertex();
     EXVertex ( float x, float y, float z, float nx, float ny, float nz, int color, float tu, float tv );
     //private static VertexElement[] _VertexElements = null;
@@ -44,8 +44,36 @@ struct EXVertex
     //	}
     //}
 
-    static const int Format = D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_DIFFUSE | D3DFVF_TEX0 | D3DFVF_TEX1;
+    static const int Format = D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_DIFFUSE | D3DFVF_TEX1 /*| D3DFVF_TEX1*/;
 };
-
+struct GCubeBound
+{
+	float mMinX;
+	float mMaxX;
+	float mMinY;
+	float mMaxY;
+	float mMinZ;
+	float mMaxZ;
+	D3DXVECTOR3 mCenter;
+	float mRadius;
+	GCubeBound();
+	void updateRadius();
+	void updateCenter();
+};
+struct HitInfo
+{
+	bool Hited;
+	D3DXVECTOR3 HitPoint;
+	int Index[3];
+	float U ;
+	float V ;
+	float Distance;
+	int TriangleIndex ;
+	static int SortByDistance ( HitInfo a1, HitInfo a2 )
+	{
+		return a1.Distance == a2.Distance ;
+	}
+	HitInfo();
+};
 
 #endif // GTerrainCommon_h__

@@ -37,6 +37,7 @@ public:
 public:
     virtual void registerAllProperty();
 public:
+	virtual void set()override;
     D3DXMATRIX GetWorldMatrix ( bool bForTrans = false );
 
     D3DXMATRIX GetRotationMatrix ( bool bForTrans = false );
