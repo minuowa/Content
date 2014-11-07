@@ -44,7 +44,7 @@ public:
 	bool render();
 
 public:
-	
+
 	CRectMesh mParticles;
 
 };

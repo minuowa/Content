@@ -4,8 +4,8 @@
 #include "GEnums.h"
 //-------------------------------------------------------------------------
 /**
-	@brief 
-	@author nnboy,14/10/2014  11:50
+@brief 
+@author nnboy,14/10/2014  11:50
 */
 class GGameOption:public GObject
 {

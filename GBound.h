@@ -24,7 +24,7 @@ class CBoundAABB:public GBound
 public:
 
 	CBoundAABB();
-	
+
 	~CBoundAABB();
 
 public:

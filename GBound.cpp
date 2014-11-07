@@ -31,7 +31,7 @@ CBoundAABB::~CBoundAABB()
 bool CBoundAABB::Init( ID3DXMesh *pMesh )
 {
 	GBound::Init( pMesh );
-	
+
 	HRESULT hr=S_FALSE;
 
 	if (pMesh==NULL)

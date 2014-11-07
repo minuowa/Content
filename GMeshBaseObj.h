@@ -4,27 +4,27 @@
 
 class GMeshBufferNode;
 class GMeshBaseObj :
-    public GRenderObject
+	public GRenderObject
 {
 	DeclareEditorType(GMeshBaseObj);
-    public:
-        GMeshBaseObj( void );
-        ~GMeshBaseObj( void );
+public:
+	GMeshBaseObj( void );
+	~GMeshBaseObj( void );
 
-		virtual void registerAllProperty();
+	virtual void registerAllProperty();
 
-		bool render();
+	bool render();
 
-        ID3DXMesh *getMeshByUsage( eMeshUsage mu );
+	ID3DXMesh *getMeshByUsage( eMeshUsage mu );
 
-		bool pick( const POINT& pt );
+	bool pick( const POINT& pt );
 
-		bool checkIntersect(const D3DXVECTOR4& vPos, /*世界坐标系中的点 */ const D3DXVECTOR4& vDir, /*世界坐标系中的向量 */ bool bInsectInfo /*是 裥枰鲎残畔?*/ );
-		
-		/** @brief 生成碰撞mesh **/
-		ID3DXMesh* recreateInsectMesh();
+	bool checkIntersect(const D3DXVECTOR4& vPos, /*世界坐标系中的点 */ const D3DXVECTOR4& vDir, /*世界坐标系中的向量 */ bool bInsectInfo /*是 裥枰鲎残畔?*/ );
+
+	/** @brief 生成碰撞mesh **/
+	ID3DXMesh* recreateInsectMesh();
 protected:
-        //渲染所需参数
-        GMeshBufferNode* mMeshBufferNode;
-		ID3DXMesh*	mMeshForInsect;
+	//渲染所需参数
+	GMeshBufferNode* mMeshBufferNode;
+	ID3DXMesh*	mMeshForInsect;
 };

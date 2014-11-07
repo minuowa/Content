@@ -6,53 +6,53 @@
 
 struct MeshNodeForLod   //LODMeshµÄ½Úµã
 {
-    ID3DXMesh *pMesh[LOD_MAX_LEVEL];
+	ID3DXMesh *pMesh[LOD_MAX_LEVEL];
 
-    MeshNodeForLod()
-    {
-        ZeroMemory( pMesh, sizeof( pMesh ) );
-    }
+	MeshNodeForLod()
+	{
+		ZeroMemory( pMesh, sizeof( pMesh ) );
+	}
 
 };
 
 class GMeshBufferNode
 {
-    public:
+public:
 
-        GMeshBufferNode();
+	GMeshBufferNode();
 
-        ~GMeshBufferNode();
+	~GMeshBufferNode();
 
-        HRESULT MakeLod( DWORD* pAdj );
+	HRESULT MakeLod( DWORD* pAdj );
 
-		bool draw();
+	bool draw();
 
-		void Add(GMetrialData* data)
-		{
-			mRenderData.push_back(data);
-		}
-		WORD getSubCount() const { return mSubSetCount; }
-		void setSubCount(WORD val) { mSubSetCount = val; }
-		GMetrialData* getMaterial(CXIndex idx) const;
-    public:
-		ID3DXMesh*		mMesh;
-		ID3DXMesh* getMesh() const { return mMesh; }
-		void setMesh(ID3DXMesh* val) { mMesh = val; }
-		WORD			mSubSetCount;
-		GRenderDataArr	mRenderData;
-		GString		mFileName;
+	void Add(GMetrialData* data)
+	{
+		mRenderData.push_back(data);
+	}
+	WORD getSubCount() const { return mSubSetCount; }
+	void setSubCount(WORD val) { mSubSetCount = val; }
+	GMetrialData* getMaterial(CXIndex idx) const;
+public:
+	ID3DXMesh*		mMesh;
+	ID3DXMesh* getMesh() const { return mMesh; }
+	void setMesh(ID3DXMesh* val) { mMesh = val; }
+	WORD			mSubSetCount;
+	GRenderDataArr	mRenderData;
+	GString		mFileName;
 };
 
 typedef CXMap<GString,GMeshBufferNode*> GMeshBufferNodeMap;
 class GMeshManager
 {
-    public:
-        GMeshManager( void );
-        ~GMeshManager( void );
-        bool Init();
-		GMeshBufferNode*	QueryCreate(const char* fileName);
+public:
+	GMeshManager( void );
+	~GMeshManager( void );
+	bool Init();
+	GMeshBufferNode*	QueryCreate(const char* fileName);
 public:
 	GMeshBufferNode*	CreateFormFile( const char* fileName );
-        GMeshBufferNodeMap	mMeshMap;
+	GMeshBufferNodeMap	mMeshMap;
 };
 #define MeshMgr CXSingleton<GMeshManager>::GetSingleton()

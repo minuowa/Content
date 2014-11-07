@@ -1,17 +1,17 @@
 #pragma once
 #include "XMap.h"
- //warning C4150: 删除指向不完整“GAnimationResource”类型的指针；没有调用析构函数
+//warning C4150: 删除指向不完整“GAnimationResource”类型的指针；没有调用析构函数
 template<typename T>
 class GResourceManager
 {
 public:
-    typedef CXMap<GString, T*> ResourceMap;
+	typedef CXMap<GString, T*> ResourceMap;
 public:
-    virtual ~GResourceManager ( void );
+	virtual ~GResourceManager ( void );
 public:
-    T* getResource ( const char* name );
+	T* getResource ( const char* name );
 private:
-    ResourceMap	mResourceMap;
+	ResourceMap	mResourceMap;
 };
 
 template<typename T>

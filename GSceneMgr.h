@@ -14,96 +14,96 @@
 
 enum eGameScene
 {
-    gsNull,
+	gsNull,
 
-    gsLoading,
+	gsLoading,
 
-    gsGame,
+	gsGame,
 
-    gslogin,			//µÇÂ¼
+	gslogin,			//µÇÂ¼
 };
 
 class CSceneMachine
 {
 public:
 
-    CSceneMachine();
+	CSceneMachine();
 
-    ~CSceneMachine();
+	~CSceneMachine();
 public:
 
-    eGameScene GetNowScene();
+	eGameScene GetNowScene();
 
-    void ChangeToScene ( eGameScene gs );
+	void ChangeToScene ( eGameScene gs );
 
 public:
 
-    eGameScene mgsNowScene;
+	eGameScene mgsNowScene;
 
-    eGameScene mgsContainer[SCENENUM];
+	eGameScene mgsContainer[SCENENUM];
 
 };
 
 class GSceneManager: public CXCallBack
 {
 public:
-    GSceneManager ( void );
-    ~GSceneManager ( void );
+	GSceneManager ( void );
+	~GSceneManager ( void );
 public:
 
-    void cull();
+	void cull();
 	bool init ();
-    void* getInput ( float fPass );
-    void setView();
-    void setProj();
-    void update ( float fPass );
-    void destroy ( CGameStaticObj *pObj );
-    bool saveScene ( CChar* xmlFile );
-    bool loadScene ( const char* xmlFile );
-    void addStaticObj ( GNode* node );
-    void addDynaObj ( GNode* node );
-    void addObj ( GNode* node, GNode* parent = nullptr );
-    void addObj ( const char* parentName, const char* typeName );
+	void* getInput ( float fPass );
+	void setView();
+	void setProj();
+	void update ( float fPass );
+	void destroy ( CGameStaticObj *pObj );
+	bool saveScene ( CChar* xmlFile );
+	bool loadScene ( const char* xmlFile );
+	void addStaticObj ( GNode* node );
+	void addDynaObj ( GNode* node );
+	void addObj ( GNode* node, GNode* parent = nullptr );
+	void addObj ( const char* parentName, const char* typeName );
 	void deleteObj(const char* name);
 
-    void ProcessEvent();
-    void selectObjByName ( const char* name );
-    GNode* getNodeByName ( const char* name );
+	void ProcessEvent();
+	void selectObjByName ( const char* name );
+	GNode* getNodeByName ( const char* name );
 
-    const CharStringArr& getGameObjectTypes();
-    const CharStringArr& getObjectComponentTypes();
-    void setOperatorObj ( int objID );
-    GNode* getSceneRoot() const;
-    GNode* createObjByTypeName ( const char* typeName );
+	const CharStringArr& getGameObjectTypes();
+	const CharStringArr& getObjectComponentTypes();
+	void setOperatorObj ( int objID );
+	GNode* getSceneRoot() const;
+	GNode* createObjByTypeName ( const char* typeName );
 	GCamera* findFirstCameraInScene(GNode* n);
 	GCamera* changeToNextCamera();
 	GCamera* getCurCamera()const;
 	void moveToNextCamera();
 public:
 	bool setInnerNode(GNode* rootNode);
-    void initNodeFactory();
-    void initComponentFactory();
-    virtual void onCallBack ( const CXDelegate& delgate );
+	void initNodeFactory();
+	void initComponentFactory();
+	virtual void onCallBack ( const CXDelegate& delgate );
 
 
-    //virtual bool OnNotify(const EditorEvent& event);
+	//virtual bool OnNotify(const EditorEvent& event);
 
-    int mRenderObjNum;
+	int mRenderObjNum;
 
 	CXDelegate mDelegateReloadScene;
 
-    GCamera* mCurCamera;
+	GCamera* mCurCamera;
 	GString mUsingCamera;
-    CSceneMachine mSceneMachine;
+	CSceneMachine mSceneMachine;
 
-    GNode* mSceneRootNode;
-    GNode* mSceneStaticRootNode;
-    GNode* mSceneDynamicRootNode;
+	GNode* mSceneRootNode;
+	GNode* mSceneStaticRootNode;
+	GNode* mSceneDynamicRootNode;
 
-    GFactory<GNode> mGameObjFactory;
+	GFactory<GNode> mGameObjFactory;
 
-    CXIndex mOperatoredObj;
+	CXIndex mOperatoredObj;
 
-    CharStringArr mGameObjectTypeArray;
-    CharStringArr mObjectComponentTypeArray;
+	CharStringArr mGameObjectTypeArray;
+	CharStringArr mObjectComponentTypeArray;
 };

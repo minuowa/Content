@@ -26,14 +26,14 @@ public:
 
 	FiDeclareSingleton( GGame );
 public:
-    GGame(void);
-    ~GGame(void);
+	GGame(void);
+	~GGame(void);
 
 	virtual bool init(HWND mainWnd);
 
-    virtual void loop();
+	virtual void loop();
 
-    void shutDown();
+	void shutDown();
 
 	void finish();
 public:
@@ -42,11 +42,11 @@ public:
 
 private:
 
-    void getInput();
+	void getInput();
 
-    void update();
+	void update();
 
-    void render( );
+	void render( );
 
 public:
 
@@ -57,6 +57,7 @@ public:
 	GMeshBaseObj *mpSelectObj;
 
 	GAnimMeshObj *mpSelectAnim;
+
 
 private:
 

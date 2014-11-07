@@ -4,8 +4,8 @@
 class GFrameWork:public CXCallBack
 {
 public:
-    GFrameWork(void);
-    virtual ~GFrameWork(void);
+	GFrameWork(void);
+	virtual ~GFrameWork(void);
 public:
 	virtual bool init(HWND mainWnd);//初始化游戏  
 	void active(bool active);
@@ -13,7 +13,7 @@ public:
 	HWND getMainWin() const { return mMainWin; }
 	void resize(int w,int h);
 public:
-    HWND mMainWin;//主窗口句柄
+	HWND mMainWin;//主窗口句柄
 	HINSTANCE mInst;//Game进程 
 	bool mIsActive;
 

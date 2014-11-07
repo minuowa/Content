@@ -16,20 +16,20 @@ GMeshManager::~GMeshManager ( void )
 
 GMeshBufferNode* GMeshManager::QueryCreate ( const char* fileName )
 {
-    GMeshBufferNode* node = 0;
-    if ( !mMeshMap.Get ( fileName, node ) )
-    {
-        node = CreateFormFile ( fileName );
-        CXASSERT_RETURN_FALSE ( node );
-        mMeshMap.Insert ( fileName, node );
-    }
-    return node;
+	GMeshBufferNode* node = 0;
+	if ( !mMeshMap.Get ( fileName, node ) )
+	{
+		node = CreateFormFile ( fileName );
+		CXASSERT_RETURN_FALSE ( node );
+		mMeshMap.Insert ( fileName, node );
+	}
+	return node;
 }
 
 
 bool GMeshManager::Init()
 {
-    return true;
+	return true;
 }
 
 //void *GMeshBuffer::GetInput( float fPass )
@@ -82,42 +82,42 @@ bool GMeshManager::Init()
 //}
 GMeshBufferNode* GMeshManager::CreateFormFile ( const char* fileName )
 {
-    HRESULT hr = S_FALSE;
+	HRESULT hr = S_FALSE;
 
-    LPD3DXBUFFER pAdj = NULL;
-    LPD3DXBUFFER pMat = NULL;
-    DWORD LnAttrNum = 0;
+	LPD3DXBUFFER pAdj = NULL;
+	LPD3DXBUFFER pMat = NULL;
+	DWORD LnAttrNum = 0;
 
-    ID3DXMesh* rootMesh = 0;
+	ID3DXMesh* rootMesh = 0;
 
-    hr = D3DXLoadMeshFromXA ( fileName,
-                              D3DXMESH_MANAGED | D3DXMESH_32BIT,
-                              D9DEVICE->GetDvc(), &pAdj, &pMat, NULL, &LnAttrNum, &rootMesh );
+	hr = D3DXLoadMeshFromXA ( fileName,
+		D3DXMESH_MANAGED | D3DXMESH_32BIT,
+		D9DEVICE->GetDvc(), &pAdj, &pMat, NULL, &LnAttrNum, &rootMesh );
 
-    CXASSERT_RESULT_FALSE ( hr );
+	CXASSERT_RESULT_FALSE ( hr );
 
-    GMeshBufferNode* node = new GMeshBufferNode;
-    node->mFileName = fileName;
-    node->mMesh = rootMesh;
-    node->setSubCount ( LnAttrNum );
+	GMeshBufferNode* node = new GMeshBufferNode;
+	node->mFileName = fileName;
+	node->mMesh = rootMesh;
+	node->setSubCount ( LnAttrNum );
 
-    D3DXMATERIAL *pMatList = ( D3DXMATERIAL * ) pMat->GetBufferPointer();
+	D3DXMATERIAL *pMatList = ( D3DXMATERIAL * ) pMat->GetBufferPointer();
 
-    for ( DWORD i = 0; i < LnAttrNum; i++ )
-    {
-        GMetrialData* metrialData = new GMetrialData;
+	for ( DWORD i = 0; i < LnAttrNum; i++ )
+	{
+		GMetrialData* metrialData = new GMetrialData;
 
-        metrialData->setMetiral ( pMatList[i].MatD3D );
-        CXFileName path ( fileName );
-        GString textureName = path.GetRelativePath();
+		metrialData->setMetiral ( pMatList[i].MatD3D );
+		CXFileName path ( fileName );
+		GString textureName = path.GetRelativePath();
 
-        if ( pMatList[i].pTextureFilename != NULL )
-        {
-            textureName.append ( pMatList[i].pTextureFilename );
-            metrialData->setTexture ( textureName );
-        }
-    }
-    return node;
+		if ( pMatList[i].pTextureFilename != NULL )
+		{
+			textureName.append ( pMatList[i].pTextureFilename );
+			metrialData->setTexture ( textureName );
+		}
+	}
+	return node;
 }
 
 GMeshBufferNode::GMeshBufferNode()
@@ -129,27 +129,27 @@ GMeshBufferNode::GMeshBufferNode()
 
 bool GMeshBufferNode::draw()
 {
-    CXASSERT_RESULT_FALSE ( mRenderData.size() == mSubSetCount );
-    CXASSERT_RETURN_FALSE ( mMesh );
+	CXASSERT_RESULT_FALSE ( mRenderData.size() == mSubSetCount );
+	CXASSERT_RETURN_FALSE ( mMesh );
 
-    for ( int i = 0; i < mSubSetCount; ++i )
-    {
-        GMetrialData* renderData = mRenderData[i];
-        renderData->set();
-        mMesh->DrawSubset ( i );
-    }
-    return true;
+	for ( int i = 0; i < mSubSetCount; ++i )
+	{
+		GMetrialData* renderData = mRenderData[i];
+		renderData->set();
+		mMesh->DrawSubset ( i );
+	}
+	return true;
 }
 
 HRESULT GMeshBufferNode::MakeLod ( DWORD* pAdj )
 {
-    return S_OK;
+	return S_OK;
 }
 
 GMeshBufferNode::~GMeshBufferNode()
 {
-    dSafeRelease ( mMesh );
-    dSafeDeleteVector ( mRenderData );
+	dSafeRelease ( mMesh );
+	dSafeDeleteVector ( mRenderData );
 }
 
 GMetrialData* GMeshBufferNode::getMaterial( CXIndex idx ) const

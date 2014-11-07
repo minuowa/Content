@@ -1,10 +1,11 @@
+#include "GTerrainCommon.h"
 
 static const u32 G_TERRAIN_CHILD_NUM = 4;
 static const u32 G_TERRAIN_FACE_NUM = 2;
 static const u32 G_TERRAIN_INDEX_NUM = 3;
 static const u32 G_TERRAIN_CELL_BASE_INDEX_NUM = G_TERRAIN_CHILD_NUM * G_TERRAIN_FACE_NUM * G_TERRAIN_INDEX_NUM;
 static const u32 G_TERRAIN_CELL_MAX_INDEX_NUM = G_TERRAIN_CELL_BASE_INDEX_NUM * 2;
-class GxHeightMap;
+class GHeightMap;
 struct GCubeBound;
 struct HitInfo;
 class GCamera;
@@ -12,11 +13,7 @@ struct EXVertex;
 class GTerrain;
 class GTerrainNode
 {
-public:
-    /** @brief center,node **/
-    typedef CXMap<int, GTerrainNode*> GCenter_NodesMap;
-    /** @brief level,nodesMap **/
-    typedef CXMap<int, GCenter_NodesMap*> GLevel_NodesMap;
+
 public:
     enum RepairType
     {
@@ -40,8 +37,8 @@ public:
         CenterType_RightBotttom,
         CenterType_RightTop,
         CenterType_LeftTop,
-		CenterType_Max,
-	};
+        CenterType_Max,
+    };
     enum NotRenderReason
     {
         None,
@@ -51,33 +48,37 @@ public:
         LevelHigh,
     };
 public:
-    GTerrainNode ( int level, Pose pose = Pose_Root );
-    ~GTerrainNode();
+    GTerrainNode();
+    virtual ~GTerrainNode();
 
     void setVertexBuffer ( IDirect3DVertexBuffer9* VB, GTerrain* owner );
     void reset();
     /** @brief add indices into terrain indexbuffer **/
-    void addIndexToTerrain ( GTerrain* owner );
+	void addIndexToTerrain ( GTerrain* owner,bool lodMode );
     void pick ( D3DXVECTOR3 orgin, D3DXVECTOR3 dir, CXDynaArray<HitInfo*>& AllHits );
 
 
-	bool buildIndexBuffer ( GTerrain* owner );
-    void build(GTerrain* owner);
+    bool buildIndexBuffer ( GTerrain* owner );
+    void build ( GTerrain* owner, int level, Pose pose = Pose_Root );
     void checkShouldRepair ( GTerrain* owner );
     void checkShouldRepair ( int center, GCenter_NodesMap& nodeMap, RepairType repairType );
     void repair();
-	void clipByCamera ( GCamera* camera,GTerrain* owner );
+    void clipByCamera ( GCamera* camera, GTerrain* owner );
     void buildBound ( GTerrain* owner );
 
     void repairCrack ( GTerrainNode* node, RepairType t , int* buffer );
-protected:
+public:
+	static void* operator new(unsigned int n)
+	{
+		return mObjectPool.acquireObject();
+	}
+	static void operator delete(void* p)
+	{
+		mObjectPool.releaseObject ( p );
+	}
+    static CXObjectPool<GTerrainNode> mObjectPool;
 public :
     static const int InvalidNumber = ~0;
-
-
-
-    //第一个int为level，第二个int为center，同一个level的QNode的Center必不相同
-    static GLevel_NodesMap mNodeMaps;
 
     typedef CXMap<RepairType, bool> RepairTypeMap;
     RepairTypeMap mRepairDatas;
@@ -91,15 +92,13 @@ public :
 
 
 
-    static int RootPos;
-    static int RootLevel;
     static int NodeCount;
 
     Pose mPose;
 
 
     //level=1的为叶子节点
-    int Level ;
+    int mLevel ;
 
     GTerrainNode* mChildren[G_TERRAIN_CHILD_NUM];
     GTerrainNode* mParentNode;

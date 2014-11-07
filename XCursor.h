@@ -26,13 +26,13 @@ public:
 	CXCursor(void);
 
 	~CXCursor(void);
-	
+
 	bool Init();
 
 	void SetNowCursor(eCursor cur);
 
 	HCURSOR GetNowCursor();
-	
+
 private:
 
 	HCURSOR mhCursor[CURSORNUM];

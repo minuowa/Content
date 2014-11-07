@@ -5,21 +5,21 @@
 class CXEvent
 {
 public:
-    CXEvent ( void );
+	CXEvent ( void );
 
-    ~CXEvent ( void );
+	~CXEvent ( void );
 
 public:
 
-    GHandle Create ( char *sEventName );
+	GHandle Create ( char *sEventName );
 
-    void SetUsed();
+	void SetUsed();
 
-    void SetNoUse();
+	void SetNoUse();
 
-    void WaitForUse ( DWORD dwWaitTime );
+	void WaitForUse ( DWORD dwWaitTime );
 
-    GHandle mGHandle;
+	GHandle mGHandle;
 };
 
 extern CXEvent gEvent;

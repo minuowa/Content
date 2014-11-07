@@ -6,15 +6,13 @@
 #include "GCamera.h"
 #include "GFrustum.h"
 
-int GTerrainNode::RootPos = GTerrainNode::InvalidNumber;
-int GTerrainNode::RootLevel = 0;
 int GTerrainNode::NodeCount = 0;
 
 IDirect3DVertexBuffer9* GTerrainNode::mVertexBuffer = nullptr;
 
 void GTerrainNode::buildBound ( GTerrain* owner )
 {
-    if ( mVertexBuffer == nullptr )
+    if ( mVertexBuffer                                   == nullptr )
         return;
 
     mBound = new GCubeBound();
@@ -30,23 +28,23 @@ void GTerrainNode::buildBound ( GTerrain* owner )
             {
                 mBound->mMinX = pos.Pos.x;
             }
-            if ( pos.Pos.x > mBound->mMaxX )
+            if ( pos               .Pos.x > mBound->mMaxX )
             {
                 mBound->mMaxX = pos.Pos.x;
             }
-            if ( pos.Pos.y < mBound->mMinY )
+            if ( pos               .Pos.y < mBound->mMinY )
             {
                 mBound->mMinY = pos.Pos.y;
             }
-            if ( pos.Pos.y > mBound->mMaxY )
+            if ( pos               .Pos.y > mBound->mMaxY )
             {
                 mBound->mMaxY = pos.Pos.y;
             }
-            if ( pos.Pos.z < mBound->mMinZ )
+            if ( pos               .Pos.z < mBound->mMinZ )
             {
                 mBound->mMinZ = pos.Pos.z;
             }
-            if ( pos.Pos.z > mBound->mMaxZ )
+            if ( pos               .Pos.z > mBound->mMaxZ )
             {
                 mBound->mMaxZ = pos.Pos.z;
             }
@@ -63,10 +61,10 @@ void GTerrainNode::buildBound ( GTerrain* owner )
     }
 }
 
-GTerrainNode::GTerrainNode ( int level, Pose pose )
-    : mPose ( pose )
+GTerrainNode::GTerrainNode ()
 {
-    Level = level;
+    mPose = Pose_Max;
+    mLevel = 0;
     mCenter = 0;
     dMemoryZeroArray ( mChildren );
     dMemoryZeroArray ( mConner );
@@ -78,12 +76,6 @@ GTerrainNode::GTerrainNode ( int level, Pose pose )
     mNotRenderReason = NotRenderReason::None;
     mRepairTimes = 0;
     mBound = nullptr;
-    GCenter_NodesMap* sameLevelNodes = 0;
-    if ( !mNodeMaps.Get ( level, sameLevelNodes ) )
-    {
-        sameLevelNodes = new GCenter_NodesMap;
-        mNodeMaps.Insert ( level, sameLevelNodes );
-    }
 }
 
 void GTerrainNode::setVertexBuffer ( IDirect3DVertexBuffer9* VB, GTerrain* owner )
@@ -113,49 +105,50 @@ void GTerrainNode::reset()
     }
 }
 
-void GTerrainNode::addIndexToTerrain ( GTerrain* owner )
+void GTerrainNode::addIndexToTerrain ( GTerrain* owner, bool lodMode )
 {
-    if ( mBeRender || mNotRenderReason == NotRenderReason::LevelHigh )
+    CXBuffer* dynamicBuffer = owner->getDynamicIndexBuffer();
+    if ( !lodMode )
     {
-        int VertexNum = 9;
-        int PrimitiveNum = 8;
-        int StartIndex = 0;
-
-        CXBuffer* dynamicBuffer = owner->getDynamicIndexBuffer();
-
-        if (
-            ( mNotRenderReason == NotRenderReason::LevelHigh && mBeNeedRepair )
-            ||
-            mBeRender
-        )
-        {
-            if ( mNotRenderReason == NotRenderReason::LevelHigh || owner->isDisplayRepairAreaOnly() )
-            {
-                VertexNum = mRepairTimes * 2;
-                PrimitiveNum = mRepairTimes * 2;
-                StartIndex = 24;
-            }
-            else
-            {
-                VertexNum = 9 + mRepairTimes * 2; ;
-                PrimitiveNum = 8 + mRepairTimes * 2;
-                StartIndex = 0;
-            }
-
-            //D9DEVICE->GetDvc()->DrawIndexedPrimitive ( D3DPT_TRIANGLELIST, 0, 0, VertexNum
-            //        , StartIndex, PrimitiveNum );
-        }
-        dynamicBuffer->addElement ( &mIndices[StartIndex], PrimitiveNum * 3 );
-        //GxDevice.DVC.DrawIndexedPrimitives(
-        //    PrimitiveType.TriangleList,
-        //    0, 0,
-        //    9,
-        //    0, 8);
+        if ( mLevel == 1 )
+            dynamicBuffer->addElement ( &mIndices[0], 8 * 3 );
     }
+    else
+    {
+        if ( mBeRender || mNotRenderReason == NotRenderReason::LevelHigh )
+        {
+            int VertexNum = 9;
+            int PrimitiveNum = 8;
+            int StartIndex = 0;
+
+
+            if (
+                ( mNotRenderReason == NotRenderReason::LevelHigh && mBeNeedRepair )
+                ||
+                mBeRender
+            )
+            {
+                if ( mNotRenderReason == NotRenderReason::LevelHigh || owner->isDisplayRepairAreaOnly() )
+                {
+                    VertexNum = mRepairTimes * 2;
+                    PrimitiveNum = mRepairTimes * 2;
+                    StartIndex = 24;
+                }
+                else
+                {
+                    VertexNum = 9 + mRepairTimes * 2; ;
+                    PrimitiveNum = 8 + mRepairTimes * 2;
+                    StartIndex = 0;
+                }
+            }
+            dynamicBuffer->addElement ( &mIndices[StartIndex], PrimitiveNum * 3 );
+        }
+    }
+
     for ( int i = 0; i < 4; i++ )
     {
         if ( mChildren[i] != nullptr )
-            mChildren[i]->addIndexToTerrain ( owner );
+            mChildren[i]->addIndexToTerrain ( owner, lodMode );
     }
 }
 
@@ -177,7 +170,7 @@ void GTerrainNode::pick ( D3DXVECTOR3 orgin, D3DXVECTOR3 dir, CXDynaArray<HitInf
 {
     if ( GetDistanceFromPointToLine ( mBound->mCenter, orgin, dir ) < mBound->mRadius )
     {
-        if ( Level == 1 )
+        if ( mLevel == 1 )
         {
             //×öÅö×²¼ì²â
             EXVertex* VData;
@@ -185,7 +178,7 @@ void GTerrainNode::pick ( D3DXVECTOR3 orgin, D3DXVECTOR3 dir, CXDynaArray<HitInf
 
             for ( int i = 0; i < 8; i++ )
             {
-                D3DXVECTOR3 A = VData[mIndices[i * 3]].Pos;
+                D3DXVECTOR3 A = VData[mIndices[i * 3]]    .Pos;
                 D3DXVECTOR3 B = VData[mIndices[i * 3 + 1]].Pos;
                 D3DXVECTOR3 C = VData[mIndices[i * 3 + 2]].Pos;
                 D3DXPLANE plane;
@@ -327,19 +320,25 @@ bool GTerrainNode::buildIndexBuffer ( GTerrain* owner )
     return true;
 }
 
-void GTerrainNode::build ( GTerrain* owner )
+void GTerrainNode::build ( GTerrain* owner, int level, Pose pose  )
 {
-    buildIndexBuffer ( owner );
+    mLevel = level;
+    mPose = pose;
+    GCenter_NodesMap* sameLevelNodes = 0;
+    GLevel_NodesMap& levelNodesMap = owner->getNodesMap();
 
-    GCenter_NodesMap* NodeByCenter = mNodeMaps[Level];
-    if ( NodeByCenter != nullptr )
+    if ( !levelNodesMap.Get ( mLevel, sameLevelNodes ) )
     {
-        NodeByCenter->Insert ( mCenter, this );
+        sameLevelNodes = new GCenter_NodesMap;
+        levelNodesMap.Insert ( mLevel, sameLevelNodes );
     }
+
+    buildIndexBuffer ( owner );
+    sameLevelNodes->Insert ( mCenter, this );
 
     NodeCount++;
 
-    if ( Level <= 1 )
+    if ( mLevel <= 1 )
     {
         return;
     }
@@ -347,9 +346,9 @@ void GTerrainNode::build ( GTerrain* owner )
     {
         for ( int i = 0; i < 4; i++ )
         {
-            mChildren[i] = new GTerrainNode ( Level - 1, Pose ( i ) );
+            mChildren[i] = new GTerrainNode ();
             mChildren[i]->mParentNode = this;
-            mChildren[i]->build ( owner );
+            mChildren[i]->build ( owner, mLevel - 1, Pose ( i ) );
         }
     }
 }
@@ -366,14 +365,14 @@ void GTerrainNode::checkShouldRepair ( GTerrain* owner )
     if ( mBeRender )
     {
         int centers[Pose_Root];
-        centers[Left] = mCenter - ( ( int ) ( pow ( 2, Level ) ) );
-        centers[Right] = mCenter + ( ( int ) ( pow ( 2, Level ) ) );
-        centers[Top] = mCenter + ( ( int ) ( pow ( 2, Level ) ) ) * owner->getLineCount();
-        centers[Bottom] = mCenter - ( ( int ) ( pow ( 2, Level ) ) ) * owner->getLineCount();
+        centers[Left] = mCenter - ( ( int ) ( pow ( 2, mLevel ) ) );
+        centers[Right] = mCenter + ( ( int ) ( pow ( 2, mLevel ) ) );
+        centers[Top] = mCenter + ( ( int ) ( pow ( 2, mLevel ) ) ) * owner->getLineCount();
+        centers[Bottom] = mCenter - ( ( int ) ( pow ( 2, mLevel ) ) ) * owner->getLineCount();
 
-        GCenter_NodesMap *NodeByCenter = mNodeMaps[Level];
-
-        if ( NodeByCenter != nullptr )
+        GLevel_NodesMap& levelNodesMap = owner->getNodesMap();
+        GCenter_NodesMap *NodeByCenter = nullptr;
+        if ( levelNodesMap.Get ( mLevel, NodeByCenter ) )
         {
             mRepairDatas.clear();
             for ( int i = 0; i <= Bottom; ++i )
@@ -382,12 +381,10 @@ void GTerrainNode::checkShouldRepair ( GTerrain* owner )
             }
         }
 
-        if ( mChildren != nullptr )
+        for ( int i = 0; i < 4; i++ )
         {
-            for ( int i = 0; i < 4; i++ )
-            {
+            if ( mChildren[i] != nullptr )
                 mChildren[i]->checkShouldRepair ( owner );
-            }
         }
     }
 }
@@ -410,7 +407,7 @@ for ( auto p: mRepairDatas )
             mRepairTimes++;
         }
 
-        for ( int i = 0; i < intList.size(); i++ )
+        for ( u32 i = 0; i < intList.size(); i++ )
             mIndices[G_TERRAIN_CELL_BASE_INDEX_NUM + i] = intList[i];
     }
     for ( int i = 0; i < 4; i++ )
@@ -485,7 +482,7 @@ void GTerrainNode::clipByCamera ( GCamera* camera, GTerrain* owner )
         return;
     }
 
-    if ( Level == 1 )
+    if ( mLevel == 1 )
     {
         mBeRender = true;
         return;
@@ -495,10 +492,9 @@ void GTerrainNode::clipByCamera ( GCamera* camera, GTerrain* owner )
     float Distance = dVector3Length ( mBound->mCenter - cameraPos );
 
     float TargetLevel =
-        Distance / 800;
-    //(float)pow(Distance / GxMap::_DisFactor, GxMap::_Power);
+        Distance / owner->getLODFactor();
 
-    if ( TargetLevel < Level )
+    if ( TargetLevel < mLevel )
     {
         mBeRender = false;
         mNotRenderReason = NotRenderReason::LevelHigh;
@@ -517,8 +513,7 @@ void GTerrainNode::clipByCamera ( GCamera* camera, GTerrain* owner )
 GTerrainNode::~GTerrainNode()
 {
     dSafeDelete ( mBound );
-
-for ( auto c: mChildren )
+for ( auto & c: mChildren )
     {
         if ( c != nullptr )
         {
@@ -529,18 +524,16 @@ for ( auto c: mChildren )
 
 void GTerrainNode::checkShouldRepair ( int center, GCenter_NodesMap & nodeMap, RepairType repairType )
 {
-    if ( nodeMap.findkey ( center ) )
+    GTerrainNode* node = 0;
+    if ( nodeMap.Get ( center, node ) )
     {
-        if (
-            !nodeMap[center]->mBeRender &&
-            nodeMap[center]->mNotRenderReason == NotRenderReason::None
-        )
+        if ( !node->mBeRender && node->mNotRenderReason  == NotRenderReason::None )
         {
             mBeNeedRepair = true;
-            if ( !mRepairDatas.findkey ( RepairType::Bottom ) )
-                mRepairDatas.Insert ( RepairType::Bottom, true );
+            if ( !mRepairDatas.findkey ( repairType ) )
+                mRepairDatas.Insert ( repairType, true );
 
-            GTerrainNode* OthersParent = nodeMap[center]->mParentNode;
+            GTerrainNode* OthersParent = node->mParentNode;
             GTerrainNode* MyParent = mParentNode;
 
             while ( MyParent != nullptr )
@@ -563,7 +556,7 @@ void GTerrainNode::checkShouldRepair ( int center, GCenter_NodesMap & nodeMap, R
     }
 }
 
+CXObjectPool<GTerrainNode> GTerrainNode::mObjectPool ( 4096 );
+
 EXVertex* GTerrainNode::mVertexData = nullptr;
 
-
-GTerrainNode::GLevel_NodesMap GTerrainNode::mNodeMaps;

@@ -1,6 +1,6 @@
 GEnum ( eFillMode )
 {
 	GEle ( FillPoint )
-	GEle ( FillWire )
-	GEle ( FillSolid )
+		GEle ( FillWire )
+		GEle ( FillSolid )
 };

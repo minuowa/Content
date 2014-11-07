@@ -3,45 +3,45 @@
 #include "GFactory.h"
 enum eComponentType
 {
-    eComponentType_Trans,
-    eComponentType_Mesh,
-    eComponentType_Ani,
-    eComponentType_Effect,
-    eComponentType_Script,
+	eComponentType_Trans,
+	eComponentType_Mesh,
+	eComponentType_Ani,
+	eComponentType_Effect,
+	eComponentType_Script,
 	eComponentType_Box,
-    eComponentType_Particles,
-    eComponentType_Count,
+	eComponentType_Particles,
+	eComponentType_Count,
 };
 class GNode;
 class GComponentInterface :
-    public GObject
+	public GObject
 {
 public:
-    GComponentInterface ( void );
-    virtual ~GComponentInterface ( void );
+	GComponentInterface ( void );
+	virtual ~GComponentInterface ( void );
 	void SetTarget(GNode* target);
 	GNode* GetTarget() const;
 protected:
-    eComponentType	mComponentType;
+	eComponentType	mComponentType;
 	GNode*	mAutoTargetRotation;
-    bool	mCanDetach;
+	bool	mCanDetach;
 public:
 	inline eComponentType GetType()
 	{
 		return mComponentType;
 	}
-    inline const char* GetComponentName()
+	inline const char* GetComponentName()
 	{
 		return categoryName();
 	}
-    inline bool canDetach() const
-    {
-        return mCanDetach;
-    }
-    inline void setCanDetach ( bool can )
-    {
-        mCanDetach = can;
-    }
+	inline bool canDetach() const
+	{
+		return mCanDetach;
+	}
+	inline void setCanDetach ( bool can )
+	{
+		mCanDetach = can;
+	}
 };
 template<eComponentType TYPE>
 class GComponentBase: public GComponentInterface
@@ -52,20 +52,20 @@ public:
 	{
 	};
 	GComponentBase()
-    {
-        mComponentType = TYPE;
-    }
+	{
+		mComponentType = TYPE;
+	}
 };
 
 
 class GComponentOwner
 {
 public:
-    GComponentOwner();
+	GComponentOwner();
 	~GComponentOwner();
 
-    GComponentInterface* getComponent ( const char* name ) const;
-    GComponentInterface* getComponent ( eComponentType type ) const;
+	GComponentInterface* getComponent ( const char* name ) const;
+	GComponentInterface* getComponent ( eComponentType type ) const;
 
 	GComponentInterface* attachComponent ( eComponentType type);
 	GComponentInterface* attachComponent ( const char* name);
@@ -74,7 +74,7 @@ public:
 	void detachComponent ( eComponentType type );
 protected:
 
-    GComponentInterface* mCompoents[eComponentType_Count];
+	GComponentInterface* mCompoents[eComponentType_Count];
 };
 
 

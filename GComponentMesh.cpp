@@ -14,20 +14,20 @@ GComponentMesh::~GComponentMesh ( void )
 
 void GComponentMesh::registerAllProperty()
 {
-    __RegisterProperty ( mMeshFile );
+	__RegisterProperty ( mMeshFile );
 }
 
 void GComponentMesh::onPropertyChange ( void* pre, void* changed )
 {
-    if ( pre == &mMeshFile )
-    {
-        GString changedName;
-        dCast ( changedName, changed );
-        if ( changedName != mMeshFile && mAutoTargetRotation )
-        {
-            mMeshFile = changedName;
-            bool res = mAutoTargetRotation->recreate();
-            CXASSERT ( res );
-        }
-    }
+	if ( pre == &mMeshFile )
+	{
+		GString changedName;
+		dCast ( changedName, changed );
+		if ( changedName != mMeshFile && mAutoTargetRotation )
+		{
+			mMeshFile = changedName;
+			bool res = mAutoTargetRotation->recreate();
+			CXASSERT ( res );
+		}
+	}
 }

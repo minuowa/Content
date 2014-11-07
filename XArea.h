@@ -6,40 +6,40 @@
 class CXArea
 {
 
-    public:
+public:
 
-        CXArea( void );
+	CXArea( void );
 
-        ~CXArea( void );
+	~CXArea( void );
 
-        void Init();
+	void Init();
 
-    public:
-        virtual bool IsDotInArea( D3DXVECTOR3 vPos );					//点在该区域内为真，不在为假
+public:
+	virtual bool IsDotInArea( D3DXVECTOR3 vPos );					//点在该区域内为真，不在为假
 
-        virtual D3DXVECTOR3 GeneratePos();
+	virtual D3DXVECTOR3 GeneratePos();
 };
 
 class CAreaRect: public CXArea
 {
-    public:
+public:
 
-        CAreaRect();
+	CAreaRect();
 
-        ~CAreaRect();
+	~CAreaRect();
 
-    public:
+public:
 
-        void Init( float Height, float Width );
+	void Init( float Height, float Width );
 
-        bool IsDotInArea( D3DXVECTOR3 vPos );
+	bool IsDotInArea( D3DXVECTOR3 vPos );
 
-        D3DXVECTOR3 GeneratePos();
+	D3DXVECTOR3 GeneratePos();
 
-    public:
+public:
 
-        float m_fHeight;
-        float m_fWidth;
+	float m_fHeight;
+	float m_fWidth;
 
 
 
@@ -48,29 +48,29 @@ class CAreaRect: public CXArea
 class CAreaCube: public CXArea
 {
 
-    public:
+public:
 
-        CAreaCube();
+	CAreaCube();
 
-        ~CAreaCube();
+	~CAreaCube();
 
-        void Init( float xmin, float xmax, float ymin, float ymax, float zmin, float zmax );
+	void Init( float xmin, float xmax, float ymin, float ymax, float zmin, float zmax );
 
-    public:
+public:
 
-        virtual bool IsDotInArea( D3DXVECTOR3 vPos );
+	virtual bool IsDotInArea( D3DXVECTOR3 vPos );
 
-        virtual D3DXVECTOR3 GeneratePos();
+	virtual D3DXVECTOR3 GeneratePos();
 
-    public:
+public:
 
-        D3DXPLANE mPlanes[6];
+	D3DXPLANE mPlanes[6];
 
-        float mfxMin, mfxMax;
+	float mfxMin, mfxMax;
 
-        float mfyMin, mfyMax;
+	float mfyMin, mfyMax;
 
-        float mfzMin, mfzMax;
+	float mfzMin, mfzMax;
 
 
 
@@ -79,45 +79,45 @@ class CAreaCube: public CXArea
 class CAreaSphere : public CXArea
 {
 
-    public:
+public:
 
-        CAreaSphere();
+	CAreaSphere();
 
-        ~CAreaSphere();
+	~CAreaSphere();
 
-    public:
+public:
 
-        void Init( int nRadius );
+	void Init( int nRadius );
 
-        virtual bool IsDotInArea( D3DXVECTOR3 vPos );
+	virtual bool IsDotInArea( D3DXVECTOR3 vPos );
 
-        virtual D3DXVECTOR3 GeneratePos();
+	virtual D3DXVECTOR3 GeneratePos();
 
-    public:
+public:
 
-        int LnRadius;
+	int LnRadius;
 
 };
 
 class CAreaSphereHollow: public CXArea
 {
 
-    public:
+public:
 
-        CAreaSphereHollow();
+	CAreaSphereHollow();
 
-        ~CAreaSphereHollow();
+	~CAreaSphereHollow();
 
-    public:
+public:
 
-        void Init( int nRadius );
+	void Init( int nRadius );
 
-        virtual bool IsDotInArea( D3DXVECTOR3 vPos );
+	virtual bool IsDotInArea( D3DXVECTOR3 vPos );
 
-        virtual D3DXVECTOR3 GeneratePos();
+	virtual D3DXVECTOR3 GeneratePos();
 
-    public:
+public:
 
-        int LnRadius;
+	int LnRadius;
 
 };

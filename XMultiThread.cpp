@@ -35,7 +35,7 @@ bool CXMultiThread::Init( LPTHREAD_START_ROUTINE MainFun,LPVOID pPara,bool bRunW
 	{
 		GHandle=CreateThread(NULL,NULL,MainFun,pPara,CREATE_SUSPENDED,&mdwThredId);
 	}
-	
+
 	if (GHandle!=NULL)
 	{
 		mGHandle=GHandle;

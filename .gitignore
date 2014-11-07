@@ -5,3 +5,4 @@ Debug
 /*.orig
 *.pch
 *.cpp~HEAD
+*.ncb

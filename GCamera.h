@@ -12,29 +12,29 @@
 #define HEIGHT_TRACE_MAN 300	//眼睛与被跟踪物的垂直距离
 class GFrustum;
 class GCamera :
-    public GNode
+	public GNode
 {
-    DeclareEditorType ( GCamera )
+	DeclareEditorType ( GCamera )
 public:
 
-    GCamera ( void );
+	GCamera ( void );
 
-    ~GCamera ( void );
+	~GCamera ( void );
 
 public:
-    void moveTo ( D3DXMATRIX& matrix );
+	void moveTo ( D3DXMATRIX& matrix );
 
-    virtual bool recreate();
+	virtual bool recreate();
 
-    virtual void getInput ( DWORD frameTimeMs );
+	virtual void getInput ( DWORD frameTimeMs );
 
-    void setView();
+	void setView();
 
-    void setProj();
+	void setProj();
 
-    virtual void update();
-    virtual void onCallBack ( const CXDelegate& delgate );
-    void cliper ( GNode* n );
+	virtual void update();
+	virtual void onCallBack ( const CXDelegate& delgate );
+	void cliper ( GNode* n );
 	float getNear()const;
 	float getFar()const;
 	float getFov() const;
@@ -43,32 +43,32 @@ public:
 	GFrustum* getCuller() const;
 public:
 
-    void TraceMan();
+	void TraceMan();
 
-    bool InitTrack ( GNode *pWorldObj );
+	bool InitTrack ( GNode *pWorldObj );
 
-    float mfLenTransMan;
+	float mfLenTransMan;
 
-    bool mbTraceMan;
+	bool mbTraceMan;
 
 
 
 public:
 
-    D3DXMATRIX matProj;
+	D3DXMATRIX matProj;
 
-    D3DXMATRIX matView;
+	D3DXMATRIX matView;
 
-    GFrustum *mCuller;
+	GFrustum *mCuller;
 
 private:
 
-    GNode *mpTransMan;			//摄像机跟踪的人物
+	GNode *mpTransMan;			//摄像机跟踪的人物
 
-    float mMouseZoomFactor;
-    float mNear;
-    float mFieldOfView;
-    float mFar;
+	float mMouseZoomFactor;
+	float mNear;
+	float mFieldOfView;
+	float mFar;
 	float mAspect;
 
 };

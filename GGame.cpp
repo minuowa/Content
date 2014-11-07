@@ -25,14 +25,14 @@ GGame::GGame ( void )
 GGame::~GGame ( void )
 {
     dSafeDelete ( mSceneMgr );
-	CXSingleton<GResourceManager<GTexture>>::destoryInstance();
-	CXSingleton<GResourceManager<GAnimationResource>>::destoryInstance();
-	CXSingleton<GMeshManager>::destoryInstance();
-	CXSingleton<GGameOption>::destoryInstance();
-	CXSingleton<GComponentFactory>::destoryInstance();
+    CXSingleton<GResourceManager<GTexture>>::destoryInstance();
+    CXSingleton<GResourceManager<GAnimationResource>>::destoryInstance();
+    CXSingleton<GMeshManager>::destoryInstance();
+    CXSingleton<GGameOption>::destoryInstance();
+    CXSingleton<GComponentFactory>::destoryInstance();
 
-	CXSingleton<GD8Input>::destoryInstance();
-	CXSingleton<GD9Device>::destoryInstance();
+    CXSingleton<GD8Input>::destoryInstance();
+    CXSingleton<GD9Device>::destoryInstance();
 }
 
 void GGame::loop()
@@ -381,6 +381,14 @@ void GGame::shutDown()
 
 }
 
+GSceneManager* getSceneMgr()
+{
+    return TheSceneMgr;
+}
+void logInfo ( const char* s )
+{
+    OutputDebugStringA ( s );
+}
 DWORD WINAPI loadObj ( LPVOID pParam )
 {
     CoInitialize ( NULL );
@@ -393,25 +401,25 @@ DWORD WINAPI loadObj ( LPVOID pParam )
     }
 
     //设置投影矩阵
-	//TheSceneMgr->loadScene("gameSceneEditor.xml");
-	TheSceneMgr->setProj();
-	if ( 1 )
+    //TheSceneMgr->loadScene("gameSceneEditor.xml");
+    TheSceneMgr->setProj();
+    if ( 1 )
     {
         //创建世界坐标系
-		//GWorldCorrd* corrd = new GWorldCorrd();
-		//corrd->setNodeName ( "World Corrd" );
-		//CXASSERT_RETURN_FALSE ( corrd->recreate() );
-		//TheSceneMgr->addStaticObj ( corrd );
+        //GWorldCorrd* corrd = new GWorldCorrd();
+        //corrd->setNodeName ( "World Corrd" );
+        //CXASSERT_RETURN_FALSE ( corrd->recreate() );
+        //TheSceneMgr->addStaticObj ( corrd );
     }
 
 
 
     if ( 1 )
     {
-		GAnimMeshObj *pAnimMesh = new GAnimMeshObj;
-		pAnimMesh->setMediaFile ( "..\\Data\\res\\Anim\\AnimMesh0002\\A0002.X" );
-		CXASSERT_RETURN_FALSE ( pAnimMesh->recreate() );
-		TheSceneMgr->addDynaObj ( pAnimMesh );
+        GAnimMeshObj *pAnimMesh = new GAnimMeshObj;
+        pAnimMesh->setMediaFile ( "..\\Data\\res\\Anim\\AnimMesh0002\\A0002.X" );
+        CXASSERT_RETURN_FALSE ( pAnimMesh->recreate() );
+        TheSceneMgr->addDynaObj ( pAnimMesh );
     }
     if ( 1 )
     {
@@ -426,12 +434,36 @@ DWORD WINAPI loadObj ( LPVOID pParam )
         //sea->setWorldTranslate ( D3DXVECTOR3 ( 0, 1, 0 ) );
         //TheSceneMgr->addDynaObj ( sea );
     }
+    //gLuaScript.init();
+    if ( 1 )
+    {
+		gLuaScript.init();
 
-	if (1)
-	{
-		GTerrain* xmap=new GTerrain(8,20);
-		TheSceneMgr->addDynaObj ( xmap );
-	}
+		//luacpp::reg_cclass<GNode>::_reg(gLuaScript.getState(),"GNode");
+
+		//luacpp::reg_cclass<GTerrain,GNode>::_reg(gLuaScript.getState(),"GTerrain")
+		//luacpp::reg_cclass<GTerrain>::_reg(gLuaScript.getState(),"GTerrain")
+		//	.constructor<void>()
+		//	.function("recreate",&GTerrain::recreate);
+
+		//luacpp::reg_cclass<GSceneManager>::_reg(gLuaScript.getState(),"GSceneManager")
+		//	.function("addDynaObj",&GSceneManager::addDynaObj);
+
+		gLuaScript.regClass<GNode> ( "GNode" );
+		gLuaScript.regClass<GTerrain,GNode> ( "GTerrain" );
+		gLuaScript.regClassFunction<GTerrain> ( "recreate", &GTerrain::recreate );
+		gLuaScript.regClassCreator<GTerrain>();
+		gLuaScript.regClass<GSceneManager> ( "GSceneManager" );
+		gLuaScript.regClassFunction<GSceneManager> ( "addDynaObj", &GSceneManager::addDynaObj );
+
+		gLuaScript.regGlobalFun ( "getSceneMgr", getSceneMgr );
+		gLuaScript.regGlobalFun ( "logInfo", logInfo );
+
+        CXASSERT ( gLuaScript.doFile ( "main.lua" ) );
+        //GTerrain* xmap=new GTerrain();
+        //xmap->recreate();
+        //TheSceneMgr->addDynaObj ( xmap );
+    }
     //TheSceneMgr->mEye.InitTrack( &gAnimMesh[0] );
 
     //gEvent.WaitForUse(-1);
