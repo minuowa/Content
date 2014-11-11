@@ -162,15 +162,14 @@
     <ClCompile Include="GGameDemoHeader.cpp" />
     <ClCompile Include="XArea.cpp" />
     <ClCompile Include="XCursor.cpp" />
-    <ClCompile Include="XEffect.cpp" />
+    <ClCompile Include="GEffect.cpp" />
     <ClCompile Include="XEvent.cpp" />
     <ClCompile Include="GGameMap.cpp" />
     <ClCompile Include="GMeshBaseObj.cpp" />
     <ClCompile Include="XMultiThread.cpp" />
     <ClCompile Include="GNode.cpp" />
     <ClCompile Include="GComponentTrans.cpp" />
-    <ClCompile Include="XTerrain.cpp" />
-    <ClCompile Include="XText.cpp" />
+    <ClCompile Include="GText.cpp" />
     <ClCompile Include="GTimer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -220,15 +219,14 @@
     <ClInclude Include="GGameDemoHeader.h" />
     <ClInclude Include="XArea.h" />
     <ClInclude Include="XCursor.h" />
-    <ClInclude Include="XEffect.h" />
+    <ClInclude Include="GEffect.h" />
     <ClInclude Include="XEvent.h" />
     <ClInclude Include="GGameMap.h" />
     <ClInclude Include="GMeshBaseObj.h" />
     <ClInclude Include="XMultiThread.h" />
     <ClInclude Include="GNode.h" />
     <ClInclude Include="GComponentTrans.h" />
-    <ClInclude Include="XTerrain.h" />
-    <ClInclude Include="XText.h" />
+    <ClInclude Include="GText.h" />
     <ClInclude Include="GTimer.h" />
   </ItemGroup>
   <ItemGroup>

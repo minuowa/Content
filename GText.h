@@ -7,26 +7,22 @@ enum OBJTYPE
 };
 
 
-enum nFontSize
+enum eFontSize
 {
 	fs8, fs9, fs10, fs11, fs12, fs14, fs16, fs18, fs20, fs22, fs24, fs26, fs28, fs36, fs48, fs72,
 	//字体大小枚举{8,9,10,11,12,14,16,18,20,22,24,26,28,36,48,72};
 };
-class CXText
+class GText:public CXCallBack
 {
-private:
-	ID3DXFont *mFonts[16];
-	ID3DXFont *mCurrentFont;
-
-	ID3DXFont *mDefaultFont;
-	nFontSize	LnowFontSize;
 public:
-	LPD3DXSPRITE mFontSprite;
-	CXText( void );
-	~CXText( void );
-	bool Init();
-
-	void SetCurrentFontSize( nFontSize fs );
+	GText( void );
+	~GText( void );
+	bool init();
+	void clear();
+	bool recreate();
+	void addText(GString* str);
+	void drawText();
+	void setCurrentFontSize( eFontSize fs );
 
 	int DrawTextDefault( char* sText, D3DVECTOR pos );
 	//2D中使用,其坐标原点为屏幕左上角
@@ -44,7 +40,19 @@ public:
 		bool bAlphaBlend,//是否与当前纹理混合
 		D3DCOLOR dwColor //纹理掩盖色
 		);
-	//2D3D都可使用
-};
 
-//extern CXText gText;
+	virtual void onCallBack( const CXDelegate& );
+
+	//2D3D都可使用
+
+protected:
+	CXDynaArray<GString*> mTextArray;
+private:
+	ID3DXFont *mFonts[16];
+	ID3DXFont *mCurrentFont;
+
+	ID3DXFont *mDefaultFont;
+	eFontSize	mFontSize;
+	LPD3DXSPRITE mFontSprite;
+};
+#define TextMgr CXSingleton<GText>::getInstance()

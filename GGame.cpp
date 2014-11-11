@@ -7,6 +7,7 @@
 #include "GComponentFactory.h"
 #include "GResourceManager.h"
 #include "GTerrain.h"
+#include "GText.h"
 
 /******************************************************************/
 //天空在MeshBuffer中，海面和地图不在
@@ -30,6 +31,8 @@ GGame::~GGame ( void )
     CXSingleton<GMeshManager>::destoryInstance();
     CXSingleton<GGameOption>::destoryInstance();
     CXSingleton<GComponentFactory>::destoryInstance();
+
+	CXSingleton<GText>::destoryInstance();
 
     CXSingleton<GD8Input>::destoryInstance();
     CXSingleton<GD9Device>::destoryInstance();
@@ -338,9 +341,11 @@ bool GGame::init ( HWND mainWnd )
 
     MeshMgr.Init();
 
+	TextMgr->init();
+
     D9DEVICE->ResetRenderState();
 
-    bSuccess = gEffect.Create ( "..\\Data\\Effect\\SimpleEffect.fx" );
+    bSuccess = gEffect.createFromFile( "..\\Data\\Effect\\SimpleEffect.fx" );
 
     gEffect.m_hWorldViewProj = gEffect.mD3DEffect->GetParameterByName ( 0, "matWorldViewProj" );
 
@@ -416,10 +421,10 @@ DWORD WINAPI loadObj ( LPVOID pParam )
 
     if ( 1 )
     {
-        GAnimMeshObj *pAnimMesh = new GAnimMeshObj;
-        pAnimMesh->setMediaFile ( "..\\Data\\res\\Anim\\AnimMesh0002\\A0002.X" );
-        CXASSERT_RETURN_FALSE ( pAnimMesh->recreate() );
-        TheSceneMgr->addDynaObj ( pAnimMesh );
+        //GAnimMeshObj *pAnimMesh = new GAnimMeshObj;
+        //pAnimMesh->setMediaFile ( "..\\Data\\res\\Anim\\AnimMesh0002\\A0002.X" );
+        //CXASSERT_RETURN_FALSE ( pAnimMesh->recreate() );
+        //TheSceneMgr->addDynaObj ( pAnimMesh );
     }
     if ( 1 )
     {
@@ -486,6 +491,7 @@ void GGame::gameRender ( float fPass )
 
     renderEye ( fPass );
 
+	TextMgr->drawText();
     //mpUIMgr->Render( fPass );
 }
 

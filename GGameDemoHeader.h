@@ -106,9 +106,7 @@ inline void toggle ( bool b )
 
 #define SEA_DEPTH_FACTOR 0.18f						//地图零高度定义,占总高度的比例
 
-#define DIFFUSE_INTENSITY 4.0f//1.33f			//漫反射光强度
-#define AMBIENT_INTENSIYT 0.075f					//环境光强度 0.3f
-#define SPECULAR_INTENSITY 0.45f					//镜面光强度
+
 
 //物体初始速度
 #define DEFAULT_SPEED_MOVE 100.0f

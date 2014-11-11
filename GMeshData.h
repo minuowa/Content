@@ -44,6 +44,8 @@ public:
 class GMetrialData
 {
 public:
+	static D3DMATERIAL9 mDefaultWhite;
+public:
 	GMetrialData(void);
 	void	setTexture(const char* fileName);
 	void	setMetiral(const D3DMATERIAL9& d9matrial);
@@ -51,5 +53,6 @@ public:
 private:
 	GTexture*			mTexture;
 	D3DMATERIAL9		mMat;
+
 };
 typedef CXDynaArray<GMetrialData*>	GRenderDataArr;

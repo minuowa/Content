@@ -3,25 +3,40 @@
 
 class GTimer
 {
-	FiDeclareSingleton(GTimer);
+    FiDeclareSingleton ( GTimer );
+
 public:
-	GTimer(void);
-	~GTimer(void);
 
-	DWORD getAccuTime();
+    static const int FPSCount = 100;
 
-	DWORD getFrameTimems();	    //两次获取当前时间的间隔
+    GTimer ( void );
+    ~GTimer ( void );
 
-	float getFrameTimeSec();
+    DWORD getAccuTime();
 
-	void update();
+    DWORD getFrameTimems();	    //两次获取当前时间的间隔
+
+    float getFrameTimeSec();
+
+    void update();
+
+    DWORD getFPS() const;
+
 private:
 
-	DWORD mAccuTime;
+    DWORD mAccuTime;
 
-	DWORD mFrameTime;
+    DWORD mFrameTime;
 
-	DWORD mLastTime;		    //上一次时间
+    DWORD mLastTime;		    //上一次时间
+
+	DWORD mFPSAccuTime;
+
+	DWORD mFPSFrameCount;
+
+    DWORD mFPS;
+
+	GString mFPSString;
 };
 
 #define TheTimer GTimer::getInstance()

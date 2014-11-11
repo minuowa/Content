@@ -7,6 +7,7 @@
 #include "GTerrainNode.h"
 #include "GCamera.h"
 #include "GGame.h"
+#include "GText.h"
 
 
 GTerrain::GTerrain ( )
@@ -14,11 +15,13 @@ GTerrain::GTerrain ( )
     mRootLevel = 8;
     mCellWidth = 50;
     mLODFactor = 800.f;
+    mHeightMax = 700.0f;
+    mHeightMin = -300.0f;
     mDisplayRepairAreaOnly = false;
     mFileHeightMap = "..\\Res\\Terrain\\heightmap.bmp";
     mHeightMap = nullptr;
     mRootNode = nullptr;
-    mLODMode = false;
+    mLODMode = true;
     ReapirLevelTwo = true;
     mAlphaSplatMap = nullptr;
     BeHasAlphasplatMap = true;
@@ -33,10 +36,10 @@ GTerrain::GTerrain ( )
     mIndexBuffer = nullptr;
     mVertexBuffer = nullptr;
     mTexture = nullptr;
-    BeHasHeightMap = true;
+    mUsingHeightMap = true;
     mCamera = nullptr;
 
-
+    TextMgr->addText ( &mTerrainCountString );
 
     //GxComponentFog TerrainFog = new GxComponentFog();
     //   SetComponent ( TerrainFog );
@@ -49,11 +52,9 @@ GTerrain::GTerrain ( )
 
     //UpdateEx += new GameUpdateEventHandler ( updateEx );
 
-    //Camera = ( GxCamera ) GxGameObj.GetObjByName ( "DefaultCamera" );
 
     mTexture = TextureMgr->getResource ( "..\\Res\\Box\\001.bmp" );
-    //Mtrl.Diffuse = Color.FromArgb ( 255, 255, 255, 255 );
-    dMakeColor ( Mtrl.Diffuse, 255, 255, 255, 255 );
+    dMakeColor ( mMtrl.Diffuse, 255, 255, 255, 255 );
 
 
     //LoadHeightMap();
@@ -87,28 +88,8 @@ void GTerrain::LoadAlphaMap()
 
 void GTerrain::updateEx()
 {
-    //if ( GxInput.instance.isKeyUp ( Key.O ) )
-    //{
-    //    DisplayRepairAreaOnly = !DisplayRepairAreaOnly;
-    //}
-    //if ( GxInput.instance.isKeyUp ( Key.M ) )
-    //{
-    //    RepairMode = !RepairMode;
-    //}
-    //if ( GxInput.instance.isKeyUp ( Key.T ) )
-    //{
-    //    RepairMode = !ReapirLevelTwo;
-    //}
-    //if ( BeSaveAlphaSplat )
-    //{
-    //    SaveAlphaSplat();
-    //    BeSaveAlphaSplat = false;
-    //}
-    ////GxPick.Pick(this);
-
     mRootNode->reset();
-    mRootNode->clipByCamera ( mCamera, this );
-
+    mRootNode->cull ( mCamera, this );
 
     if ( mLODMode )
     {
@@ -117,6 +98,9 @@ void GTerrain::updateEx()
     }
     mDynamicIndexBuffer->clear();
     mRootNode->addIndexToTerrain ( this, mLODMode );
+
+    mTerrainCountString.Format ( "Terrain_Triangle:%d", mDynamicIndexBuffer->size() / 3 );
+
     u32* pIB;
     mIndexBuffer->Lock ( 0, 0, ( void** ) &pIB, 0 );
     mDynamicIndexBuffer->copyTo ( pIB );
@@ -170,12 +154,13 @@ bool GTerrain::render()
         return false;
 
     //必须的，否则默认使用顶点颜色做光照
-    D9DEVICE->OpenAllLight ( false );
+    D9DEVICE->OpenAllLight ( true );
     D9DEVICE->OpenAlphaBlend ( false );
     D9DEVICE->GetDvc()->SetStreamSource ( 0, mVertexBuffer, 0, sizeof ( EXVertex ) );
     D9DEVICE->GetDvc()->SetFVF ( EXVertex::Format );
-    D9DEVICE->GetDvc()->SetTexture ( 0, nullptr );
+    D9DEVICE->GetDvc()->SetTexture ( 0, mTexture->getTexture() );
     D9DEVICE->GetDvc()->SetIndices ( mIndexBuffer );
+    D9DEVICE->GetDvc()->SetMaterial ( &GMetrialData::mDefaultWhite );
     D9DEVICE->GetDvc()->DrawIndexedPrimitive ( D3DPT_TRIANGLELIST, 0, 0, mLineCount * mLineCount, 0, mDynamicIndexBuffer->size() / 3 );
     //D9DEVICE->GetDvc()->DrawIndexedPrimitive ( D3DPT_TRIANGLELIST, 0, 0, mLineCount * mLineCount, 0,8 );
 
@@ -197,7 +182,7 @@ bool GTerrain::render()
     return true;
 }
 
-void GTerrain::CreateVertexBuffer()
+void GTerrain::createVertexBuffer()
 {
     D9DEVICE->GetDvc()->CreateVertexBuffer (
         ( mLineCount ) * ( mLineCount ) * sizeof ( EXVertex )
@@ -222,9 +207,10 @@ void GTerrain::CreateVertexBuffer()
             {
                 fX = ( j - getCellCount() / 2.0f ) * mCellWidth;
                 fZ = ( i - getCellCount() / 2.0f ) * mCellWidth;
-                if ( BeHasHeightMap )
+                if ( mUsingHeightMap )
                 {
                     fHeight = mHeightMap->GetHeight ( fX, fZ );
+                    //fHeight = 0;
                 }
                 else
                 {
@@ -239,7 +225,7 @@ void GTerrain::CreateVertexBuffer()
                 }
 
                 //pos.Color = Color.Red.ToArgb();
-                pos.Color = 0XFFFFFFFF;
+                pos.Color = 0XDDDDDDFF;
                 pos.Tu = j;
                 pos.Tv = getCellCount() - i;
 
@@ -254,18 +240,18 @@ void GTerrain::loadHeightMap()
 {
     if ( !IsFileExist ( mFileHeightMap.c_str() ) )
     {
-        BeHasHeightMap = false;
+        mUsingHeightMap = false;
         return;
     }
     mHeightMap = new GHeightMap (
         ( float ) ( mCellWidth * ( pow ( 2, mRootLevel ) ) ),
         ( float ) ( mCellWidth * ( pow ( 2, mRootLevel ) ) ),
-        -100.0f, 400.0f,
+        mHeightMin, mHeightMax,
         mFileHeightMap );
-    BeHasHeightMap = mHeightMap->load();
+    mUsingHeightMap = mHeightMap->load();
 }
 
-void GTerrain::ComputerNormals()
+void GTerrain::computerNormals()
 {
     //计算每个面的法线
     if ( mOriginalIndexBuffer == nullptr )
@@ -310,7 +296,6 @@ void GTerrain::ComputerNormals()
                 mOriginalIndexBuffer->set ( BaseIndex + 21, ( i * 2 + 1 ) * Stride + j * 2 + 1			);
                 mOriginalIndexBuffer->set ( BaseIndex + 22, ( i * 2 + 1 ) * Stride + j * 2				);
                 mOriginalIndexBuffer->set ( BaseIndex + 23, ( ( i + 1 ) * 2 ) * Stride + j * 2 + 1		);
-
             }
         }
     }
@@ -382,7 +367,7 @@ void GTerrain::ComputerNormals()
     mVertexBuffer->Unlock();
 }
 
-void GTerrain::SmoothProcess()
+void GTerrain::smoothProcess()
 {
     EXVertex* data;
     mVertexBuffer->Lock ( 0, 0, ( void** ) &data, D3DLOCK_DISCARD );
@@ -716,6 +701,8 @@ void GTerrain::registerAllProperty()
     __RegisterProperty ( mCellWidth );
     __RegisterProperty ( mLODFactor );
     __RegisterProperty ( mLODMode );
+    __RegisterProperty ( mHeightMax );
+    __RegisterProperty ( mHeightMin );
 }
 
 void GTerrain::setRootLevel ( uchar level )
@@ -737,6 +724,11 @@ bool GTerrain::recreate()
 
     if ( !createNodes() )
         return false;
+
+    smoothProcess();
+
+    computerNormals();
+
     return true;
 }
 
@@ -744,7 +736,9 @@ void GTerrain::onPropertyChangeEnd ( void* cur )
 {
     if ( cur == &mCellWidth
             || cur == &mRootLevel
-            || cur == &mLODFactor )
+            || cur == &mHeightMax
+            || cur == &mHeightMin
+       )
     {
         recreate();
     }
@@ -757,11 +751,13 @@ void GTerrain::clear()
 
     dSafeDelete ( mAlphaSplatMap );
     dSafeDelete ( mHeightMap );
-    mNodeMaps.destroySecond();
+    dSafeDeleteMap2 ( mNodeMaps );
 }
 
 bool GTerrain::createNodes()
 {
+    mNodeMaps.destroySecond();
+
     mLineCount = ( int ) pow ( 2, mRootLevel ) + 1;
     mCellCount = mLineCount - 1;
 
@@ -771,18 +767,11 @@ bool GTerrain::createNodes()
 
     D9DEVICE->GetDvc()->CreateIndexBuffer ( mCellCount * mCellCount * 2 * 3 * 2 * sizeof ( DWORD ), 0, D3DFMT_INDEX32, D3DPOOL_MANAGED, &mIndexBuffer, 0 );
     mRootNode = new GTerrainNode();
-    //mRootNode = GTerrainNode::allocate ();
     mRootNode->build ( this, mRootLevel );
 
-    CreateVertexBuffer();
+    createVertexBuffer();
     mRootNode->setVertexBuffer ( mVertexBuffer, this );
+    mRootNode->buildNeighbour ( this );
+
     return true;
 }
-
-
-
-
-
-
-float GTerrain::_DisFactor = 25.6f;
-float GTerrain::_Power = 1.2f;

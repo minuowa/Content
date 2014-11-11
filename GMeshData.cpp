@@ -28,6 +28,15 @@ GMetrialData::GMetrialData ( void )
 	dMemoryZero ( &mMat, sizeof ( mMat ) );
 }
 
+D3DMATERIAL9 GMetrialData::mDefaultWhite=
+{
+	{0.6,0.6,0.6,0.6,},
+	{1.0,1.0,1.0,1.0,},
+	{0.6,0.6,0.6,0.6,},
+	{0.6,0.6,1.0,1.0,},
+	5,
+};
+
 void GGraphVertexBuffer::Set()
 {
 	D9DEVICE->GetDvc()->SetStreamSource ( 0, mD9VertexBuffer, 0, mDataSize );

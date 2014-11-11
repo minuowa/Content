@@ -6,7 +6,7 @@
 class GBitmap;
 class GCamera;
 class GTexture;
-class CXEffect;
+class GEffect;
 struct EXVertex;
 struct HitInfo;
 class GHeightMap;
@@ -25,12 +25,12 @@ public:
 	void LoadBrushs();
 	void LoadEffect();
 	virtual bool render() override;
-	void CreateVertexBuffer();
+	void createVertexBuffer();
 
 	void loadHeightMap();
 
-	void ComputerNormals();
-	void SmoothProcess();
+	void computerNormals();
+	void smoothProcess();
 	void AlterHeight ( HitInfo* HI, EXVertex* MyVB );
 
 	void AlterFace ( HitInfo* HI, EXVertex* MyVB );
@@ -66,6 +66,8 @@ protected:
 	u32 mRootLevel;
 	int mCellCount;
 	int mLineCount;
+	float mHeightMax;
+	float mHeightMin;
 
 	GHeightMap* mHeightMap;
 	GTerrainNode* mRootNode;
@@ -80,21 +82,21 @@ protected:
 	GBitmap* mAlphaSplatMap ;
 	bool BeHasAlphasplatMap ;
 	bool BeSaveAlphaSplat ;
+	bool mUsingHeightMap  ;
 
 	GString File_AlphaSplat ;
 	GString File_Effect ;
 	GString File_BrushConfig ;
 	GString mFileHeightMap;
 
+	GString mTerrainCountString;
+
 	CXMap<GString, GString> BrushSets;
 
-	CXEffect* TerrainEffect ;
+	GEffect* TerrainEffect ;
 	CXMap<GString, HANDLE> Paras ;
 	CXMap<GString, GTexture*> Texts;
 	HANDLE EH_Diffuse ;
-
-	static float _DisFactor;
-	static float _Power;
 
 	float DisFactor;
 	double Power;
@@ -114,9 +116,8 @@ protected:
 	IDirect3DVertexBuffer9* mVertexBuffer;
 	IDirect3DIndexBuffer9* mIndexBuffer;
 	GTexture* mTexture;
-	bool BeHasHeightMap  ;
 
-	D3DMATERIAL9 Mtrl;
+	D3DMATERIAL9 mMtrl;
 	GCamera* mCamera  ;
 	typedef CXDynaArray<int> AlterFaceList;
 	typedef CXMap<int, AlterFaceList*> AlterFaceIndexListMap;

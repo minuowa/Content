@@ -83,7 +83,9 @@ void GD9Device::EndRender()
 		CXASSERT ( 0 );
 	}
 }
-
+#define DIFFUSE_INTENSITY 1.0f//1.33f			//漫反射光强度
+#define AMBIENT_INTENSIYT 1.0f					//环境光强度 0.3f
+#define SPECULAR_INTENSITY 1.0f					//镜面光强度
 
 void GD9Device::SetLight()
 {
@@ -252,10 +254,10 @@ void GD9Device::ResetRenderState()
 	mD9Device->SetRenderState ( D3DRS_LIGHTING, false );
 
 	//关闭环境光
-	mD9Device->SetRenderState ( D3DRS_AMBIENT, 0x4a4a4a4a );
+	mD9Device->SetRenderState ( D3DRS_AMBIENT, 0xFFFFFFFF );
 
 	//关闭镜面反射
-	mD9Device->SetRenderState ( D3DRS_SPECULARENABLE, false );
+	mD9Device->SetRenderState ( D3DRS_SPECULARENABLE, true );
 
 	//设置纹理坐标寻址方式为循环寻址
 	mD9Device->SetSamplerState ( 0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP );
@@ -418,7 +420,6 @@ bool GD9Device::ResetDevice ( int w, int h )
 	if ( mD9Device )
 	{
 		CXASSERT_RESULT_FALSE ( mD9Device->Reset ( &d3dp ) );
-		ResetRenderState();
 	}
 	else
 	{
@@ -438,8 +439,9 @@ bool GD9Device::ResetDevice ( int w, int h )
 		{
 			return false;
 		}
-		SetLight();
 	}
+	ResetRenderState();
+	SetLight();
 
 	return true;
 }

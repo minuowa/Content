@@ -5,21 +5,27 @@ typedef D3DXHANDLE(*SetPara)(ID3DXEffect *);
 
 D3DXHANDLE SetEffectParaments(ID3DXEffect *pEffect);
 
-class CXEffect
+class GEffect
 {
 public:
-	CXEffect(void);
-	~CXEffect(void);
+	GEffect(void);
+	~GEffect(void);
+	bool createFromFile ( const char* name );
 
-	bool Create(char *sEffectFileName);
-
+	inline ID3DXEffect* getTexture()
+	{
+		return mD3DEffect;
+	}
+public:
+	GString			FileName;
+protected:
 	D3DXHANDLE SetEffectPara(SetPara FunSetPara);
 
 public:
 
 	ID3DXEffect *mD3DEffect;
 
-	ID3DXEffectPool *m_pEffectPool;
+	static ID3DXEffectPool *mEffectPool;
 
 	D3DXHANDLE m_hParaBlock;
 
@@ -46,4 +52,4 @@ public:
 
 };
 
-extern CXEffect gEffect;
+extern GEffect gEffect;

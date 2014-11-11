@@ -1,6 +1,6 @@
 #pragma once
 
-#include "XEffect.h"
+#include "GEffect.h"
 #include "GAmmo.h"
 #include "Particles.h"
 #include "XCursor.h"

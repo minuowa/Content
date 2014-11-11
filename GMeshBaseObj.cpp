@@ -2,7 +2,7 @@
 #include "GMeshBaseObj.h"
 #include "GGameMap.h"
 #include "GComponentTrans.h"
-#include "XEffect.h"
+#include "GEffect.h"
 
 #include "GSceneMgr.h"
 #include "GGame.h"

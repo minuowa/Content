@@ -6,11 +6,8 @@
     <ClCompile Include="Particles.cpp" />
     <ClCompile Include="XArea.cpp" />
     <ClCompile Include="XCursor.cpp" />
-    <ClCompile Include="XEffect.cpp" />
     <ClCompile Include="XEvent.cpp" />
     <ClCompile Include="XMultiThread.cpp" />
-    <ClCompile Include="XTerrain.cpp" />
-    <ClCompile Include="XText.cpp" />
     <ClCompile Include="GRenderObject.cpp" />
     <ClCompile Include="GWorldCorrd.cpp" />
     <ClCompile Include="GSceneMgr.cpp" />
@@ -63,6 +60,8 @@
     <ClCompile Include="GBitmap.cpp" />
     <ClCompile Include="GTerrainNode.cpp" />
     <ClCompile Include="GFrustum.cpp" />
+    <ClCompile Include="GEffect.cpp" />
+    <ClCompile Include="GText.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameStaticObj.h" />
@@ -70,11 +69,8 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="XArea.h" />
     <ClInclude Include="XCursor.h" />
-    <ClInclude Include="XEffect.h" />
     <ClInclude Include="XEvent.h" />
     <ClInclude Include="XMultiThread.h" />
-    <ClInclude Include="XTerrain.h" />
-    <ClInclude Include="XText.h" />
     <ClInclude Include="FiGameDemo.h" />
     <ClInclude Include="GRenderObject.h" />
     <ClInclude Include="GWorldCorrd.h" />
@@ -134,6 +130,8 @@
     <ClInclude Include="GBitmap.h" />
     <ClInclude Include="GTerrainNode.h" />
     <ClInclude Include="GFrustum.h" />
+    <ClInclude Include="GEffect.h" />
+    <ClInclude Include="GText.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Animation">

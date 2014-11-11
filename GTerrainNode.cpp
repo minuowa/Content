@@ -6,24 +6,24 @@
 #include "GCamera.h"
 #include "GFrustum.h"
 
-int GTerrainNode::NodeCount = 0;
+int GTerrainNode::RenderNodeCount = 0;
 
 IDirect3DVertexBuffer9* GTerrainNode::mVertexBuffer = nullptr;
 
 void GTerrainNode::buildBound ( GTerrain* owner )
 {
-    if ( mVertexBuffer                                   == nullptr )
+    if ( mVertexBuffer == nullptr )
         return;
 
     mBound = new GCubeBound();
-    int Stride = mConner[Pose_RightBotttom] - mConner[Pose_LeftBottom];
-    int LineNum = ( mConner[Pose_LeftTop] - mConner[Pose_LeftBottom] ) / ( owner->getCellCount() + 1 );
+    int Stride = mConner[ChildRightBotttom] - mConner[ChildLeftBottom];
+    int LineNum = ( mConner[ChildLeftTop] - mConner[ChildLeftBottom] ) / ( owner->getCellCount() + 1 );
 
     for ( int i = 0; i < LineNum; i++ )
     {
         for ( int j = 0; j < Stride + 1; j++ )
         {
-            EXVertex& pos = mVertexData[mConner[Pose_LeftBottom] + i * ( owner->getCellCount() + 1 ) + j];
+            EXVertex& pos = mVertexData[mConner[ChildLeftBottom] + i * ( owner->getCellCount() + 1 ) + j];
             if ( pos.Pos.x < mBound->mMinX )
             {
                 mBound->mMinX = pos.Pos.x;
@@ -63,17 +63,16 @@ void GTerrainNode::buildBound ( GTerrain* owner )
 
 GTerrainNode::GTerrainNode ()
 {
-    mPose = Pose_Max;
+    mPose = ChildCount;
     mLevel = 0;
     mCenter = 0;
     dMemoryZeroArray ( mChildren );
     dMemoryZeroArray ( mConner );
+    dMemoryZeroArray ( mCulledIndexType );
+    dMemoryZeroArray ( mNeighbour );
     mParentNode = nullptr;
-    mVertexBuffer = nullptr;
-    mVertexData = nullptr;
-    mBeRender = true;
     mBeNeedRepair = false;
-    mNotRenderReason = NotRenderReason::None;
+    mCullResult = eCullResultTypeNone;
     mRepairTimes = 0;
     mBound = nullptr;
 }
@@ -92,13 +91,15 @@ void GTerrainNode::setVertexBuffer ( IDirect3DVertexBuffer9* VB, GTerrain* owner
 
 void GTerrainNode::reset()
 {
-    mBeRender = false;
+    mBeRender = true;
     mBeNeedRepair = false;
     mRepairTimes = 0;
-    mRepairDatas.clear();
+    dMemoryZeroArray ( mCulledIndexType );
+    dMemoryZeroArray ( mRepairIndexType );
+    //dMemoryZeroArray ( mNeighbour );
+    mCullResult = eCullResultTypeNone;
 
-    mNotRenderReason = NotRenderReason::None;
-    for ( int i = 0; i < G_TERRAIN_CHILD_NUM; i++ )
+    for ( int i = 0; i < ChildCount; i++ )
     {
         if ( mChildren[i] != nullptr )
             mChildren[i]->reset();
@@ -115,34 +116,16 @@ void GTerrainNode::addIndexToTerrain ( GTerrain* owner, bool lodMode )
     }
     else
     {
-        if ( mBeRender || mNotRenderReason == NotRenderReason::LevelHigh )
+        if ( mCullResult != eCullResultTypeNotInEye && mCullResult != eCullResultTypeNone )
         {
-            int VertexNum = 9;
-            int PrimitiveNum = 8;
-            int StartIndex = 0;
-
-
-            if (
-                ( mNotRenderReason == NotRenderReason::LevelHigh && mBeNeedRepair )
-                ||
-                mBeRender
-            )
+            for ( int i = 0; i < ChildCount; ++i )
             {
-                if ( mNotRenderReason == NotRenderReason::LevelHigh || owner->isDisplayRepairAreaOnly() )
-                {
-                    VertexNum = mRepairTimes * 2;
-                    PrimitiveNum = mRepairTimes * 2;
-                    StartIndex = 24;
-                }
-                else
-                {
-                    VertexNum = 9 + mRepairTimes * 2; ;
-                    PrimitiveNum = 8 + mRepairTimes * 2;
-                    StartIndex = 0;
-                }
+                if ( !mCulledIndexType[i] )
+                    dynamicBuffer->addElement ( &mIndices[i * 6], 6 );
             }
-            dynamicBuffer->addElement ( &mIndices[StartIndex], PrimitiveNum * 3 );
-        }
+            if ( mRepairTimes > 0 )
+                dynamicBuffer->addElement ( &mIndices[24], mRepairTimes *  2 * 3 );
+            }
     }
 
     for ( int i = 0; i < 4; i++ )
@@ -236,91 +219,91 @@ bool GTerrainNode::buildIndexBuffer ( GTerrain* owner )
     {
         int len = owner->getLineCount();
         mCenter = ( len + 1 ) * (  len - 1 ) / 2;
-        mConner[Pose_LeftBottom] = 0;
-        mConner[Pose_RightBotttom] = len - 1;
-        mConner[Pose_RightTop] = len * ( len - 1 ) + len - 1;
-        mConner[Pose_LeftTop] = len * ( len - 1 );
+        mConner[ChildLeftBottom] = 0;
+        mConner[ChildRightBotttom] = len - 1;
+        mConner[ChildRightTop] = len * ( len - 1 ) + len - 1;
+        mConner[ChildLeftTop] = len * ( len - 1 );
     }
     else
     {
         switch ( mPose )
         {
-        case Pose_LeftBottom:
-            mConner[Pose_LeftBottom] = mParentNode->mConner[Pose_LeftBottom];
-            mConner[Pose_RightBotttom] = ( mParentNode->mConner[Pose_RightBotttom] + mParentNode->mConner[Pose_LeftBottom] ) / 2;
-            mConner[Pose_RightTop] = mParentNode->mCenter;
-            mConner[Pose_LeftTop] = ( mParentNode->mConner[Pose_LeftTop] + mParentNode->mConner[Pose_LeftBottom] ) / 2;
+        case ChildLeftBottom:
+            mConner[ChildLeftBottom] = mParentNode->mConner[ChildLeftBottom];
+            mConner[ChildRightBotttom] = ( mParentNode->mConner[ChildRightBotttom] + mParentNode->mConner[ChildLeftBottom] ) / 2;
+            mConner[ChildRightTop] = mParentNode->mCenter;
+            mConner[ChildLeftTop] = ( mParentNode->mConner[ChildLeftTop] + mParentNode->mConner[ChildLeftBottom] ) / 2;
             break;
 
-        case Pose_RightBotttom:
-            mConner[Pose_LeftBottom] = ( mParentNode->mConner[Pose_RightBotttom] + mParentNode->mConner[Pose_LeftBottom] ) / 2;
-            mConner[Pose_RightBotttom] = mParentNode->mConner[Pose_RightBotttom];
-            mConner[Pose_RightTop] = ( mParentNode->mConner[Pose_RightTop] + mParentNode->mConner[Pose_RightBotttom] ) / 2;
-            mConner[Pose_LeftTop] = mParentNode->mCenter;
+        case ChildRightBotttom:
+            mConner[ChildLeftBottom] = ( mParentNode->mConner[ChildRightBotttom] + mParentNode->mConner[ChildLeftBottom] ) / 2;
+            mConner[ChildRightBotttom] = mParentNode->mConner[ChildRightBotttom];
+            mConner[ChildRightTop] = ( mParentNode->mConner[ChildRightTop] + mParentNode->mConner[ChildRightBotttom] ) / 2;
+            mConner[ChildLeftTop] = mParentNode->mCenter;
             break;
 
-        case Pose_RightTop:
-            mConner[Pose_LeftBottom] = mParentNode->mCenter;
-            mConner[Pose_RightBotttom] = ( mParentNode->mConner[Pose_RightTop] + mParentNode->mConner[Pose_RightBotttom] ) / 2;
-            mConner[Pose_RightTop] = mParentNode->mConner[Pose_RightTop];
-            mConner[Pose_LeftTop] = ( mParentNode->mConner[Pose_RightTop] + mParentNode->mConner[Pose_LeftTop] ) / 2;
+        case ChildRightTop:
+            mConner[ChildLeftBottom] = mParentNode->mCenter;
+            mConner[ChildRightBotttom] = ( mParentNode->mConner[ChildRightTop] + mParentNode->mConner[ChildRightBotttom] ) / 2;
+            mConner[ChildRightTop] = mParentNode->mConner[ChildRightTop];
+            mConner[ChildLeftTop] = ( mParentNode->mConner[ChildRightTop] + mParentNode->mConner[ChildLeftTop] ) / 2;
             break;
 
-        case Pose_LeftTop:
-            mConner[Pose_LeftBottom] = ( mParentNode->mConner[Pose_LeftTop] + mParentNode->mConner[Pose_LeftBottom] ) / 2;
-            mConner[Pose_RightBotttom] = mParentNode->mCenter;
-            mConner[Pose_RightTop] = ( mParentNode->mConner[Pose_RightTop] + mParentNode->mConner[Pose_LeftTop] ) / 2;
-            mConner[Pose_LeftTop] = mParentNode->mConner[Pose_LeftTop];
+        case ChildLeftTop:
+            mConner[ChildLeftBottom] = ( mParentNode->mConner[ChildLeftTop] + mParentNode->mConner[ChildLeftBottom] ) / 2;
+            mConner[ChildRightBotttom] = mParentNode->mCenter;
+            mConner[ChildRightTop] = ( mParentNode->mConner[ChildRightTop] + mParentNode->mConner[ChildLeftTop] ) / 2;
+            mConner[ChildLeftTop] = mParentNode->mConner[ChildLeftTop];
             break;
         }
-        mCenter = ( mConner[Pose_LeftTop] + mConner[Pose_LeftBottom] ) / 2 + ( mConner[Pose_RightTop] - mConner[Pose_LeftTop] ) / 2;
+        mCenter = ( mConner[ChildLeftTop] + mConner[ChildLeftBottom] ) / 2 + ( mConner[ChildRightTop] - mConner[ChildLeftTop] ) / 2;
 
     }
-    int LeftCenter = ( mConner[Pose_LeftTop] + mConner[Pose_LeftBottom] ) / 2;
-    int RightCenter = ( mConner[Pose_RightTop] + mConner[Pose_RightBotttom] ) / 2;
-    int TopCenter = ( mConner[Pose_RightTop] + mConner[Pose_LeftTop] ) / 2;
-    int BottomCenter = ( mConner[Pose_RightBotttom] + mConner[Pose_LeftBottom] ) / 2;
+    int LeftCenter = ( mConner[ChildLeftTop] + mConner[ChildLeftBottom] ) / 2;
+    int RightCenter = ( mConner[ChildRightTop] + mConner[ChildRightBotttom] ) / 2;
+    int TopCenter = ( mConner[ChildRightTop] + mConner[ChildLeftTop] ) / 2;
+    int BottomCenter = ( mConner[ChildRightBotttom] + mConner[ChildLeftBottom] ) / 2;
     mIndices[0] = mCenter;
-    mIndices[1] = mConner[Pose_LeftBottom];
+    mIndices[1] = mConner[ChildLeftBottom];
     mIndices[2] = LeftCenter;
 
     mIndices[3] = mCenter;
     mIndices[4] = BottomCenter;
-    mIndices[5] = mConner[Pose_LeftBottom];
+    mIndices[5] = mConner[ChildLeftBottom];
 
     mIndices[6] = mCenter;
-    mIndices[7] = mConner[Pose_RightBotttom];
+    mIndices[7] = mConner[ChildRightBotttom];
     mIndices[8] = BottomCenter;
 
     mIndices[9] = mCenter;
     mIndices[10] = RightCenter;
-    mIndices[11] = mConner[Pose_RightBotttom];
+    mIndices[11] = mConner[ChildRightBotttom];
 
     mIndices[12] = mCenter;
-    mIndices[13] = mConner[Pose_RightTop];
+    mIndices[13] = mConner[ChildRightTop];
     mIndices[14] = RightCenter;
 
     mIndices[15] = mCenter;
     mIndices[16] = TopCenter;
-    mIndices[17] = mConner[Pose_RightTop];
+    mIndices[17] = mConner[ChildRightTop];
 
     mIndices[18] = mCenter;
-    mIndices[19] = mConner[Pose_LeftTop];
+    mIndices[19] = mConner[ChildLeftTop];
     mIndices[20] = TopCenter;
 
     mIndices[21] = mCenter;
     mIndices[22] = LeftCenter;
-    mIndices[23] = mConner[Pose_LeftTop];
+    mIndices[23] = mConner[ChildLeftTop];
 
     for ( int i = G_TERRAIN_CELL_BASE_INDEX_NUM; i < G_TERRAIN_CELL_MAX_INDEX_NUM; i++ )
-        mIndices[i] = InvalidNumber;
+        mIndices[i] = CXIndex::InvalidIndex;
 
-    //修补裂缝最多需要4个三角面,另加12个索引
+    //修补裂缝最多需要8个三角面,另加24个索引
 
     return true;
 }
 
-void GTerrainNode::build ( GTerrain* owner, int level, Pose pose  )
+void GTerrainNode::build ( GTerrain* owner, int level, ChildType pose  )
 {
     mLevel = level;
     mPose = pose;
@@ -336,8 +319,6 @@ void GTerrainNode::build ( GTerrain* owner, int level, Pose pose  )
     buildIndexBuffer ( owner );
     sameLevelNodes->Insert ( mCenter, this );
 
-    NodeCount++;
-
     if ( mLevel <= 1 )
     {
         return;
@@ -348,67 +329,27 @@ void GTerrainNode::build ( GTerrain* owner, int level, Pose pose  )
         {
             mChildren[i] = new GTerrainNode ();
             mChildren[i]->mParentNode = this;
-            mChildren[i]->build ( owner, mLevel - 1, Pose ( i ) );
+            mChildren[i]->build ( owner, mLevel - 1, ChildType ( i ) );
         }
     }
 }
 
-void GTerrainNode::checkShouldRepair ( GTerrain* owner )
-{
-    ////可以修补任意等级差的裂缝
 
-    ////如果当前可渲染节点(A),周围某同级节点(B)
-    ////如果B不可渲染并且B的不可渲染值为None,那么A必须作AB之间的修补
-
-    ////如果A的父节点(PA)不为空,B的父节点（PB）不可能为空（因为AB的level相同）
-    ////如果PB不可渲染并且PB的不可渲染值为None,那么PA必须作PA、PB之间的修补
-    if ( mBeRender )
-    {
-        int centers[Pose_Root];
-        centers[Left] = mCenter - ( ( int ) ( pow ( 2, mLevel ) ) );
-        centers[Right] = mCenter + ( ( int ) ( pow ( 2, mLevel ) ) );
-        centers[Top] = mCenter + ( ( int ) ( pow ( 2, mLevel ) ) ) * owner->getLineCount();
-        centers[Bottom] = mCenter - ( ( int ) ( pow ( 2, mLevel ) ) ) * owner->getLineCount();
-
-        GLevel_NodesMap& levelNodesMap = owner->getNodesMap();
-        GCenter_NodesMap *NodeByCenter = nullptr;
-        if ( levelNodesMap.Get ( mLevel, NodeByCenter ) )
-        {
-            mRepairDatas.clear();
-            for ( int i = 0; i <= Bottom; ++i )
-            {
-                checkShouldRepair ( centers[i], *NodeByCenter, RepairType ( i ) );
-            }
-        }
-
-        for ( int i = 0; i < 4; i++ )
-        {
-            if ( mChildren[i] != nullptr )
-                mChildren[i]->checkShouldRepair ( owner );
-        }
-    }
-}
 void GTerrainNode::repair()
 {
     if ( mBeNeedRepair )
     {
-        CXDynaArray<int> intList;
-
         mRepairTimes = 0;
-for ( auto p: mRepairDatas )
+        int index = G_TERRAIN_CELL_BASE_INDEX_NUM;
+        for ( int i = 0; i < RepairTypeCount; ++i )
         {
-            static const int cnt = 6;
-            int buffer[cnt];
-            repairCrack ( this, p.first, buffer );
-            for ( int i = 0; i < cnt; i++ )
+            if ( mRepairIndexType[i] )
             {
-                intList.push_back ( buffer[i] );
+                repairCrack ( this, ( RepairType ) i, &mIndices[index] );
+                index += 6;
+                mRepairTimes++;
             }
-            mRepairTimes++;
         }
-
-        for ( u32 i = 0; i < intList.size(); i++ )
-            mIndices[G_TERRAIN_CELL_BASE_INDEX_NUM + i] = intList[i];
     }
     for ( int i = 0; i < 4; i++ )
     {
@@ -417,76 +358,77 @@ for ( auto p: mRepairDatas )
     }
 }
 
-void GTerrainNode::repairCrack ( GTerrainNode* node, RepairType t , int* buffer )
+void GTerrainNode::repairCrack ( GTerrainNode* node, RepairType t , u32* buffer )
 {
     switch ( t )
     {
     case RepairType::Left:
-        buffer[0] = node->mConner[Pose_LeftTop];
-        buffer[1] = node->mConner[Pose_LeftBottom];
+        buffer[0] = node->mConner[ChildLeftTop];
+        buffer[1] = node->mConner[ChildLeftBottom];
         buffer[2] = ( buffer[0] + buffer[1] ) / 2;
 
 
-        buffer[3] = node->mConner[Pose_LeftTop];
-        buffer[4] = node->mConner[Pose_LeftBottom];
+        buffer[3] = node->mConner[ChildLeftTop];
+        buffer[4] = node->mConner[ChildLeftBottom];
         buffer[5] = ( buffer[3] + buffer[4] ) / 2;
 
 
         break;
     case RepairType::Bottom:
-        buffer[0] = node->mConner[Pose_LeftBottom];
-        buffer[1] = node->mConner[Pose_RightBotttom];
+        buffer[0] = node->mConner[ChildLeftBottom];
+        buffer[1] = node->mConner[ChildRightBotttom];
         buffer[2] = ( buffer[0] + buffer[1] ) / 2;
 
 
-        buffer[3] = node->mConner[Pose_LeftBottom];
-        buffer[4] = node->mConner[Pose_RightBotttom];
+        buffer[3] = node->mConner[ChildLeftBottom];
+        buffer[4] = node->mConner[ChildRightBotttom];
         buffer[5] = ( buffer[3] + buffer[4] ) / 2;
 
         break;
 
     case RepairType::Right:
-        buffer[0] = node->mConner[Pose_RightTop];
-        buffer[1] = node->mConner[Pose_RightBotttom];
+        buffer[0] = node->mConner[ChildRightTop];
+        buffer[1] = node->mConner[ChildRightBotttom];
         buffer[2] = ( buffer[0] + buffer[1] ) / 2;
 
 
-        buffer[3] = node->mConner[Pose_RightTop];
-        buffer[4] = node->mConner[Pose_RightBotttom];
+        buffer[3] = node->mConner[ChildRightTop];
+        buffer[4] = node->mConner[ChildRightBotttom];
         buffer[5] = ( buffer[3] + buffer[4] ) / 2;
 
         break;
 
     case RepairType::Top:
 
-        buffer[0] = node->mConner[Pose_LeftTop];
-        buffer[1] = node->mConner[Pose_RightTop];
+        buffer[0] = node->mConner[ChildLeftTop];
+        buffer[1] = node->mConner[ChildRightTop];
         buffer[2] = ( buffer[0] + buffer[1] ) / 2;
 
 
-        buffer[3] = node->mConner[Pose_LeftTop];
-        buffer[4] = node->mConner[Pose_RightTop];
+        buffer[3] = node->mConner[ChildLeftTop];
+        buffer[4] = node->mConner[ChildRightTop];
         buffer[5] = ( buffer[3] + buffer[4] ) / 2;
 
         break;
     }
 }
 
-void GTerrainNode::clipByCamera ( GCamera* camera, GTerrain* owner )
+void GTerrainNode::cull ( GCamera* camera, GTerrain* owner )
 {
-    mNotRenderReason = NotRenderReason::None;
     if ( !camera->getCuller()->isInFrustum ( mBound ) )
     {
-        mBeRender = false;
-        mNotRenderReason = NotRenderReason::NotInEye;
+        mCullResult = eCullResultTypeNotInEye;
         return;
     }
 
     if ( mLevel == 1 )
     {
-        mBeRender = true;
+        mCullResult = eCullResultTypeRender;
+        if ( mParentNode )
+            mParentNode->mCulledIndexType[mPose] = true;
         return;
     }
+
     D3DXVECTOR3 cameraPos;
     camera->getObjectCorrdPos ( cameraPos, owner );
     float Distance = dVector3Length ( mBound->mCenter - cameraPos );
@@ -496,17 +438,20 @@ void GTerrainNode::clipByCamera ( GCamera* camera, GTerrain* owner )
 
     if ( TargetLevel < mLevel )
     {
-        mBeRender = false;
-        mNotRenderReason = NotRenderReason::LevelHigh;
-        for ( int i = 0; i < 4; i++ )
+        mCullResult = eCullResultTypeLevelHigh;
+        if ( mParentNode )
+            mParentNode->mCulledIndexType[mPose] = true;
+        for ( int i = 0; i < ChildCount; i++ )
         {
             if ( mChildren[i] != nullptr )
-                mChildren[i]->clipByCamera ( camera, owner );
+                mChildren[i]->cull ( camera, owner );
         }
     }
     else
     {
-        mBeRender = true;
+        mCullResult = eCullResultTypeRender;
+        if ( mParentNode )
+            mParentNode->mCulledIndexType[mPose] = true;
     }
 }
 
@@ -521,38 +466,67 @@ for ( auto & c: mChildren )
         }
     }
 }
-
-void GTerrainNode::checkShouldRepair ( int center, GCenter_NodesMap & nodeMap, RepairType repairType )
+void GTerrainNode::checkShouldRepair ( GTerrain* owner )
 {
-    GTerrainNode* node = 0;
-    if ( nodeMap.Get ( center, node ) )
+    ////可以修补任意等级差的裂缝
+
+    /** @brief
+    	@1,当前可渲染节点(A),周围某同级节点B,如果如果B不可渲染并且B的不可渲染
+    值为None,AB之间要做修补
+    	@2,当前不可渲染节点A(eCullResultTypeLevelHigh),周围存在某同级节点B
+    (eCullResultTypeNone,裁剪过程中，因其为LevelHigh的子节点，所以未做任何处
+    理),AB之间要做修补
+    **/
+    if ( mCullResult == eCullResultTypeRender || mCullResult == eCullResultTypeLevelHigh )
     {
-        if ( !node->mBeRender && node->mNotRenderReason  == NotRenderReason::None )
+        for ( int i = 0; i < RepairTypeCount; ++i )
         {
-            mBeNeedRepair = true;
-            if ( !mRepairDatas.findkey ( repairType ) )
-                mRepairDatas.Insert ( repairType, true );
-
-            GTerrainNode* OthersParent = node->mParentNode;
-            GTerrainNode* MyParent = mParentNode;
-
-            while ( MyParent != nullptr )
-            {
-                if ( OthersParent->mNotRenderReason == NotRenderReason::None )
-                {
-                    MyParent->mBeNeedRepair = true;
-                    if ( !MyParent->mRepairDatas.findkey ( repairType ) )
-                        MyParent->mRepairDatas.Insert ( repairType, true );
-
-                    MyParent = MyParent->mParentNode;
-                    OthersParent = OthersParent->mParentNode;
-                }
-                else if ( OthersParent->mNotRenderReason == NotRenderReason::LevelHigh )
-                {
-                    break;
-                }
-            }
+            checkShouldRepair ( RepairType ( i ) );
         }
+    }
+
+    if ( mCullResult == eCullResultTypeLevelHigh )
+    {
+        for ( int i = 0; i < ChildCount; i++ )
+        {
+            if ( mChildren[i] != nullptr )
+                mChildren[i]->checkShouldRepair ( owner );
+        }
+    }
+}
+void GTerrainNode::checkShouldRepair ( RepairType repairType )
+{
+    if ( mNeighbour[repairType] && mNeighbour[repairType]->mCullResult == eCullResultTypeNone )
+    {
+        mBeNeedRepair = true;
+        mRepairIndexType[repairType] = true;
+        mParentNode->mCulledIndexType[mPose] = true;
+    }
+}
+
+void GTerrainNode::buildNeighbour ( GTerrain* owner )
+{
+    int centers[ChildCount];
+    centers[Left] = mCenter - ( ( int ) ( pow ( 2, mLevel ) ) );
+    centers[Right] = mCenter + ( ( int ) ( pow ( 2, mLevel ) ) );
+    centers[Top] = mCenter + ( ( int ) ( pow ( 2, mLevel ) ) ) * owner->getLineCount();
+    centers[Bottom] = mCenter - ( ( int ) ( pow ( 2, mLevel ) ) ) * owner->getLineCount();
+
+    GLevel_NodesMap& levelNodesMap = owner->getNodesMap();
+    GCenter_NodesMap *NodeByCenter = nullptr;
+    if ( levelNodesMap.Get ( mLevel, NodeByCenter ) )
+    {
+        for ( int i = 0; i < NeighbourCount; ++i )
+        {
+            GTerrainNode* n = 0;
+            if ( NodeByCenter->Get ( centers[i], n ) )
+                mNeighbour[i] = n;
+        }
+    }
+    for ( int i = 0; i < ChildCount; ++i )
+    {
+        if ( mChildren[i] != nullptr )
+            mChildren[i]->buildNeighbour ( owner );
     }
 }
 

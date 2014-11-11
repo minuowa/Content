@@ -1,5 +1,6 @@
 #ifndef GTerrainCommon_h__
 #define GTerrainCommon_h__
+#include <hash_map>
 
 struct EXVertex
 {
@@ -77,7 +78,7 @@ struct HitInfo
 };
 class GTerrainNode;
 /** @brief center,node **/
-typedef CXMap<int, GTerrainNode*> GCenter_NodesMap;
+typedef CXHashMap<int, GTerrainNode*> GCenter_NodesMap;
 /** @brief level,nodesMap **/
-typedef CXMap<int, GCenter_NodesMap*> GLevel_NodesMap;
+typedef CXHashMap<int, GCenter_NodesMap*> GLevel_NodesMap;
 #endif // GTerrainCommon_h__
