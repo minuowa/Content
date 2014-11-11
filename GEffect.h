@@ -1,55 +1,43 @@
 #pragma once
+#include "GResourceManager.h"
 
-
-typedef D3DXHANDLE(*SetPara)(ID3DXEffect *);
-
-D3DXHANDLE SetEffectParaments(ID3DXEffect *pEffect);
-
-class GEffect
+class GEffect: public CXCallBack
 {
 public:
-	GEffect(void);
-	~GEffect(void);
+	CXDelegate mDelegateRender;
+	CXDelegate mDelegateSetPara;
+	CXDelegate mDelegateOnReset;
+public:
+	GEffect();
+	~GEffect();
 	bool createFromFile ( const char* name );
-
-	inline ID3DXEffect* getTexture()
-	{
-		return mD3DEffect;
-	}
+	void draw();
+	void setParams();
+	bool recreate();
+	inline ID3DXEffect* getD3DEffect();
 public:
-	GString			FileName;
-protected:
-	D3DXHANDLE SetEffectPara(SetPara FunSetPara);
-
+	GString	mFileName;
 public:
-
 	ID3DXEffect *mD3DEffect;
-
-	static ID3DXEffectPool *mEffectPool;
-
-	D3DXHANDLE m_hParaBlock;
-
-	D3DXHANDLE m_hWorldViewProj;
-
-	D3DXHANDLE m_Tech;
-
-	D3DXHANDLE m_hUseMaterialOnly;
-
-	D3DXHANDLE m_hTexture;
-
-	D3DXHANDLE m_hMtrlAmbient;
-
-	D3DXHANDLE m_hMtrlDiffuse;
-
-	D3DXHANDLE m_hWorld;
-
-	D3DXHANDLE m_hOpenLight;
-
-
-	IDirect3DVertexDeclaration9 *m_pVDel;
-
+};
+inline ID3DXEffect* GEffect::getD3DEffect()
+{
+    return mD3DEffect;
+}
+class GEffectManager:public GResourceManager<GEffect>,public CXCallBack
+{
 public:
-
+	CXDelegate mDelegateRecreate;
+public:
+	GEffectManager();
+	~GEffectManager();
+	ID3DXEffectPool*& getPool();
+	virtual void onCallBack( const CXDelegate& );
+	void clear();
+	bool recreate();
+private:
+	ID3DXEffectPool* mEffectPool;
+	CXMap<GString,GEffect*> mPointerMap;
 };
 
-extern GEffect gEffect;
+#define EffectMgr	CXSingleton<GEffectManager>::getInstance()

@@ -10,7 +10,8 @@ class GEffect;
 struct EXVertex;
 struct HitInfo;
 class GHeightMap;
-
+class GTerrainBrush;
+class GEffect;
 class GTerrain: public GNode
 {
 	DeclareEditorType(GTerrain);
@@ -19,12 +20,13 @@ public:
 	~GTerrain();
 	void setRootLevel(uchar level);
 	void setCellWidth(float width);
+
 	void LoadAlphaMap();
 	void updateEx ( );
 	virtual void update();
-	void LoadBrushs();
-	void LoadEffect();
 	virtual bool render() override;
+	bool loadBrushs();
+	bool loadEffect();
 	void createVertexBuffer();
 
 	void loadHeightMap();
@@ -48,7 +50,11 @@ public:
 	inline float getLODFactor() const;
 	virtual bool recreate();
 protected:
+	void renderNodes();
+	void setEffects();
+	void setEffectConst();
 	bool createNodes();
+	bool createVertexDeclaretion();
 protected:
 	virtual void registerAllProperty();
 
@@ -56,6 +62,9 @@ protected:
 	virtual void onPropertyChangeEnd( void* cur );
 
 	virtual void clear();
+
+	virtual void onCallBack( const CXDelegate& );
+
 public:
 
 	//第一个int为level，第二个int为center，同一个level的QNode的Center必不相同
@@ -80,20 +89,20 @@ protected:
 	bool ReapirLevelTwo;
 
 	GBitmap* mAlphaSplatMap ;
-	bool BeHasAlphasplatMap ;
+	bool mUsingAlphasplatMap ;
 	bool BeSaveAlphaSplat ;
 	bool mUsingHeightMap  ;
 
 	GString File_AlphaSplat ;
-	GString File_Effect ;
+	GString mFileEffect ;
 	GString File_BrushConfig ;
 	GString mFileHeightMap;
 
 	GString mTerrainCountString;
-
+	GTerrainBrush* mTerrainBrush;
 	CXMap<GString, GString> BrushSets;
 
-	GEffect* TerrainEffect ;
+	GEffect* mTerrainEffect ;
 	CXMap<GString, HANDLE> Paras ;
 	CXMap<GString, GTexture*> Texts;
 	HANDLE EH_Diffuse ;
@@ -115,10 +124,11 @@ protected:
 
 	IDirect3DVertexBuffer9* mVertexBuffer;
 	IDirect3DIndexBuffer9* mIndexBuffer;
+	IDirect3DVertexDeclaration9 *mVertexDeclartion;
+
 	GTexture* mTexture;
 
 	D3DMATERIAL9 mMtrl;
-	GCamera* mCamera  ;
 	typedef CXDynaArray<int> AlterFaceList;
 	typedef CXMap<int, AlterFaceList*> AlterFaceIndexListMap;
 	AlterFaceIndexListMap mAlterFaceIndexListMap ;

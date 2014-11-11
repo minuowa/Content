@@ -38,11 +38,11 @@ public:
 
 	void OpenlightEx ( int nIndex, bool bOpen, float fDiffuseIntensity, bool bUseMatrialColor = false );
 
-	void OpenAllLight ( bool bOpen, bool bUseMatrialColor = false ); //开启所有光源
+	void openAllLight ( bool bOpen, bool bUseMatrialColor = false ); //开启所有光源
 
 	void OpenAllLightEx ( bool bOpen, float fDiffuseIntensity, float fAmbientIntensity, float fSpecularIntensity, bool bUseMatrialColor = false ); //设置指定参数光源，并开启
 
-	void OpenAlphaBlend ( bool bOpen );	//开启Alpha混合
+	void openAlphaBlend ( bool bOpen );	//开启Alpha混合
 
 	void ResetRenderState();
 

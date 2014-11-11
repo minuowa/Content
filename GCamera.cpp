@@ -19,9 +19,9 @@ GCamera::GCamera ( void )
 
 	mCuller = NULL;
 
-	matProj = NORMALMATRIX;
+	mProj = NORMALMATRIX;
 
-	matView = NORMALMATRIX;
+	mView = NORMALMATRIX;
 
 	D9DEVICE->mOnResetDevice += this;
 }
@@ -36,11 +36,11 @@ void GCamera::setProj()
 {
 	mAspect = ( ( float ) ( D9DEVICE->mWidth ) ) / ( ( float ) ( D9DEVICE->mHeight ) );
 
-	D3DXMatrixPerspectiveFovLH ( &matProj, mFieldOfView, mAspect, mNear, mFar );
+	D3DXMatrixPerspectiveFovLH ( &mProj, mFieldOfView, mAspect, mNear, mFar );
 
 	if ( D9DEVICE != NULL )
 	{
-		D9DEVICE->GetDvc()->SetTransform ( D3DTS_PROJECTION, &matProj );
+		D9DEVICE->GetDvc()->SetTransform ( D3DTS_PROJECTION, &mProj );
 	}
 	if ( mCuller == nullptr )
 		mCuller = new GFrustum();
@@ -60,11 +60,11 @@ void GCamera::setView()
 {
 	D3DXVECTOR3 vLookAtPos = getTrans().mTranslate + getTrans().mDir * 100;
 
-	D3DXMatrixLookAtLH ( &matView, &getTrans().mTranslate, &vLookAtPos, &getTrans().mUpon );
+	D3DXMatrixLookAtLH ( &mView, &getTrans().mTranslate, &vLookAtPos, &getTrans().mUpon );
 
 	if ( D9DEVICE != NULL )
 	{
-		D9DEVICE->GetDvc()->SetTransform ( D3DTS_VIEW, &matView );
+		D9DEVICE->GetDvc()->SetTransform ( D3DTS_VIEW, &mView );
 	}
 }
 
@@ -231,6 +231,8 @@ void GCamera::getObjectCorrdPos ( D3DXVECTOR3& out, GNode* obj )
 	out = getTrans().mTranslate;
 	D3DXVec3TransformCoord ( &out, &out, &mat );
 }
+
+
 
 
 

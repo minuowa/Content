@@ -1,9 +1,5 @@
 #pragma once
-
-#include "XList.h"
-//#include "EasyList.h"
 #include "GResourceManager.h"
-//纹理与Mesh是对应的
 class GTexture
 {
 public:
@@ -12,15 +8,17 @@ public:
 
 	bool createFromFile ( const char* name );
 
-	inline IDirect3DTexture9* getTexture()
-	{
-		return mD3DTexture;
-	}
+	inline IDirect3DTexture9* getTexture();
 public:
-	GString			FileName;
+	GString			mFileName;
 protected:
 	IDirect3DTexture9*	mD3DTexture;
 };
+
+inline IDirect3DTexture9* GTexture::getTexture()
+{
+	return mD3DTexture;
+}
 typedef CXSingleton<GResourceManager<GTexture>> GTextureManager;
 
 #define TextureMgr	GTextureManager::getInstance()

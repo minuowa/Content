@@ -143,6 +143,7 @@
     <ClCompile Include="GAnimMeshObj.cpp" />
     <ClCompile Include="GBound.cpp" />
     <ClCompile Include="GTerrain.cpp" />
+    <ClCompile Include="GTerrainBrush.cpp" />
     <ClCompile Include="GTerrainCommon.cpp" />
     <ClCompile Include="GTerrainNode.cpp" />
     <ClCompile Include="GWorldCorrd.cpp" />
@@ -197,6 +198,7 @@
     <ClInclude Include="GMoviePlayer.h" />
     <ClInclude Include="GObject.h" />
     <ClInclude Include="GResourceManager.h" />
+    <ClInclude Include="GTerrainBrush.h" />
     <ClInclude Include="GTerrainCommon.h" />
     <ClInclude Include="GTerrainNode.h" />
     <ClInclude Include="GWorldCorrd.h" />

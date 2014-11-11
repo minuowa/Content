@@ -7,6 +7,7 @@
 #include "GComponentFactory.h"
 #include "GComponentBox.h"
 #include <fstream>
+#include "GTerrain.h"
 
 static const char* gRootNodeName = "SceneRootNode";
 static const char* gRootDynamicNodeName = "SceneRootDynamicNode";
@@ -150,6 +151,7 @@ void GSceneManager::initNodeFactory()
 	__RegisterGameObjCreator ( GRenderObject );
 	__RegisterGameObjCreator ( GWater );
 	__RegisterGameObjCreator ( GWorldCorrd );
+	__RegisterGameObjCreator ( GTerrain );
 	__RegisterGameObjCreator ( GCamera );
 
 #if TheEditor

@@ -8,15 +8,17 @@
 #include "GCamera.h"
 #include "GGame.h"
 #include "GText.h"
+#include "GTerrainBrush.h"
+#include "GEffect.h"
 
 
 GTerrain::GTerrain ( )
 {
     mRootLevel = 8;
-    mCellWidth = 50;
-    mLODFactor = 800.f;
-    mHeightMax = 700.0f;
-    mHeightMin = -300.0f;
+    mCellWidth = 150;
+    mLODFactor = 2400.f;
+    mHeightMax = 3000.0f;
+    mHeightMin = -2000.0f;
     mDisplayRepairAreaOnly = false;
     mFileHeightMap = "..\\Res\\Terrain\\heightmap.bmp";
     mHeightMap = nullptr;
@@ -24,12 +26,12 @@ GTerrain::GTerrain ( )
     mLODMode = true;
     ReapirLevelTwo = true;
     mAlphaSplatMap = nullptr;
-    BeHasAlphasplatMap = true;
+    mUsingAlphasplatMap = true;
     BeSaveAlphaSplat = false;
     File_AlphaSplat = "..\\Res\\Terrain\\TerrainAlphaSplat.png";
-    File_Effect = "..\\Res\\Terrain\\TerrainEffect.fx";
+    mFileEffect = "..\\Res\\Terrain\\TerrainEffect.fx";
     File_BrushConfig = "..\\Res\\Terrain\\Brushs\\Brushs.xml";
-    TerrainEffect = nullptr;
+    mTerrainEffect = nullptr;
     EH_Diffuse = nullptr;
     mOriginalIndexBuffer = nullptr;
     mDynamicIndexBuffer = nullptr;
@@ -37,8 +39,8 @@ GTerrain::GTerrain ( )
     mVertexBuffer = nullptr;
     mTexture = nullptr;
     mUsingHeightMap = true;
-    mCamera = nullptr;
-
+    mTerrainBrush = nullptr;
+    mVertexDeclartion = nullptr;
     TextMgr->addText ( &mTerrainCountString );
 
     //GxComponentFog TerrainFog = new GxComponentFog();
@@ -75,7 +77,7 @@ void GTerrain::LoadAlphaMap()
 {
     if ( !IsFileExist ( File_AlphaSplat.c_str() ) )
     {
-        BeHasAlphasplatMap = false;
+        mUsingAlphasplatMap = false;
         return;
     }
     mAlphaSplatMap = new GBitmap ( File_AlphaSplat );
@@ -89,7 +91,7 @@ void GTerrain::LoadAlphaMap()
 void GTerrain::updateEx()
 {
     mRootNode->reset();
-    mRootNode->cull ( mCamera, this );
+    mRootNode->cull (TheSceneMgr->getCurCamera(), this );
 
     if ( mLODMode )
     {
@@ -107,45 +109,24 @@ void GTerrain::updateEx()
     mIndexBuffer->Unlock();
 }
 
-void GTerrain::LoadBrushs()
+bool GTerrain::loadBrushs()
 {
-    //BrushSets = new Dictionary<string, string>();
-    //Texts = new Dictionary<string, Texture>();
-
-    //XmlDocument doc = new XmlDocument();
-    //doc.Load ( File_BrushConfig );
-    //XmlNode root = doc.SelectSingleNode ( "Brushs" );
-    //XmlNodeList xnl = root.ChildNodes;
-    //foreach ( XmlNode xnf in xnl )
-    //{
-    //    XmlElement xe = ( XmlElement ) xnf;
-    //    string file = xe.GetAttribute ( "File" );
-    //    string color = xe.GetAttribute ( "Color" );
-
-    //    BrushSets.Add ( file, color );
-
-    //    string fileEx = file.Insert ( 0, "..\\Res\\Terrain\\Brushs\\" );
-    //    Texts.Add ( color, GxTexturePool.GetTexture ( fileEx ) );
-    //}
+    dSafeDelete ( mTerrainBrush );
+    mTerrainBrush = new GTerrainBrush;
+    mTerrainBrush->setXMLFile ( File_BrushConfig.c_str() );
+    return mTerrainBrush->recreate();
 }
 
-void GTerrain::LoadEffect()
+bool GTerrain::loadEffect()
 {
-    //TerrainEffect = GxEffect.GetEffect ( File_Effect );
-
-    //Paras = new Dictionary<string, EffectHandle>();
-
-    //Paras.Add ( "A", EffectHandle.FromString ( "xTexture0" ) );
-    //Paras.Add ( "R", EffectHandle.FromString ( "xTexture1" ) );
-    //Paras.Add ( "G", EffectHandle.FromString ( "xTexture2" ) );
-    //Paras.Add ( "B", EffectHandle.FromString ( "xTexture3" ) );
-
-    //EH_Diffuse = EffectHandle.FromString ( "Diffuse" );
-
-    //foreach ( KeyValuePair<string, EffectHandle> ect in Paras )
-    //{
-    //    TerrainEffect.SetValue ( ect.Value, Texts[ect.Key] );
-    //}
+    mTerrainEffect = EffectMgr->getResource ( mFileEffect.c_str() );
+    CXASSERT_RESULT_FALSE ( mTerrainEffect );
+    mTerrainEffect->mDelegateRender += this;
+    mTerrainEffect->mDelegateSetPara += this;
+    mTerrainEffect->mDelegateOnReset += this;
+    CXASSERT_RESULT_FALSE ( mTerrainBrush );
+    setEffectConst();
+    return true;
 }
 
 bool GTerrain::render()
@@ -154,31 +135,11 @@ bool GTerrain::render()
         return false;
 
     //必须的，否则默认使用顶点颜色做光照
-    D9DEVICE->OpenAllLight ( true );
-    D9DEVICE->OpenAlphaBlend ( false );
-    D9DEVICE->GetDvc()->SetStreamSource ( 0, mVertexBuffer, 0, sizeof ( EXVertex ) );
-    D9DEVICE->GetDvc()->SetFVF ( EXVertex::Format );
-    D9DEVICE->GetDvc()->SetTexture ( 0, mTexture->getTexture() );
-    D9DEVICE->GetDvc()->SetIndices ( mIndexBuffer );
-    D9DEVICE->GetDvc()->SetMaterial ( &GMetrialData::mDefaultWhite );
-    D9DEVICE->GetDvc()->DrawIndexedPrimitive ( D3DPT_TRIANGLELIST, 0, 0, mLineCount * mLineCount, 0, mDynamicIndexBuffer->size() / 3 );
-    //D9DEVICE->GetDvc()->DrawIndexedPrimitive ( D3DPT_TRIANGLELIST, 0, 0, mLineCount * mLineCount, 0,8 );
+    //D9DEVICE->openAllLight ( true );
+    //D9DEVICE->openAlphaBlend ( false );
+    mTerrainEffect->setParams();
+    mTerrainEffect->draw();
 
-    //DVC.RenderState.DiffuseMaterialSource = ColorSource.Material;
-    //DVC.Material = Mtrl;
-    //DVC.VertexFormat = EXVertex.Format;
-    //DVC.VertexDeclaration = EXVertex.Vertex_Declaration;
-    //DVC.SetStreamSource ( 0, VBuffer, 0 );
-    //TerrainEffect.SetValue ( EH_Diffuse, Mtrl.DiffuseColor );
-    //TerrainEffect.SetValue (
-    //    EffectHandle.FromString ( "matWorldViewProj" ),
-    //    Transform.getTransfrom() * GxDevice.DVC.Transform.View * GxDevice.DVC.Transform.Projection
-    //);
-    //TerrainEffect.Begin ( FX.None );
-    //TerrainEffect.BeginPass ( 0 );
-    //RootNode->Render();
-    //TerrainEffect.EndPass();
-    //TerrainEffect.End();
     return true;
 }
 
@@ -217,17 +178,19 @@ void GTerrain::createVertexBuffer()
                     fHeight = 0;
                 }
                 pos.Pos = D3DXVECTOR3 ( fX, fHeight, fZ );
+                //pos.Txt1 = new D3DXVECTOR4 ( cl.R / 255.0f, cl.G / 255.0f, cl.B / 255.0f, cl.A / 255.0f );
+                pos.Wights = D3DXVECTOR4 ( 0.25, 0.25, 0.25, 0.25 );
+                //pos.Wights = D3DXVECTOR4 ( 1, 1, 1, 1 );
 
-                if ( BeHasAlphasplatMap )
+                if ( mUsingAlphasplatMap )
                 {
                     //CXColor cl = AlphaSplatMap->GetPixel ( j, QNode::LineCount - i - 1 );
-                    //pos.Txt1 = new D3DXVECTOR4 ( cl.R / 255.0f, cl.G / 255.0f, cl.B / 255.0f, cl.A / 255.0f );
                 }
 
                 //pos.Color = Color.Red.ToArgb();
                 pos.Color = 0XDDDDDDFF;
-                pos.Tu = j;
-                pos.Tv = getCellCount() - i;
+                pos.TU = j;
+                pos.TV = getCellCount() - i;
 
                 data[ ( getLineCount() ) * i + j] = pos;
             }
@@ -675,7 +638,6 @@ GTerrain::~GTerrain()
 void GTerrain::update()
 {
     __super::update();
-    mCamera = TheSceneMgr->getCurCamera();
     updateEx();
 }
 
@@ -720,8 +682,16 @@ bool GTerrain::recreate()
     if ( !__super::recreate() )
         return false;
 
+
+    if ( !createVertexDeclaretion() )
+        return false;
+
     loadHeightMap();
 
+    if ( !loadBrushs() )
+        return false;
+    if ( !loadEffect() )
+        return false;
     if ( !createNodes() )
         return false;
 
@@ -751,6 +721,14 @@ void GTerrain::clear()
 
     dSafeDelete ( mAlphaSplatMap );
     dSafeDelete ( mHeightMap );
+    dSafeDelete ( mTerrainBrush );
+    dSafeRelease ( mVertexDeclartion );
+    if ( mTerrainEffect )
+    {
+        mTerrainEffect->mDelegateSetPara -= this;
+        mTerrainEffect->mDelegateRender -= this;
+        mTerrainEffect->mDelegateOnReset -= this;
+    }
     dSafeDeleteMap2 ( mNodeMaps );
 }
 
@@ -774,4 +752,68 @@ bool GTerrain::createNodes()
     mRootNode->buildNeighbour ( this );
 
     return true;
+}
+
+bool GTerrain::createVertexDeclaretion()
+{
+    dSafeRelease ( mVertexDeclartion );
+    D9DEVICE->GetDvc()->CreateVertexDeclaration ( gTerrainVertexDeclartion, &mVertexDeclartion );
+    return mVertexDeclartion != nullptr;
+}
+
+void GTerrain::renderNodes()
+{
+    D9DEVICE->GetDvc()->SetStreamSource ( 0, mVertexBuffer, 0, sizeof ( EXVertex ) );
+    D9DEVICE->GetDvc()->SetVertexDeclaration ( mVertexDeclartion );
+    //D9DEVICE->GetDvc()->SetFVF ( EXVertex::Format );
+    //D9DEVICE->GetDvc()->SetTexture ( 0, mTexture->getTexture() );
+    D9DEVICE->GetDvc()->SetIndices ( mIndexBuffer );
+    D9DEVICE->GetDvc()->SetMaterial ( &GMetrialData::mDefaultWhite );
+    D9DEVICE->GetDvc()->DrawIndexedPrimitive ( D3DPT_TRIANGLELIST, 0, 0, mLineCount * mLineCount, 0, mDynamicIndexBuffer->size() / 3 );
+
+}
+
+void GTerrain::onCallBack ( const CXDelegate& d )
+{
+    if ( mTerrainEffect  )
+    {
+        if ( mTerrainEffect->mDelegateRender == d )
+        {
+            renderNodes();
+        }
+        else if ( mTerrainEffect->mDelegateSetPara == d )
+        {
+            setEffects();
+        }
+        else if ( mTerrainEffect->mDelegateOnReset == d )
+        {
+            setEffectConst();
+        }
+    }
+}
+
+void GTerrain::setEffects()
+{
+    assert ( mTerrainEffect );
+    D3DXMATRIX mat;
+	GCamera* camera=TheSceneMgr->getCurCamera();
+    mat = ( *camera->getView() ) * ( * camera->getProjection() );
+    mTerrainEffect->getD3DEffect()->SetMatrix ( "matWorldViewProj", &mat );
+    mTerrainEffect->getD3DEffect()->SetTechnique ( "TShader" );
+}
+
+void GTerrain::setEffectConst()
+{
+    mTerrainEffect->getD3DEffect()->SetTexture ( "xTexture0", mTerrainBrush->getTexture ( eTerrainBrushType_A )->getTexture() );
+    mTerrainEffect->getD3DEffect()->SetTexture ( "xTexture1", mTerrainBrush->getTexture ( eTerrainBrushType_R )->getTexture() );
+    mTerrainEffect->getD3DEffect()->SetTexture ( "xTexture2", mTerrainBrush->getTexture ( eTerrainBrushType_G )->getTexture() );
+    mTerrainEffect->getD3DEffect()->SetTexture ( "xTexture3", mTerrainBrush->getTexture ( eTerrainBrushType_B )->getTexture() );
+    mTerrainEffect->getD3DEffect()->SetBool ( "BeTexture", true );
+    mTerrainEffect->getD3DEffect()->SetBool ( "BeMaterial", true );
+    mTerrainEffect->getD3DEffect()->SetBool ( "BeLightOn", false );
+    D3DXVECTOR4 diffuse ( 1.0, 1.0, 1.0, 1.0 );
+    mTerrainEffect->getD3DEffect()->SetFloatArray ( "Diffuse", ( CONST FLOAT* ) &diffuse, 4 );
+    mTerrainEffect->getD3DEffect()->SetFloatArray ( "Ambient", ( CONST FLOAT* ) &diffuse, 4 );
+    mTerrainEffect->getD3DEffect()->SetFloatArray ( "Specular", ( CONST FLOAT* ) &diffuse, 4 );
+    mTerrainEffect->getD3DEffect()->SetFloatArray ( "Emissive", ( CONST FLOAT* ) &diffuse, 4 );
 }

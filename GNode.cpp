@@ -302,10 +302,10 @@ IntersectInfo * GNode::GetBlockPoint()
 
 void GNode::update(  )
 {
-	if ( mComponentOwner.getComponent ( eComponentType_Trans ) )
-	{
-		updateTrans();
-	}
+	//if ( mComponentOwner.getComponent ( eComponentType_Trans ) )
+	//{
+	//	updateTrans();
+	//}
 
 	for ( GNode * child: mChildren )
 	{

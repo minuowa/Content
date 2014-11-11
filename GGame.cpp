@@ -27,7 +27,8 @@ GGame::~GGame ( void )
 {
     dSafeDelete ( mSceneMgr );
     CXSingleton<GResourceManager<GTexture>>::destoryInstance();
-    CXSingleton<GResourceManager<GAnimationResource>>::destoryInstance();
+	CXSingleton<GResourceManager<GAnimationResource>>::destoryInstance();
+	CXSingleton<GEffectManager>::destoryInstance();
     CXSingleton<GMeshManager>::destoryInstance();
     CXSingleton<GGameOption>::destoryInstance();
     CXSingleton<GComponentFactory>::destoryInstance();
@@ -42,13 +43,13 @@ void GGame::loop()
 {
     TheTimer->update();
 
-    if ( mIsActive )
-    {
-        INPUTSYSTEM.Update();
-        getInput();
-    }
+	if ( mIsActive )
+	{
+		INPUTSYSTEM.Update();
+		getInput();
+	}
 
-    update();
+	update();
 
     render();
 }
@@ -343,25 +344,25 @@ bool GGame::init ( HWND mainWnd )
 
 	TextMgr->init();
 
-    D9DEVICE->ResetRenderState();
+    //D9DEVICE->ResetRenderState();
 
-    bSuccess = gEffect.createFromFile( "..\\Data\\Effect\\SimpleEffect.fx" );
+    //bSuccess = gEffect.createFromFile( "..\\Data\\Effect\\SimpleEffect.fx" );
 
-    gEffect.m_hWorldViewProj = gEffect.mD3DEffect->GetParameterByName ( 0, "matWorldViewProj" );
+    //gEffect.m_hWorldViewProj = gEffect.mD3DEffect->GetParameterByName ( 0, "matWorldViewProj" );
 
-    gEffect.m_hWorld = gEffect.mD3DEffect->GetParameterByName ( 0, "matWorld" );
+    //gEffect.m_hWorld = gEffect.mD3DEffect->GetParameterByName ( 0, "matWorld" );
 
-    gEffect.m_Tech = gEffect.mD3DEffect->GetTechniqueByName ( "TShader" );
+    //gEffect.m_Tech = gEffect.mD3DEffect->GetTechniqueByName ( "TShader" );
 
-    gEffect.m_hUseMaterialOnly = gEffect.mD3DEffect->GetParameterByName ( 0, "bUseMaterialOnly" );
+    //gEffect.m_hUseMaterialOnly = gEffect.mD3DEffect->GetParameterByName ( 0, "bUseMaterialOnly" );
 
-    gEffect.m_hTexture = gEffect.mD3DEffect->GetParameterByName ( 0, "TexObj" );
+    //gEffect.m_hTexture = gEffect.mD3DEffect->GetParameterByName ( 0, "TexObj" );
 
-    gEffect.m_hMtrlAmbient = gEffect.mD3DEffect->GetParameterByName ( 0, "materialAmbient" );
+    //gEffect.m_hMtrlAmbient = gEffect.mD3DEffect->GetParameterByName ( 0, "materialAmbient" );
 
-    gEffect.m_hMtrlDiffuse = gEffect.mD3DEffect->GetParameterByName ( 0, "materialDiffuse" );
+    //gEffect.m_hMtrlDiffuse = gEffect.mD3DEffect->GetParameterByName ( 0, "materialDiffuse" );
 
-    gEffect.m_hOpenLight = gEffect.mD3DEffect->GetParameterByName ( 0, "bOpenLight" );
+    //gEffect.m_hOpenLight = gEffect.mD3DEffect->GetParameterByName ( 0, "bOpenLight" );
 
 
     //加载渲染对象大概3000ms
@@ -421,10 +422,10 @@ DWORD WINAPI loadObj ( LPVOID pParam )
 
     if ( 1 )
     {
-        //GAnimMeshObj *pAnimMesh = new GAnimMeshObj;
-        //pAnimMesh->setMediaFile ( "..\\Data\\res\\Anim\\AnimMesh0002\\A0002.X" );
-        //CXASSERT_RETURN_FALSE ( pAnimMesh->recreate() );
-        //TheSceneMgr->addDynaObj ( pAnimMesh );
+        GAnimMeshObj *pAnimMesh = new GAnimMeshObj;
+        pAnimMesh->setMediaFile ( "..\\Data\\res\\Anim\\AnimMesh0002\\A0002.X" );
+        CXASSERT_RETURN_FALSE ( pAnimMesh->recreate() );
+        TheSceneMgr->addDynaObj ( pAnimMesh );
     }
     if ( 1 )
     {
@@ -483,16 +484,8 @@ DWORD WINAPI loadObj ( LPVOID pParam )
 
 void GGame::gameRender ( float fPass )
 {
-    //GMeshManager::GetSingleton().Render( fPass );
-
     mSceneMgr->mSceneRootNode->draw();
-
-    //gAnimMesh[0].Render( fPass );
-
-    renderEye ( fPass );
-
 	TextMgr->drawText();
-    //mpUIMgr->Render( fPass );
 }
 
 void GGame::renderEye ( float fPass )

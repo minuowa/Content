@@ -263,8 +263,8 @@ void GWater::setPointCount ( unsigned int cnt )
 
 bool GWater::render()
 {
-	D9DEVICE->OpenAllLight ( true, false );
-	D9DEVICE->OpenAlphaBlend(true);
+	D9DEVICE->openAllLight ( true, false );
+	D9DEVICE->openAlphaBlend(true);
 	return __super::render();
 }
 

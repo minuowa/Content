@@ -7,8 +7,8 @@ EXVertex::EXVertex ( float x, float y, float z, float nx, float ny, float nz, in
 	//, Txt1 ( 0, 0, 0, 0 )
 {
 	Color = color;
-	Tu = tu;
-	Tv = tv;
+	TU = tu;
+	TV = tv;
 }
 
 EXVertex::EXVertex()

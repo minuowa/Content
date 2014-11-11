@@ -92,7 +92,7 @@ void GAnimMeshObj::DrawMeshContainer ( D3DXMESHCONTAINER *pMeshContainerBase, D3
 	}
 
 
-	D9DEVICE->OpenAllLight ( true );
+	D9DEVICE->openAllLight ( true );
 
 	DWORD dwAmbient = 0;
 	D9DEVICE->GetDvc()->GetRenderState ( D3DRS_AMBIENT, &dwAmbient );
@@ -166,7 +166,7 @@ void GAnimMeshObj::DrawMeshContainer ( D3DXMESHCONTAINER *pMeshContainerBase, D3
 		D9DEVICE->GetDvc()->SetRenderState ( D3DRS_VERTEXBLEND, FALSE );
 	}
 
-	D9DEVICE->OpenAllLight ( false );
+	D9DEVICE->openAllLight ( false );
 
 }
 

@@ -134,8 +134,8 @@ bool CRectMesh::render()
 
 	matTmp = GNode::GetWorldMatrix( false );
 
-	D9DEVICE->OpenAllLight( false );
-	D9DEVICE->OpenAlphaBlend( true );
+	D9DEVICE->openAllLight( false );
+	D9DEVICE->openAlphaBlend( true );
 
 	for ( int i = 0; i < LnNumParticles; i++ )
 	{
@@ -160,7 +160,7 @@ bool CRectMesh::render()
 
 	}
 
-	D9DEVICE->OpenAlphaBlend( false );
+	D9DEVICE->openAlphaBlend( false );
 
 	return true;
 
