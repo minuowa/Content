@@ -422,23 +422,23 @@ DWORD WINAPI loadObj ( LPVOID pParam )
 
     if ( 1 )
     {
-        GAnimMeshObj *pAnimMesh = new GAnimMeshObj;
-        pAnimMesh->setMediaFile ( "..\\Data\\res\\Anim\\AnimMesh0002\\A0002.X" );
-        CXASSERT_RETURN_FALSE ( pAnimMesh->recreate() );
-        TheSceneMgr->addDynaObj ( pAnimMesh );
+		GAnimMeshObj *pAnimMesh = new GAnimMeshObj;
+		pAnimMesh->setMediaFile ( "..\\Data\\res\\Anim\\AnimMesh0002\\A0002.X" );
+		CXASSERT_RETURN_FALSE ( pAnimMesh->recreate() );
+		TheSceneMgr->addDynaObj ( pAnimMesh );
     }
     if ( 1 )
     {
-        //MeshPara seaPara (  80.0f, 0, 64, "..\\Data\\res\\water\\BlueShort\\A21C_000.jpg", NULL );
+        MeshPara seaPara (  80.0f, 0, 64, "..\\Data\\res\\water\\BlueShort\\A21C_000.jpg", NULL );
 
-        //GWater* sea = new GWater;
-        //sea->setParam ( seaPara );
-        //sea->mCanSelect = false;
-        ////sea->addQuakePoint ( -50, 0, 10.0f, 2.8f );
-        ////sea->addQuakePoint ( 50, 0, 10.0f, 2.8f );
-        //sea->recreate();
-        //sea->setWorldTranslate ( D3DXVECTOR3 ( 0, 1, 0 ) );
-        //TheSceneMgr->addDynaObj ( sea );
+        GWater* sea = new GWater;
+        sea->setParam ( seaPara );
+        sea->mCanSelect = false;
+        //sea->addQuakePoint ( -50, 0, 10.0f, 2.8f );
+        //sea->addQuakePoint ( 50, 0, 10.0f, 2.8f );
+        sea->recreate();
+        sea->setWorldTranslate ( D3DXVECTOR3 ( 0, 1, 0 ) );
+        TheSceneMgr->addDynaObj ( sea );
     }
     //gLuaScript.init();
     if ( 1 )

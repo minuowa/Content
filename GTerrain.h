@@ -55,6 +55,7 @@ protected:
 	void setEffectConst();
 	bool createNodes();
 	bool createVertexDeclaretion();
+	void copyToIndexBuffer();
 protected:
 	virtual void registerAllProperty();
 
@@ -71,6 +72,7 @@ public:
 	GLevel_NodesMap mNodeMaps;
 public:
 	bool mDisplayRepairAreaOnly;
+	bool mDisplayRepairArea;
 protected:
 	u32 mRootLevel;
 	int mCellCount;

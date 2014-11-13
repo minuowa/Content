@@ -28,6 +28,9 @@ struct GAutoMoveInfo
 	GAutoMoveInfo();
 	DWORD getElpaseTime();
 };
+struct GMatrix 
+{
+};
 class GComponentTrans: public GComponentBase<eComponentType_Trans>
 {
 	DeclareComponentType ( GComponentTrans )
@@ -38,7 +41,7 @@ public:
 	virtual void registerAllProperty();
 public:
 	virtual void set()override;
-	D3DXMATRIX GetWorldMatrix ( bool bForTrans = false );
+	void GetWorldMatrix (D3DXMATRIX& out, bool bForTrans = false );
 
 	D3DXMATRIX GetRotationMatrix ( bool bForTrans = false );
 

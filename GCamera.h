@@ -11,6 +11,7 @@
 
 #define HEIGHT_TRACE_MAN 300	//眼睛与被跟踪物的垂直距离
 class GFrustum;
+struct GCubeBound;
 class GCamera :
     public GNode
 {
@@ -40,7 +41,11 @@ public:
     float getFov() const;
     float getAspect() const;
     void getObjectCorrdPos ( D3DXVECTOR3& out, GNode* obj );
-    GFrustum* getCuller() const;
+
+	void updateCullerToObjectCoord(GNode* obj);
+	bool isInCamera(GCubeBound* bound) const;
+
+    GFrustum* getFrustum() const;
 public:
 
     void TraceMan();
@@ -55,8 +60,8 @@ public:
 
     D3DXMATRIX mView;
 
-    GFrustum *mCuller;
-
+    GFrustum* mFrustum;
+	GCubeBound* mCuller;
 private:
 
     GNode *mpTransMan;			//摄像机跟踪的人物

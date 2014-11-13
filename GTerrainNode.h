@@ -9,30 +9,32 @@ struct EXVertex;
 class GTerrain;
 class GTerrainNode
 {
+    CXDeclareObjectPool ( GTerrainNode );
 public:
-	enum ChildType
-	{
-		ChildLeftBottom,
-		ChildRightBotttom,
-		ChildRightTop,
-		ChildLeftTop,
-		ChildRoot,
-		ChildCount = ChildRoot,
-	};
+    enum ChildType
+    {
+        ChildLeftBottom,
+        ChildRightBotttom,
+        ChildRightTop,
+        ChildLeftTop,
+        ChildRoot,
+        ChildCount = ChildRoot,
+    };
 public:
-	static const u32 G_TERRAIN_FACE_NUM = 2;
-	static const u32 G_TERRAIN_INDEX_NUM = 3;
-	static const u32 G_TERRAIN_CELL_BASE_INDEX_NUM = ChildCount * G_TERRAIN_FACE_NUM * G_TERRAIN_INDEX_NUM;
-	static const u32 G_TERRAIN_CELL_MAX_INDEX_NUM = G_TERRAIN_CELL_BASE_INDEX_NUM * 2;
+    static const u32 G_TERRAIN_FACE_NUM = 2;
+    static const u32 G_TERRAIN_INDEX_NUM = 3;
+    static const u32 G_TERRAIN_CELL_BASE_INDEX_NUM = ChildCount * G_TERRAIN_FACE_NUM * G_TERRAIN_INDEX_NUM;
+    /** @brief 修补最多使用childCount-1个三角形 **/
+    static const u32 G_TERRAIN_CELL_MAX_INDEX_NUM = G_TERRAIN_CELL_BASE_INDEX_NUM + ( ChildCount - 1 )  * G_TERRAIN_INDEX_NUM;
 public:
     enum RepairType
     {
         Left,
         Right,
-        Top,
         Bottom,
-		RepairTypeCount,
-		NeighbourCount=RepairTypeCount,
+        Top,
+        RepairTypeCount,
+        NeighbourCount = RepairTypeCount,
     };
 
     enum CenterType
@@ -45,7 +47,7 @@ public:
     };
     enum eCullResultType
     {
-		eCullResultTypeNone,
+        eCullResultTypeNone,
         eCullResultTypeRender,
         eCullResultTypeNotInEye,	//不在视野内
         eCullResultTypeLevelHigh,	//level的等级过高
@@ -57,7 +59,7 @@ public:
     void setVertexBuffer ( IDirect3DVertexBuffer9* VB, GTerrain* owner );
     void reset();
     /** @brief add indices into terrain indexbuffer **/
-	void addIndexToTerrain ( GTerrain* owner,bool lodMode );
+    void addIndexToTerrain ( GTerrain* owner, bool displayRepairArea, bool displayRepairOnly, bool lodMode );
     void pick ( D3DXVECTOR3 orgin, D3DXVECTOR3 dir, CXDynaArray<HitInfo*>& AllHits );
 
 
@@ -68,17 +70,17 @@ public:
     void repair();
     void cull ( GCamera* camera, GTerrain* owner );
     void buildBound ( GTerrain* owner );
-	void buildNeighbour(GTerrain* owner);
-	void repairCrack ( GTerrainNode* node, RepairType t , u32* buffer );
+    void buildNeighbour ( GTerrain* owner );
+    void repairCrack ( GTerrainNode* node, RepairType t , u32* buffer );
 public:
-	static void* operator new(unsigned int n)
-	{
-		return mObjectPool.acquireObject();
-	}
-	static void operator delete(void* p)
-	{
-		mObjectPool.releaseObject ( p );
-	}
+    //static void* operator new ( unsigned int n )
+    //{
+    //    return mObjectPool.acquireObject();
+    //}
+    //static void operator delete ( void* p )
+    //{
+    //    mObjectPool.releaseObject ( p );
+    //}
 public :
     //3---------2
     //|         |
@@ -88,22 +90,20 @@ public :
     ChildType mPose;
     //level=1的为叶子节点
     int mLevel ;
-	GTerrainNode* mChildren[ChildCount];
-	GTerrainNode* mNeighbour[NeighbourCount];
+    GTerrainNode* mChildren[ChildCount];
+    GTerrainNode* mNeighbour[NeighbourCount];
     GTerrainNode* mParentNode;
     GCubeBound* mBound;
     u32 mIndices[G_TERRAIN_CELL_MAX_INDEX_NUM];
     eCullResultType mCullResult;
-	bool mCulledIndexType[ChildCount];
-	bool mRepairIndexType[RepairTypeCount];
-    bool mBeNeedRepair;
-	bool mBeRender;
-	int mRepairTimes;
+    int mRepairTimes;
+    bool mCulledData[ChildCount];
+    bool mRepairData[RepairTypeCount];
 
-	static IDirect3DVertexBuffer9* mVertexBuffer;
-	//buildBound时使用，减少锁定与解锁的时间
-	static EXVertex* mVertexData;
-	static int RenderNodeCount;
-	static CXObjectPool<GTerrainNode> mObjectPool;
+    static IDirect3DVertexBuffer9* mVertexBuffer;
+    //buildBound时使用，减少锁定与解锁的时间
+    static EXVertex* mVertexData;
+    static int RenderNodeCount;
+    //static CXObjectPool<GTerrainNode> mObjectPool;
 };
 

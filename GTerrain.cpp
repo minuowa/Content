@@ -14,16 +14,23 @@
 
 GTerrain::GTerrain ( )
 {
-    mRootLevel = 8;
     mCellWidth = 150;
-    mLODFactor = 2400.f;
+    //mRootLevel = 4;
+    //mLODFactor = 1200.f;
+    //mHeightMax = 400.0f;
+    //mHeightMin = -400.0f;
+
+    mRootLevel = 9;
     mHeightMax = 3000.0f;
     mHeightMin = -2000.0f;
+    mLODFactor = 6400.f;
+
     mDisplayRepairAreaOnly = false;
+    mDisplayRepairArea = true;
     mFileHeightMap = "..\\Res\\Terrain\\heightmap.bmp";
     mHeightMap = nullptr;
     mRootNode = nullptr;
-    mLODMode = true;
+    mLODMode = false;
     ReapirLevelTwo = true;
     mAlphaSplatMap = nullptr;
     mUsingAlphasplatMap = true;
@@ -90,23 +97,19 @@ void GTerrain::LoadAlphaMap()
 
 void GTerrain::updateEx()
 {
-    mRootNode->reset();
-    mRootNode->cull (TheSceneMgr->getCurCamera(), this );
-
     if ( mLODMode )
     {
+        mRootNode->reset();
+        GCamera* camera = TheSceneMgr->getCurCamera();
+        camera->updateCullerToObjectCoord ( this );
+        mRootNode->cull ( camera, this );
         mRootNode->checkShouldRepair ( this );
         mRootNode->repair();
+        mDynamicIndexBuffer->clear();
+        mRootNode->addIndexToTerrain ( this, mDisplayRepairArea, mDisplayRepairAreaOnly, mLODMode );
+        copyToIndexBuffer();
     }
-    mDynamicIndexBuffer->clear();
-    mRootNode->addIndexToTerrain ( this, mLODMode );
-
     mTerrainCountString.Format ( "Terrain_Triangle:%d", mDynamicIndexBuffer->size() / 3 );
-
-    u32* pIB;
-    mIndexBuffer->Lock ( 0, 0, ( void** ) &pIB, 0 );
-    mDynamicIndexBuffer->copyTo ( pIB );
-    mIndexBuffer->Unlock();
 }
 
 bool GTerrain::loadBrushs()
@@ -162,6 +165,8 @@ void GTerrain::createVertexBuffer()
         float fHeight = 0.0f;
         float fX = 0.0f;
         float fZ = 0.0f;
+        float dh = mHeightMax - mHeightMin;
+        float fh = 0;
         for ( u32 i = 0; i < getLineCount(); i++ )
         {
             for ( u32 j = 0; j < getLineCount(); j++ )
@@ -178,8 +183,9 @@ void GTerrain::createVertexBuffer()
                     fHeight = 0;
                 }
                 pos.Pos = D3DXVECTOR3 ( fX, fHeight, fZ );
+                fh = ( fHeight - mHeightMin ) / dh;
                 //pos.Txt1 = new D3DXVECTOR4 ( cl.R / 255.0f, cl.G / 255.0f, cl.B / 255.0f, cl.A / 255.0f );
-                pos.Wights = D3DXVECTOR4 ( 0.25, 0.25, 0.25, 0.25 );
+                pos.Wights = D3DXVECTOR4 ( gRandom.randF ( fh * 0.5, fh * 0.75 ), gRandom.randF ( fh * 0.75, fh * 1 ), gRandom.randF ( fh * 0.25, fh * 0.5 ), gRandom.randF ( 0, fh * 0.25 ) );
                 //pos.Wights = D3DXVECTOR4 ( 1, 1, 1, 1 );
 
                 if ( mUsingAlphasplatMap )
@@ -665,6 +671,8 @@ void GTerrain::registerAllProperty()
     __RegisterProperty ( mLODMode );
     __RegisterProperty ( mHeightMax );
     __RegisterProperty ( mHeightMin );
+    __RegisterProperty ( mDisplayRepairAreaOnly );
+    __RegisterProperty ( mDisplayRepairArea );
 }
 
 void GTerrain::setRootLevel ( uchar level )
@@ -698,6 +706,12 @@ bool GTerrain::recreate()
     smoothProcess();
 
     computerNormals();
+
+    if ( !mLODMode )
+    {
+        mRootNode->addIndexToTerrain ( this, mDisplayRepairArea, mDisplayRepairAreaOnly, mLODMode );
+        copyToIndexBuffer();
+    }
 
     return true;
 }
@@ -750,6 +764,7 @@ bool GTerrain::createNodes()
     createVertexBuffer();
     mRootNode->setVertexBuffer ( mVertexBuffer, this );
     mRootNode->buildNeighbour ( this );
+    mNodeMaps.destroySecond();
 
     return true;
 }
@@ -796,7 +811,7 @@ void GTerrain::setEffects()
 {
     assert ( mTerrainEffect );
     D3DXMATRIX mat;
-	GCamera* camera=TheSceneMgr->getCurCamera();
+    GCamera* camera = TheSceneMgr->getCurCamera();
     mat = ( *camera->getView() ) * ( * camera->getProjection() );
     mTerrainEffect->getD3DEffect()->SetMatrix ( "matWorldViewProj", &mat );
     mTerrainEffect->getD3DEffect()->SetTechnique ( "TShader" );
@@ -816,4 +831,12 @@ void GTerrain::setEffectConst()
     mTerrainEffect->getD3DEffect()->SetFloatArray ( "Ambient", ( CONST FLOAT* ) &diffuse, 4 );
     mTerrainEffect->getD3DEffect()->SetFloatArray ( "Specular", ( CONST FLOAT* ) &diffuse, 4 );
     mTerrainEffect->getD3DEffect()->SetFloatArray ( "Emissive", ( CONST FLOAT* ) &diffuse, 4 );
+}
+
+void GTerrain::copyToIndexBuffer()
+{
+    u32* pIB;
+    mIndexBuffer->Lock ( 0, 0, ( void** ) &pIB, 0 );
+    mDynamicIndexBuffer->copyTo ( pIB );
+    mIndexBuffer->Unlock();
 }

@@ -5,7 +5,7 @@
 #include "GD9Device.h"
 #include "GCamera.h"
 #include "GFrustum.h"
-
+CXImpleteObjectPoolN ( GTerrainNode, 4096 * 2 );
 int GTerrainNode::RenderNodeCount = 0;
 
 IDirect3DVertexBuffer9* GTerrainNode::mVertexBuffer = nullptr;
@@ -68,10 +68,9 @@ GTerrainNode::GTerrainNode ()
     mCenter = 0;
     dMemoryZeroArray ( mChildren );
     dMemoryZeroArray ( mConner );
-    dMemoryZeroArray ( mCulledIndexType );
+    dMemoryZeroArray ( mCulledData );
     dMemoryZeroArray ( mNeighbour );
     mParentNode = nullptr;
-    mBeNeedRepair = false;
     mCullResult = eCullResultTypeNone;
     mRepairTimes = 0;
     mBound = nullptr;
@@ -91,11 +90,9 @@ void GTerrainNode::setVertexBuffer ( IDirect3DVertexBuffer9* VB, GTerrain* owner
 
 void GTerrainNode::reset()
 {
-    mBeRender = true;
-    mBeNeedRepair = false;
     mRepairTimes = 0;
-    dMemoryZeroArray ( mCulledIndexType );
-    dMemoryZeroArray ( mRepairIndexType );
+    dMemoryZeroArray ( mCulledData );
+    dMemoryZeroArray ( mRepairData );
     //dMemoryZeroArray ( mNeighbour );
     mCullResult = eCullResultTypeNone;
 
@@ -106,7 +103,7 @@ void GTerrainNode::reset()
     }
 }
 
-void GTerrainNode::addIndexToTerrain ( GTerrain* owner, bool lodMode )
+void GTerrainNode::addIndexToTerrain ( GTerrain* owner, bool displayRepairArea, bool displayRepairOnly, bool lodMode )
 {
     CXBuffer* dynamicBuffer = owner->getDynamicIndexBuffer();
     if ( !lodMode )
@@ -116,22 +113,29 @@ void GTerrainNode::addIndexToTerrain ( GTerrain* owner, bool lodMode )
     }
     else
     {
-        if ( mCullResult != eCullResultTypeNotInEye && mCullResult != eCullResultTypeNone )
+        if ( mCullResult == eCullResultTypeRender || mCullResult == eCullResultTypeLevelHigh )
         {
-            for ( int i = 0; i < ChildCount; ++i )
+            if ( !displayRepairOnly )
             {
-                if ( !mCulledIndexType[i] )
-                    dynamicBuffer->addElement ( &mIndices[i * 6], 6 );
+                for ( int i = 0; i < ChildCount; ++i )
+                {
+                    if ( !mCulledData[i] )
+                        dynamicBuffer->addElement ( &mIndices[i * 6], 6 );
+                }
             }
-            if ( mRepairTimes > 0 )
-                dynamicBuffer->addElement ( &mIndices[24], mRepairTimes *  2 * 3 );
+
+            if ( mRepairTimes > 0 && displayRepairArea )
+            {
+                assert ( mRepairTimes < 4 );
+                dynamicBuffer->addElement ( &mIndices[G_TERRAIN_CELL_BASE_INDEX_NUM], mRepairTimes * 3 );
             }
+        }
     }
 
     for ( int i = 0; i < 4; i++ )
     {
         if ( mChildren[i] != nullptr )
-            mChildren[i]->addIndexToTerrain ( owner, lodMode );
+            mChildren[i]->addIndexToTerrain ( owner, displayRepairArea, displayRepairOnly, lodMode );
     }
 }
 
@@ -337,21 +341,19 @@ void GTerrainNode::build ( GTerrain* owner, int level, ChildType pose  )
 
 void GTerrainNode::repair()
 {
-    if ( mBeNeedRepair )
+    mRepairTimes = 0;
+    int index = G_TERRAIN_CELL_BASE_INDEX_NUM;
+
+    for ( int i = 0; i < RepairTypeCount; ++i )
     {
-        mRepairTimes = 0;
-        int index = G_TERRAIN_CELL_BASE_INDEX_NUM;
-        for ( int i = 0; i < RepairTypeCount; ++i )
+        if ( mRepairData[i] )
         {
-            if ( mRepairIndexType[i] )
-            {
-                repairCrack ( this, ( RepairType ) i, &mIndices[index] );
-                index += 6;
-                mRepairTimes++;
-            }
+            repairCrack ( this, ( RepairType ) i, &mIndices[index] );
+            index += 3;
+            mRepairTimes++;
         }
     }
-    for ( int i = 0; i < 4; i++ )
+    for ( int i = 0; i < ChildCount; i++ )
     {
         if ( mChildren[i] )
             mChildren[i]->repair();
@@ -368,9 +370,9 @@ void GTerrainNode::repairCrack ( GTerrainNode* node, RepairType t , u32* buffer 
         buffer[2] = ( buffer[0] + buffer[1] ) / 2;
 
 
-        buffer[3] = node->mConner[ChildLeftTop];
-        buffer[4] = node->mConner[ChildLeftBottom];
-        buffer[5] = ( buffer[3] + buffer[4] ) / 2;
+        //buffer[3] = node->mConner[ChildLeftTop];
+        //buffer[4] = node->mConner[ChildLeftBottom];
+        //buffer[5] = ( buffer[3] + buffer[4] ) / 2;
 
 
         break;
@@ -380,9 +382,9 @@ void GTerrainNode::repairCrack ( GTerrainNode* node, RepairType t , u32* buffer 
         buffer[2] = ( buffer[0] + buffer[1] ) / 2;
 
 
-        buffer[3] = node->mConner[ChildLeftBottom];
-        buffer[4] = node->mConner[ChildRightBotttom];
-        buffer[5] = ( buffer[3] + buffer[4] ) / 2;
+        //buffer[3] = node->mConner[ChildLeftBottom];
+        //buffer[4] = node->mConner[ChildRightBotttom];
+        //buffer[5] = ( buffer[3] + buffer[4] ) / 2;
 
         break;
 
@@ -392,9 +394,9 @@ void GTerrainNode::repairCrack ( GTerrainNode* node, RepairType t , u32* buffer 
         buffer[2] = ( buffer[0] + buffer[1] ) / 2;
 
 
-        buffer[3] = node->mConner[ChildRightTop];
-        buffer[4] = node->mConner[ChildRightBotttom];
-        buffer[5] = ( buffer[3] + buffer[4] ) / 2;
+        //buffer[3] = node->mConner[ChildRightTop];
+        //buffer[4] = node->mConner[ChildRightBotttom];
+        //buffer[5] = ( buffer[3] + buffer[4] ) / 2;
 
         break;
 
@@ -405,9 +407,9 @@ void GTerrainNode::repairCrack ( GTerrainNode* node, RepairType t , u32* buffer 
         buffer[2] = ( buffer[0] + buffer[1] ) / 2;
 
 
-        buffer[3] = node->mConner[ChildLeftTop];
-        buffer[4] = node->mConner[ChildRightTop];
-        buffer[5] = ( buffer[3] + buffer[4] ) / 2;
+        //buffer[3] = node->mConner[ChildLeftTop];
+        //buffer[4] = node->mConner[ChildRightTop];
+        //buffer[5] = ( buffer[3] + buffer[4] ) / 2;
 
         break;
     }
@@ -415,7 +417,7 @@ void GTerrainNode::repairCrack ( GTerrainNode* node, RepairType t , u32* buffer 
 
 void GTerrainNode::cull ( GCamera* camera, GTerrain* owner )
 {
-    if ( !camera->getCuller()->isInFrustum ( mBound ) )
+    if ( !camera->isInCamera ( mBound ) )
     {
         mCullResult = eCullResultTypeNotInEye;
         return;
@@ -424,8 +426,9 @@ void GTerrainNode::cull ( GCamera* camera, GTerrain* owner )
     if ( mLevel == 1 )
     {
         mCullResult = eCullResultTypeRender;
-        if ( mParentNode )
-            mParentNode->mCulledIndexType[mPose] = true;
+        //if ( mParentNode )
+        assert ( mParentNode );
+        mParentNode->mCulledData[mPose] = true;
         return;
     }
 
@@ -434,13 +437,13 @@ void GTerrainNode::cull ( GCamera* camera, GTerrain* owner )
     float Distance = dVector3Length ( mBound->mCenter - cameraPos );
 
     float TargetLevel =
-        Distance / owner->getLODFactor();
+        Distance / owner->getLODFactor()  / sqrt ( mLevel );
 
     if ( TargetLevel < mLevel )
     {
         mCullResult = eCullResultTypeLevelHigh;
         if ( mParentNode )
-            mParentNode->mCulledIndexType[mPose] = true;
+            mParentNode->mCulledData[mPose] = true;
         for ( int i = 0; i < ChildCount; i++ )
         {
             if ( mChildren[i] != nullptr )
@@ -451,7 +454,7 @@ void GTerrainNode::cull ( GCamera* camera, GTerrain* owner )
     {
         mCullResult = eCullResultTypeRender;
         if ( mParentNode )
-            mParentNode->mCulledIndexType[mPose] = true;
+            mParentNode->mCulledData[mPose] = true;
     }
 }
 
@@ -496,11 +499,12 @@ void GTerrainNode::checkShouldRepair ( GTerrain* owner )
 }
 void GTerrainNode::checkShouldRepair ( RepairType repairType )
 {
-    if ( mNeighbour[repairType] && mNeighbour[repairType]->mCullResult == eCullResultTypeNone )
+    GTerrainNode* node = mNeighbour[repairType];
+    if ( node && ( node->mCullResult == eCullResultTypeNone
+                   //|| node->mCullResult == eCullResultTypeLevelHigh
+                 ) )
     {
-        mBeNeedRepair = true;
-        mRepairIndexType[repairType] = true;
-        mParentNode->mCulledIndexType[mPose] = true;
+        mRepairData[repairType] = true;
     }
 }
 
@@ -530,7 +534,7 @@ void GTerrainNode::buildNeighbour ( GTerrain* owner )
     }
 }
 
-CXObjectPool<GTerrainNode> GTerrainNode::mObjectPool ( 4096 );
+//CXObjectPool<GTerrainNode> GTerrainNode::mObjectPool ( 4096 * 2 );
 
 EXVertex* GTerrainNode::mVertexData = nullptr;
 
