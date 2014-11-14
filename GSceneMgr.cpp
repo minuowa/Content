@@ -58,7 +58,7 @@ bool GSceneManager::init()
         mCurCamera->getTrans().mSpeedMove = 150.0f;
 
         addDynaObj ( mCurCamera );
-
+        addInputObj ( mCurCamera );
         return true;
     }
 
@@ -67,7 +67,8 @@ bool GSceneManager::init()
 
 void* GSceneManager::getInput ( float fPass )
 {
-    mSceneDynamicRootNode->getInput ( fPass );
+    mInputEntityManager.getInput ( fPass );
+    //mSceneDynamicRootNode->getInput ( fPass );
     return 0;
 }
 
@@ -146,9 +147,9 @@ GNode* GSceneManager::getNodeByName ( const char* name )
 void GSceneManager::initNodeFactory()
 {
     __RegisterGameObjCreator ( GNode );
-    __RegisterGameObjCreator ( GAnimMeshObj );
-    __RegisterGameObjCreator ( GMeshBaseObj );
-    __RegisterGameObjCreator ( GRenderObject );
+    __RegisterGameObjCreator ( GAnimEntity );
+    __RegisterGameObjCreator ( GStillEntity );
+    __RegisterGameObjCreator ( GRenderEntity );
     __RegisterGameObjCreator ( GWater );
     __RegisterGameObjCreator ( GWorldCorrd );
     __RegisterGameObjCreator ( GTerrain );
@@ -175,7 +176,7 @@ void GSceneManager::initComponentFactory()
 
     typedef GComponentFactory::ComponentCreatorMap ComponentCreatorMap;
     const ComponentCreatorMap& nodeCreatorMap =
-        CXSingleton<GComponentFactory>::GetSingleton().getCreators();
+        CXSingleton<GComponentFactory>::getSingleton().getCreators();
     ComponentCreatorMap::const_iterator walk = nodeCreatorMap.begin();
     ComponentCreatorMap::const_iterator end = nodeCreatorMap.end();
     for ( ; walk != end; ++walk )
@@ -313,6 +314,7 @@ bool GSceneManager::setInnerNode ( GNode* rootNode )
 
     mCurCamera = nullptr;
     mCurCamera = findFirstCameraInScene ( mSceneRootNode );
+    addInputObj ( mCurCamera );
     mUsingCamera = mCurCamera->getObjectName();
     CXASSERT_RETURN_FALSE ( mCurCamera );
     setProj();
@@ -351,6 +353,7 @@ GCamera* GSceneManager::changeToNextCamera()
             mCurCamera->setCanGetInput ( false );
         mCurCamera = next;
         mCurCamera->setCanGetInput ( true );
+        addInputObj ( mCurCamera );
         mUsingCamera = next->getObjectName();
         this->setProj();
     }
@@ -373,6 +376,11 @@ void GSceneManager::moveToNextCamera()
 GCamera* GSceneManager::getCurCamera() const
 {
     return mCurCamera;
+}
+
+void GSceneManager::addInputObj ( GNode* node )
+{
+    mInputEntityManager.addInputObj ( node );
 }
 
 

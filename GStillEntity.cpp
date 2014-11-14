@@ -1,5 +1,5 @@
 #include "GGameDemoHeader.h"
-#include "GMeshBaseObj.h"
+#include "GStillEntity.h"
 #include "GGameMap.h"
 #include "GComponentTrans.h"
 #include "GEffect.h"
@@ -7,19 +7,19 @@
 #include "GSceneMgr.h"
 #include "GGame.h"
 
-GMeshBaseObj::GMeshBaseObj ( void )
+GStillEntity::GStillEntity ( void )
     : mMeshBufferNode ( 0 )
 {
     mMeshForInsect = nullptr;
 }
 
-GMeshBaseObj::~GMeshBaseObj ( void )
+GStillEntity::~GStillEntity ( void )
 {
     dSafeRelease ( mMeshForInsect );
 }
 
 
-bool GMeshBaseObj::render()
+bool GStillEntity::render()
 {
     if ( !__super::render() )
         return false;
@@ -153,7 +153,7 @@ bool GMeshBaseObj::render()
 
 
 
-ID3DXMesh * GMeshBaseObj::recreateInsectMesh()
+ID3DXMesh * GStillEntity::recreateInsectMesh()
 {
     dSafeRelease ( mMeshForInsect );
 
@@ -169,7 +169,7 @@ ID3DXMesh * GMeshBaseObj::recreateInsectMesh()
 }
 
 
-bool GMeshBaseObj::checkIntersect ( const D3DXVECTOR4& vPos, /*世界坐标系中的点 */ const D3DXVECTOR4& vDir, /*世界坐标系中的向量 */ bool bInsectInfo /*是 裥枰鲎残畔?*/ )
+bool GStillEntity::checkIntersect ( const D3DXVECTOR4& vPos, /*世界坐标系中的点 */ const D3DXVECTOR4& vDir, /*世界坐标系中的向量 */ bool bInsectInfo /*是 裥枰鲎残畔?*/ )
 {
     HRESULT hr = S_FALSE;
 
@@ -195,7 +195,6 @@ bool GMeshBaseObj::checkIntersect ( const D3DXVECTOR4& vPos, /*世界坐标系中的点 
          );
 
     m_bHit = ( bool ) bHit;
-
     DebugMsgBox ( hr, "碰撞失败！" );
 
     if ( FAILED ( hr ) )
@@ -284,7 +283,7 @@ bool GMeshBaseObj::checkIntersect ( const D3DXVECTOR4& vPos, /*世界坐标系中的点 
 
 }
 
-bool GMeshBaseObj::pick ( const POINT& pt )
+bool GStillEntity::pick ( const POINT& pt )
 {
 
     D3DXMATRIX	matView, matProj;
@@ -318,7 +317,7 @@ bool GMeshBaseObj::pick ( const POINT& pt )
 
 
 
-void GMeshBaseObj::registerAllProperty()
+void GStillEntity::registerAllProperty()
 {
     __super::registerAllProperty();
 }

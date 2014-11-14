@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GTexture.h"
-#include "GMeshBaseObj.h"
+#include "GStillEntity.h"
 #include "GMeshData.h"
 
 struct MeshNodeForLod   //LODMeshµÄ½Úµã
@@ -55,4 +55,4 @@ public:
 	GMeshBufferNode*	CreateFormFile( const char* fileName );
 	GMeshBufferNodeMap	mMeshMap;
 };
-#define MeshMgr CXSingleton<GMeshManager>::GetSingleton()
+#define MeshMgr CXSingleton<GMeshManager>::getSingleton()

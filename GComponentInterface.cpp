@@ -66,7 +66,7 @@ GComponentInterface* GComponentOwner::attachComponent ( eComponentType type )
 	if ( !getComponent ( type ) )
 	{
 		GComponentFactory::ComponentCreator* creator =
-			CXSingleton<GComponentFactory>::GetSingleton().getCreator ( type );
+			CXSingleton<GComponentFactory>::getSingleton().getCreator ( type );
 		CXASSERT_RESULT_FALSE ( creator );
 		mCompoents[type] = creator->mCreator();
 	}
@@ -81,7 +81,7 @@ GComponentInterface* GComponentOwner::attachComponent ( const char* name )
 		return component;
 	}
 	GComponentFactory::ComponentCreator* creator =
-		CXSingleton<GComponentFactory>::GetSingleton().getCreator ( name );
+		CXSingleton<GComponentFactory>::getSingleton().getCreator ( name );
 	CXASSERT_RESULT_FALSE ( creator );
 	CXASSERT_RESULT_FALSE ( !mCompoents[creator->mType] );
 	mCompoents[creator->mType] = creator->mCreator();

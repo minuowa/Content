@@ -1,5 +1,5 @@
 #pragma once
-#include "GMeshBaseObj.h"
+#include "GStillEntity.h"
 
 
 struct MAPVERTEX
@@ -15,7 +15,7 @@ struct MAPVERTEX
 #define FVFMAP D3DFVF_XYZ | D3DFVF_TEX1|D3DFVF_NORMAL
 
 class GGameMap :
-	public GMeshBaseObj
+	public GStillEntity
 {
 public:
 	GGameMap( void );

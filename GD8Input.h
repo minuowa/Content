@@ -73,4 +73,4 @@ private:
 	bool mNeedClearMouseMoveDelta;
 };
 typedef CXSingleton<GD8Input> GSingletonD8Input;
-#define	INPUTSYSTEM GSingletonD8Input::GetSingleton()
+#define	INPUTSYSTEM GSingletonD8Input::getSingleton()

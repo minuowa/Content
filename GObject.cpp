@@ -109,7 +109,7 @@ bool GObject::isRegist()
 	return !mOption.empty();
 }
 
-CChar* GObject::getObjectName() const
+const char* GObject::getObjectName() const
 {
 	return mNodeName.c_str();
 }

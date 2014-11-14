@@ -286,7 +286,7 @@ inline void dGetMatixFromQuation ( D3DXMATRIX&out, D3DXQUATERNION& in )
 	private:\
 	static ClassName* mInstance;\
 	public:\
-	static ClassName& GetSingleton()  { if( mInstance == 0 ) { static ClassName scn; mInstance = &scn; } return *mInstance; }\
+	static ClassName& getSingleton()  { if( mInstance == 0 ) { static ClassName scn; mInstance = &scn; } return *mInstance; }\
 	static ClassName* getInstance(){ if( mInstance == 0 ) { static ClassName scn; mInstance = &scn;} return mInstance;}
 
 #define FiImplateSingleton( ClassName ) ClassName* ClassName::mInstance = 0 ;
@@ -295,70 +295,53 @@ inline void dGetMatixFromQuation ( D3DXMATRIX&out, D3DXQUATERNION& in )
 	CXASSERT(!bInit && "not a singleton");\
 	bInit = true;\
  
-enum eHitType
+//enum eHitType
+//{
+//    htNull,							//什么都没有撞到
+//    htAutoMoveHitNoMap,				//没有撞到
+//    htAutoMoveHitNoObj,				//没有撞到物体
+//    htAutoMoveHitMap,				//撞到地图了
+//    htAutoMoveHitObj,				//撞到物体了
+//    //htAutoMoveHitObjAndMap,		//都撞到了
+//
+//    htNotAutoMoveHitNoMap,			//没有撞到
+//    htNotAutoMoveHitMap,			//撞到地图
+//    htNotAutoMoveHitObj,			//撞到物体
+//    htNotAutoMoveHitNoObj,			//没有撞到物体
+//
+//    htNotAutoMoveHitBelowMap,		//撞到下面的物体了
+//    htNotAutoMoveHitNoBelowMap,		//没有撞到下面的物体
+//
+//};
+
+enum eObjState
 {
-    htNull,							//什么都没有撞到
-    htAutoMoveHitNoMap,				//没有撞到
-    htAutoMoveHitNoObj,				//没有撞到物体
-    htAutoMoveHitMap,				//撞到地图了
-    htAutoMoveHitObj,				//撞到物体了
-    //htAutoMoveHitObjAndMap,		//都撞到了
-
-    htNotAutoMoveHitNoMap,			//没有撞到
-    htNotAutoMoveHitMap,			//撞到地图
-    htNotAutoMoveHitObj,			//撞到物体
-    htNotAutoMoveHitNoObj,			//没有撞到物体
-
-    htNotAutoMoveHitBelowMap,		//撞到下面的物体了
-    htNotAutoMoveHitNoBelowMap,		//没有撞到下面的物体
-
-};
-
-
-//对象类型，创建时决定了
-enum eObjType
-{
-    Obj,
-    WorldObj,
-    VisObj,
-    MeshObj,
-    AnimMeshObj,
-};
-
-#define UpdateWithMap 1
-
-#define OS_LIGHTON				0x0001			//是否开灯光
-#define OS_RENDER				0x0002			//是否渲染
-#define OS_GETINPUT				0x0004			//是否可以操控
-#define OS_UPDATE				0x0008			//是否可以更新
-#define OS_BEHIT				0x0010			//是否被点击了
-#define OS_CHANGEWHENHIT		0x0020			//点击时是否发生改变
-#define OS_CANBESELECT			0x0040			//是否可以被选择
-#define OS_BESELECTED			0x0080			//是否被选择了
-#define OS_PLAYDONE				0x0100			//该动画是否播放完毕
-
-#define OS_DEFAULT				( OS_RENDER || OS_UPDATE )		//默认状态
-
-
-enum eObjAnimState			//对象的状态
-{
-    oasNULL,
-    oasStandBy,
-    oasMoving,
-    oasTurning,
-    oasDead,
-    oasAttack,
-    oasBeAttack,
-    oasRunAttack,
+    eObjState_Lighting				, //是否开灯光
+    eObjState_Render				, //是否渲染
+    eObjState_GetInput				, //是否可以操控
+    eObjState_Update				, //是否可以更新
+    eObjState_Picked				, //是否被点击了
+    eObjState_ChangeWhenPicked		, //点击时是否发生改变
+    eObjState_CanBeSelect			, //是否可以被选择
+    eObjState_BeSelect				, //是否被选择了
 };
 
 
 
-enum eObjParentType
-{
-    optByPosition,
-    optByName,
-};
+
+
+
+
+
+
+
+
+
+//enum eObjParentType
+//{
+//    optByPosition,
+//    optByName,
+//};
 
 struct ForceMapPara
 {

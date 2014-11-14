@@ -1,15 +1,15 @@
 #pragma once
 #include "GBound.h"
-#include "GRenderObject.h"
+#include "GRenderEntity.h"
 
 class GMeshBufferNode;
-class GMeshBaseObj :
-	public GRenderObject
+class GStillEntity :
+	public GRenderEntity
 {
-	DeclareEditorType(GMeshBaseObj);
+	DeclareEditorType(GStillEntity);
 public:
-	GMeshBaseObj( void );
-	~GMeshBaseObj( void );
+	GStillEntity( void );
+	~GStillEntity( void );
 
 	virtual void registerAllProperty();
 

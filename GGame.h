@@ -4,12 +4,12 @@
 #include "GAmmo.h"
 #include "Particles.h"
 #include "XCursor.h"
-#include "GAnimMeshObj.h"
+#include "GAnimEntity.h"
 #include "GWater.h"
 #include "GMeshBuffer.h"
 #include "GWorldCorrd.h"
 #include "GGameMap.h"
-#include "GMeshBaseObj.h"
+#include "GStillEntity.h"
 #include "GFrameWork.h"
 #include "GTimer.h"
 #include "GNode.h"
@@ -31,7 +31,7 @@ public:
 
 	virtual bool init(HWND mainWnd);
 
-	virtual void loop();
+	virtual bool loop();
 
 	void shutDown();
 
@@ -54,9 +54,9 @@ public:
 
 	GSceneManager *mSceneMgr;
 
-	GMeshBaseObj *mpSelectObj;
+	GStillEntity *mpSelectObj;
 
-	GAnimMeshObj *mpSelectAnim;
+	GAnimEntity *mpSelectAnim;
 
 
 private:
@@ -69,4 +69,4 @@ private:
 };
 
 #define TheGame GGame::getInstance() 
-#define TheSceneMgr GGame::GetSingleton().getSceneMgr()
+#define TheSceneMgr GGame::getSingleton().getSceneMgr()

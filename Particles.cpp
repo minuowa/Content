@@ -114,7 +114,7 @@ void CRectMesh::update( )
 
 	}
 
-	GRenderObject::update();
+	GRenderEntity::update();
 }
 
 bool CRectMesh::render()

@@ -16,93 +16,87 @@ void GNode::getInput ( DWORD frameTimeMs )
         1、跳跃之后只能转动方向，不可MoveStep
 
         *************************************************************/
-        bool bMoveFront = INPUTSYSTEM.IsPressKey ( DIK_W );				//向前移动
-        bool bMoveBack = INPUTSYSTEM.IsPressKey ( DIK_S );				//向后移动
-        bool bTrunLeft = INPUTSYSTEM.IsPressKey ( DIK_A );				//左转
-        bool bTrunRight = INPUTSYSTEM.IsPressKey ( DIK_D );				//右转
-        bool bJump = INPUTSYSTEM.IsPressKey ( DIK_SPACE );				//跳跃
-        /*************************************************************/
+        //bool bMoveFront = INPUTSYSTEM.IsPressKey ( DIK_W );				//向前移动
+        //bool bMoveBack = INPUTSYSTEM.IsPressKey ( DIK_S );				//向后移动
+        //bool bTrunLeft = INPUTSYSTEM.IsPressKey ( DIK_A );				//左转
+        //bool bTrunRight = INPUTSYSTEM.IsPressKey ( DIK_D );				//右转
+        //bool bJump = INPUTSYSTEM.IsPressKey ( DIK_SPACE );				//跳跃
+        ///*************************************************************/
 
 
-        if ( bMoveFront )
-        {
-            m_bBehaviour = true;
+        //if ( bMoveFront )
+        //{
+        //    m_bBehaviour = true;
 
-            getTrans().MoveStep ( frameTimeMs );
+        //    getTrans().MoveStep ( frameTimeMs );
 
-            getTrans().mBack = false;
+        //    getTrans().mBack = false;
 
-            SetState ( oasMoving, false );
+        //    SetState ( oasMoving, false );
 
-        }
-        else if ( bMoveBack )
-        {
-            m_bBehaviour = true;
+        //}
+        //else if ( bMoveBack )
+        //{
+        //    m_bBehaviour = true;
 
-            getTrans().MoveStep ( -frameTimeMs );
+        //    getTrans().MoveStep ( -frameTimeMs );
 
-            getTrans().mBack = true;
+        //    getTrans().mBack = true;
 
-            SetState ( oasMoving, true );
-        }
+        //    SetState ( oasMoving, true );
+        //}
 
 
-        if ( bTrunLeft )
-        {
-            getTrans().TrunStepLeftRight ( -frameTimeMs / 3.0f );
-        }
+        //if ( bTrunLeft )
+        //{
+        //    getTrans().TrunStepLeftRight ( -frameTimeMs / 3.0f );
+        //}
 
-        else if ( bTrunRight )
-        {
-            getTrans().TrunStepLeftRight ( frameTimeMs / 3.0f );
-        }
+        //else if ( bTrunRight )
+        //{
+        //    getTrans().TrunStepLeftRight ( frameTimeMs / 3.0f );
+        //}
 
-        if ( bJump )
-        {
-            if ( !getTrans().mJump )
-            {
-                m_bBehaviour = true;
+        //if ( bJump )
+        //{
+        //    if ( !getTrans().mJump )
+        //    {
+        //        m_bBehaviour = true;
 
-                if ( bMoveBack )
-                {
-                    getTrans().mSpeed = -getTrans().getDir() * getTrans().mSpeedMove;
-                }
-                if ( bMoveFront )
-                {
-                    getTrans().mSpeed = getTrans().getDir() * getTrans().mSpeedMove;
-                }
-            }
+        //        if ( bMoveBack )
+        //        {
+        //            getTrans().mSpeed = -getTrans().getDir() * getTrans().mSpeedMove;
+        //        }
+        //        if ( bMoveFront )
+        //        {
+        //            getTrans().mSpeed = getTrans().getDir() * getTrans().mSpeedMove;
+        //        }
+        //    }
 
-            getTrans().Jump();
-        }
+        //    getTrans().Jump();
+        //}
 
-        if ( INPUTSYSTEM.IsPressKey ( DIK_1 ) )
-        {
-            SetState ( oasBeAttack, false );
-        }
+        //if ( INPUTSYSTEM.IsPressKey ( DIK_1 ) )
+        //{
+        //    SetState ( oasBeAttack, false );
+        //}
 
-        if ( INPUTSYSTEM.getKeyAction ( DIK_2 ) == DI_BUTTONUP )
-        {
-            SetState ( oasAttack, false );
-        }
-        else if ( INPUTSYSTEM.getKeyAction ( DIK_3 ) == DI_BUTTONUP )
-        {
-            SetState ( oasRunAttack, false );
-        }
+        //if ( INPUTSYSTEM.getKeyAction ( DIK_2 ) == DI_BUTTONUP )
+        //{
+        //    SetState ( oasAttack, false );
+        //}
+        //else if ( INPUTSYSTEM.getKeyAction ( DIK_3 ) == DI_BUTTONUP )
+        //{
+        //    SetState ( oasRunAttack, false );
+        //}
 
-        if ( ! ( bMoveFront || bMoveBack || bTrunRight || bTrunLeft || bJump || INPUTSYSTEM.IsPressKey ( DIK_1 ) ) )
-        {
+        //if ( ! ( bMoveFront || bMoveBack || bTrunRight || bTrunLeft || bJump || INPUTSYSTEM.IsPressKey ( DIK_1 ) ) )
+        //{
 
-            SetState ( oasStandBy, false );
-        }
+        //    SetState ( oasStandBy, false );
+        //}
     }
-    GNodeArr::iterator iBegin = mChildren.begin();
-    GNodeArr::iterator iEnd = mChildren.end();
-    for ( ; iBegin != iEnd; ++iBegin )
-    {
-        GNode* n = *iBegin;
-        n->getInput ( frameTimeMs );
-    }
+
 }
 
 void GNode::updateWorld()
@@ -137,11 +131,13 @@ for ( auto c : mChildren )
 
 GNode::GNode()
     : mCanGetInput ( false )
+    , mNodeState ( 1, true )
+    , mLocalID ( 0 )
 {
+    mLocalID = mObjectIDManager.addObj ( this );
+
     mParent = nullptr;
-
-    m_pOnObj = nullptr;
-
+    mNodeState.setBit ( eObjState_Render );
     m_fBoundRadius = 0.01f;
 
     mForceMap = NULL;										//依附的地图的指针
@@ -166,36 +162,20 @@ GNode::GNode()
 
     m_fBlockArea = ZEROFLOAT;
 
-    mOpt = optByPosition;
-
     m_bUseMatrialColor = false;
 
     m_bHit = false;
 
 
-    m_bEyeCliper = true;
-
-
+    mCulledByCamera = true;
     ZeroMemory ( &m_InsectInfo, sizeof ( m_InsectInfo ) );			//碰撞信息
-    m_ObjAnimState = oasNULL;									//对象当前状态
     attachComponent ( eComponentType_Trans, false, false );
 }
 
 GNode::~GNode()
 {
+    mObjectIDManager.removeObj ( mLocalID );
     dSafeDeleteVector ( mChildren );
-    //   if ( mParent )
-    //{
-    //	mParent->removeChild(this);
-    //	mParent = nullptr;
-    //}
-}
-
-eObjAnimState GNode::SetState ( eObjAnimState oas, bool bBack )
-{
-    m_ObjAnimState = oas;
-
-    return m_ObjAnimState;
 }
 
 
@@ -213,7 +193,7 @@ IntersectInfo * GNode::GetBlockPoint()
 {
     IntersectInfo *HitInfo = NULL;
 
-    //CMeshBufferNodeArr& mbnList=GMeshManager::GetSingleton().GetList();
+    //CMeshBufferNodeArr& mbnList=GMeshManager::getSingleton().GetList();
     //CMeshBufferNodeArr::iterator pEnd = mbnList.end();
     //for (CMeshBufferNodeArr::iterator i = mbnList.begin();i!=pEnd;++i)
     //{
@@ -297,7 +277,7 @@ void GNode::update(  )
     //	updateTrans();
     //}
 
-for ( GNode * child: mChildren )
+for ( auto child: mChildren )
     {
         child->update();
     }
@@ -357,7 +337,7 @@ IntersectInfo * GNode::UpdateForForceOnObj ( void *pObj )
         return NULL;
     }
 
-    GMeshBaseObj *lpObj = ( GMeshBaseObj * ) pObj;
+    GStillEntity *lpObj = ( GStillEntity * ) pObj;
 
     D3DXVECTOR4 vDir ( 0, -1, 0, 0 ), vPos ( getTrans().getTranslate().x, getTrans().getTranslate().y + 20.0f, getTrans().getTranslate().z, 1 );
 
@@ -444,36 +424,10 @@ void GNode::endRender()
         n->draw();
     }
 }
-
-
-
-
-
-
 bool GNode::recreate()
 {
     this->clear();
     return true;
-}
-
-
-void GNode::setParentBone ( GNode *Parent, const char *sName )
-{
-    if ( sName == NULL || strlen ( sName ) == 0 || strlen ( sName ) > 31 )
-    {
-        return;
-    }
-
-    mOpt = optByName;
-
-    mParent = Parent;
-    mParentName = sName;
-
-}
-
-int GNode::getObjID() const
-{
-    return _nID;
 }
 
 void GNode::registerAllProperty()
@@ -495,6 +449,7 @@ void GNode::registerAllProperty()
 #define XML_OBJ_NODE_PROP_NAME	"Name"
 #define XML_OBJ_NODE_PROP_VALUE "Value"
 #define XML_OBJ_NODE_CATEGORY	"Category"
+
 void GNode::linkTo ( CXRapidxmlNode* parent )
 {
     CXASSERT_RETURN ( parent );
@@ -543,13 +498,8 @@ void GNode::linkTo ( CXRapidxmlNode* parent )
         }
     }
 
-    GNodeArr::iterator iBegin = mChildren.begin();
-    GNodeArr::iterator iEnd = mChildren.end();
-    for ( ; iBegin != iEnd; ++iBegin )
-    {
-        GNode* n = *iBegin;
-        n->linkTo ( parent );
-    }
+for ( auto i: mChildren )
+        i->linkTo ( parent );
 }
 
 void GNode::MakeXMLNode ( CXRapidxmlNode& node )
@@ -571,7 +521,7 @@ void GNode::MakeXMLNode ( CXRapidxmlNode& node )
     //}
 }
 
-void GNode::setNodeName ( CChar* name )
+void GNode::setNodeName ( const char* name )
 {
     mNodeName = name;
 }
@@ -975,10 +925,7 @@ void GNode::onPropertyChangeEnd ( void* cur )
     }
 }
 
-GNode* GNode::getParent() const
-{
-    return mParent;
-}
+
 
 GNode* GNode::getFirstNodeByCategoryName ( const char* category )
 {
@@ -1003,15 +950,19 @@ void GNode::deleteChild ( GNode* node )
     dSafeDelete ( node );
 }
 
-CXDynaArray<GNode*>& GNode::getChildren()
-{
-    return mChildren;
-}
+
 
 void GNode::setCanGetInput ( bool can )
 {
     mCanGetInput = can;
 }
+
+CXDynaArray<GNode*>& GNode::getChildren()
+{
+    return mChildren;
+}
+
+CXIDObjectManager<GNode> GNode::mObjectIDManager;
 
 
 CXDelegate GNode::mDelegateDeleteObj;

@@ -1,8 +1,8 @@
 #include "GGameDemoHeader.h"
-#include "GRenderObject.h"
+#include "GRenderEntity.h"
 
 
-GRenderObject::GRenderObject ( void )
+GRenderEntity::GRenderEntity ( void )
 {
     mVisible = true;
 
@@ -10,12 +10,12 @@ GRenderObject::GRenderObject ( void )
 }
 
 
-GRenderObject::~GRenderObject ( void )
+GRenderEntity::~GRenderEntity ( void )
 {
     mForceMap = NULL;
 }
 
-bool GRenderObject::render()
+bool GRenderEntity::render()
 {
     if ( !mVisible )
         return false;

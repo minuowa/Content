@@ -1,11 +1,11 @@
 #pragma once
 #include "GNode.h"
-class GRenderObject :
+class GRenderEntity :
 	public GNode
 {
 public:
-	GRenderObject(void);
-	~GRenderObject(void);
+	GRenderEntity(void);
+	~GRenderEntity(void);
 	virtual bool render();
 public:
 	bool mVisible;

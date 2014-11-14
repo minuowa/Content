@@ -6,7 +6,7 @@ class FiGraph
 	virtual void Update(){}
 	virtual void Render(){}
 };
-class GAnimMeshObj;
+class GAnimEntity;
 
 class GTrailEffect:public FiGraph
 {
@@ -14,8 +14,8 @@ public:
 	GTrailEffect(void);
 	~GTrailEffect(void);
 
-	void Init(CChar* linkerName1,CChar* linkerName2);
-	void Attach(GAnimMeshObj* anim);
+	void Init(const char* linkerName1,const char* linkerName2);
+	void Attach(GAnimEntity* anim);
 	void Update();
 public:
 	void Generate(D3DXMATRIX* v1,D3DXMATRIX*v2);

@@ -1,7 +1,7 @@
 ﻿#ifndef GTerrain_h__
 #define GTerrain_h__
 #include "GTerrainCommon.h"
-#include "GRenderObject.h"
+#include "GRenderEntity.h"
 
 class GBitmap;
 class GCamera;
@@ -12,7 +12,7 @@ struct HitInfo;
 class GHeightMap;
 class GTerrainBrush;
 class GEffect;
-class GTerrain: public GRenderObject
+class GTerrain: public GRenderEntity
 {
 	DeclareEditorType(GTerrain);
 public:

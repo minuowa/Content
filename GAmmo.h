@@ -1,12 +1,12 @@
 #pragma once
 
 #include "Particles.h"
-#include "GRenderObject.h"
+#include "GRenderEntity.h"
 
 //炮弹类
 //从武器中发射，落到地面时产生效果，消亡
 
-class GAmmo:public GRenderObject 
+class GAmmo:public GRenderEntity 
 {
 public:
 	GAmmo(void);
@@ -23,7 +23,7 @@ public:
 
 public:
 
-	GRenderObject *mpObj;
+	GRenderEntity *mpObj;
 
 };
 

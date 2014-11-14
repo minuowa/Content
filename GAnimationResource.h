@@ -56,12 +56,12 @@ public:
 	~GAnimationResource();
 public:
 	bool createFromFile ( const char* name );
-	void UpdateBones();
-	GBoneLinker *GetBoneInfo( CChar*sBoneName );
+	void updateBones();
+	GBoneLinker *getBoneInfo( const char*sBoneName );
 protected:
 	HRESULT SetupBoneMatrixPointers( LPD3DXFRAME pFrame )  ;
 	HRESULT SetupBoneMatrixPointersOnMesh( LPD3DXMESHCONTAINER pMeshContainerBase );
-	int AddBoneInfo( CChar*sBoneName, D3DXMATRIX *pmat );
+	int addBoneInfo( const char*sBoneName, D3DXMATRIX *pmat );
 public:
 	D3DXFRAME*	mFrameRoot;									//¸ù¿ò¼Ü
 	GBoneLinkerMap mBoneInfos;

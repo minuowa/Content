@@ -43,7 +43,7 @@ HRESULT GAnimationResource::SetupBoneMatrixPointers ( LPD3DXFRAME pFrame )
 
 	return S_OK;
 }
-GBoneLinker * GAnimationResource::GetBoneInfo ( CChar*sBoneName )
+GBoneLinker * GAnimationResource::getBoneInfo ( const char*sBoneName )
 {
 	GBoneLinker *pBoneInfo = NULL;
 
@@ -88,7 +88,7 @@ HRESULT GAnimationResource::SetupBoneMatrixPointersOnMesh ( LPD3DXMESHCONTAINER 
 			return S_FALSE;
 		}
 
-		AddBoneInfo ( sBoneName, & ( pFrameEx->matCombinedTransformation ) );
+		addBoneInfo ( sBoneName, & ( pFrameEx->matCombinedTransformation ) );
 
 
 		pMeshContainerEx->ppBoneMatrixPtrs[i] = & ( pFrameEx->matCombinedTransformation );
@@ -97,7 +97,7 @@ HRESULT GAnimationResource::SetupBoneMatrixPointersOnMesh ( LPD3DXMESHCONTAINER 
 	return S_OK;
 
 }
-int GAnimationResource::AddBoneInfo ( CChar*sBoneName, D3DXMATRIX *pmat )
+int GAnimationResource::addBoneInfo ( const char*sBoneName, D3DXMATRIX *pmat )
 {
 	CXASSERT ( sBoneName );
 	GBoneLinker*  linker = new GBoneLinker;
@@ -113,7 +113,7 @@ int GAnimationResource::AddBoneInfo ( CChar*sBoneName, D3DXMATRIX *pmat )
 	return mBoneInfos.size();
 }
 
-void GAnimationResource::UpdateBones()
+void GAnimationResource::updateBones()
 {
 	SetupBoneMatrixPointers ( mFrameRoot );
 }
@@ -124,7 +124,7 @@ bool GAnimationResource::createFromFile ( const char* name )
 	HRESULT hr  = D3DXLoadMeshHierarchyFromXA ( name, D3DXMESH_MANAGED, D9DEVICE->GetDvc(), &Alloc, NULL,
 		&mFrameRoot, &mAnimationController );
 	CXASSERT_RESULT_FALSE ( hr );
-	UpdateBones();
+	updateBones();
 	return true;
 }
 

@@ -5,7 +5,6 @@
 #include "XProp.h"
 #include "XDelegate.h"
 
-typedef GString GString;
 
 #define DeclareCategoryName(className)\
 		public:\
@@ -51,16 +50,15 @@ public:
 	virtual void onPropertyChangeEnd ( void* cur );
 protected:
 	virtual void registerAllProperty();
-	GString	mNodeName;
 	CategoryPropertyMap mOption;
+	GString	mNodeName;
 public:
 	static GString mTargetName;
 	static GString mOperatorObjectName;
 	static CXDelegate mDelegateAlterName;
 
 	bool isRegist();
-
-	CChar* getObjectName() const;
+	const char* getObjectName() const;
 };
 
 

@@ -80,7 +80,6 @@ void GCamera::getInput ( DWORD frameTimeMs )
 {
     if ( !mCanGetInput )
         return;
-
     if ( INPUTSYSTEM.IsPressKey ( DIK_ADD ) )
         getTrans().mSpeedMove += 0.03f * frameTimeMs;
 
@@ -93,7 +92,6 @@ void GCamera::getInput ( DWORD frameTimeMs )
     {
         return;			//鼠标在客户区外面就不执行GetInput
     }
-
     D3DXVECTOR3 vMove = INPUTSYSTEM.GetMouseMoveEX();
 
     if ( INPUTSYSTEM.IsPressKey ( DIK_A ) || INPUTSYSTEM.IsPressKey ( DIK_D ) || INPUTSYSTEM.IsPressKey ( DIK_S ) || INPUTSYSTEM.IsPressKey ( DIK_W ) )

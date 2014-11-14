@@ -1,7 +1,7 @@
 
 #pragma once
 #include "XArea.h"
-#include "GRenderObject.h"
+#include "GRenderEntity.h"
 
 struct Particle							//粒子的数据结构
 {
@@ -32,7 +32,7 @@ struct VertexSnow
 	float u, v;
 };
 
-class CRectMesh: public GRenderObject
+class CRectMesh: public GRenderEntity
 {
 
 public:

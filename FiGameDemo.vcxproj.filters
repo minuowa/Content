@@ -1,35 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="GameStaticObj.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Particles.cpp" />
-    <ClCompile Include="XArea.cpp" />
-    <ClCompile Include="XCursor.cpp" />
-    <ClCompile Include="XEvent.cpp" />
-    <ClCompile Include="XMultiThread.cpp" />
-    <ClCompile Include="GRenderObject.cpp" />
-    <ClCompile Include="GWorldCorrd.cpp" />
     <ClCompile Include="GSceneMgr.cpp" />
-    <ClCompile Include="GTrailEffect.cpp" />
-    <ClCompile Include="GGameDemoHeader.cpp" />
-    <ClCompile Include="GAmmo.cpp" />
-    <ClCompile Include="GD8Input.cpp" />
-    <ClCompile Include="GMeshBuffer.cpp" />
-    <ClCompile Include="GBound.cpp" />
-    <ClCompile Include="GTimer.cpp" />
-    <ClCompile Include="GNode.cpp" />
-    <ClCompile Include="GFrameWork.cpp" />
-    <ClCompile Include="GMeshData.cpp" />
-    <ClCompile Include="GCamera.cpp" />
-    <ClCompile Include="GD9Device.cpp" />
     <ClCompile Include="GGame.cpp" />
-    <ClCompile Include="GMeshBaseObj.cpp" />
-    <ClCompile Include="GGameMap.cpp" />
     <ClCompile Include="GAnimationResource.cpp">
-      <Filter>Animation</Filter>
-    </ClCompile>
-    <ClCompile Include="GAnimMeshObj.cpp">
       <Filter>Animation</Filter>
     </ClCompile>
     <ClCompile Include="GAllocateHierarchy.cpp">
@@ -47,55 +22,138 @@
     <ClCompile Include="GComponentTrans.cpp">
       <Filter>Component</Filter>
     </ClCompile>
-    <ClCompile Include="GComponentFactory.cpp" />
-    <ClCompile Include="GObject.cpp" />
-    <ClCompile Include="GCuller.cpp" />
-    <ClCompile Include="GTexture.cpp" />
-    <ClCompile Include="GWater.cpp" />
-    <ClCompile Include="GGameOption.cpp" />
-    <ClCompile Include="GMoviePlayer.cpp" />
-    <ClCompile Include="GTerrain.cpp" />
-    <ClCompile Include="GHeightMap.cpp" />
-    <ClCompile Include="GTerrainCommon.cpp" />
-    <ClCompile Include="GBitmap.cpp" />
-    <ClCompile Include="GTerrainNode.cpp" />
-    <ClCompile Include="GFrustum.cpp" />
-    <ClCompile Include="GEffect.cpp" />
-    <ClCompile Include="GText.cpp" />
-    <ClCompile Include="GTerrainBrush.cpp" />
-    <ClCompile Include="GMatrix.cpp" />
+    <ClCompile Include="GComponentFactory.cpp">
+      <Filter>Component</Filter>
+    </ClCompile>
+    <ClCompile Include="GD8Input.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="GD9Device.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="GCamera.cpp">
+      <Filter>BaseObj</Filter>
+    </ClCompile>
+    <ClCompile Include="GAmmo.cpp">
+      <Filter>BaseObj</Filter>
+    </ClCompile>
+    <ClCompile Include="GHeightMap.cpp">
+      <Filter>BaseObj\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="GFrustum.cpp">
+      <Filter>BaseObj</Filter>
+    </ClCompile>
+    <ClCompile Include="GMeshBuffer.cpp">
+      <Filter>BaseObj</Filter>
+    </ClCompile>
+    <ClCompile Include="GMeshData.cpp">
+      <Filter>BaseObj</Filter>
+    </ClCompile>
+    <ClCompile Include="GNode.cpp">
+      <Filter>BaseObj</Filter>
+    </ClCompile>
+    <ClCompile Include="GObject.cpp">
+      <Filter>BaseObj</Filter>
+    </ClCompile>
+    <ClCompile Include="GCuller.cpp">
+      <Filter>BaseObj</Filter>
+    </ClCompile>
+    <ClCompile Include="GBound.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="GBitmap.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="GGameOption.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="GMatrix.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="GText.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="GTexture.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="GTimer.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="XEvent.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="XMultiThread.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="XCursor.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="XArea.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="GEffect.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="GTerrain.cpp">
+      <Filter>BaseObj\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="GTerrainBrush.cpp">
+      <Filter>BaseObj\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="GTerrainCommon.cpp">
+      <Filter>BaseObj\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="GTerrainNode.cpp">
+      <Filter>BaseObj\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="GWorldCorrd.cpp">
+      <Filter>BaseObj</Filter>
+    </ClCompile>
+    <ClCompile Include="Particles.cpp">
+      <Filter>BaseObj</Filter>
+    </ClCompile>
+    <ClCompile Include="GWater.cpp">
+      <Filter>BaseObj</Filter>
+    </ClCompile>
+    <ClCompile Include="GTrailEffect.cpp">
+      <Filter>BaseObj</Filter>
+    </ClCompile>
+    <ClCompile Include="GGameMap.cpp">
+      <Filter>BaseObj</Filter>
+    </ClCompile>
+    <ClCompile Include="GFrameWork.cpp">
+      <Filter>BaseObj</Filter>
+    </ClCompile>
+    <ClCompile Include="GameStaticObj.cpp">
+      <Filter>BaseObj</Filter>
+    </ClCompile>
+    <ClCompile Include="GFilm.cpp">
+      <Filter>Film</Filter>
+    </ClCompile>
+    <ClCompile Include="GFilmPlayer.cpp">
+      <Filter>Film</Filter>
+    </ClCompile>
+    <ClCompile Include="GFilmFrame.cpp">
+      <Filter>Film</Filter>
+    </ClCompile>
+    <ClCompile Include="GRenderEntity.cpp">
+      <Filter>BaseObj</Filter>
+    </ClCompile>
+    <ClCompile Include="GAnimEntity.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="GStillEntity.cpp">
+      <Filter>BaseObj</Filter>
+    </ClCompile>
+    <ClCompile Include="GGameDemoHeader.cpp" />
+    <ClCompile Include="GInputEntityManager.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GameStaticObj.h" />
-    <ClInclude Include="Particles.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="XArea.h" />
-    <ClInclude Include="XCursor.h" />
-    <ClInclude Include="XEvent.h" />
-    <ClInclude Include="XMultiThread.h" />
-    <ClInclude Include="FiGameDemo.h" />
-    <ClInclude Include="GRenderObject.h" />
-    <ClInclude Include="GWorldCorrd.h" />
     <ClInclude Include="GSceneMgr.h" />
-    <ClInclude Include="GTrailEffect.h" />
-    <ClInclude Include="GGameDemoHeader.h" />
-    <ClInclude Include="GAmmo.h" />
-    <ClInclude Include="GD8Input.h" />
-    <ClInclude Include="GMeshBuffer.h" />
-    <ClInclude Include="GBound.h" />
-    <ClInclude Include="GTimer.h" />
-    <ClInclude Include="GNode.h" />
-    <ClInclude Include="GFrameWork.h" />
-    <ClInclude Include="GMeshData.h" />
-    <ClInclude Include="GCamera.h" />
-    <ClInclude Include="GD9Device.h" />
     <ClInclude Include="GGame.h" />
-    <ClInclude Include="GMeshBaseObj.h" />
-    <ClInclude Include="GGameMap.h" />
-    <ClInclude Include="GFactory.h" />
-    <ClInclude Include="GAnimMeshObj.h">
-      <Filter>Animation</Filter>
-    </ClInclude>
     <ClInclude Include="GAllocateHierarchy.h">
       <Filter>Animation</Filter>
     </ClInclude>
@@ -114,28 +172,146 @@
     <ClInclude Include="GComponentMesh.h">
       <Filter>Component</Filter>
     </ClInclude>
-    <ClInclude Include="GComponentFactory.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="GComponentFactory.h">
+      <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="GD8Input.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="GD9Device.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="GCamera.h">
+      <Filter>BaseObj</Filter>
+    </ClInclude>
+    <ClInclude Include="GAmmo.h">
+      <Filter>BaseObj</Filter>
+    </ClInclude>
+    <ClInclude Include="GHeightMap.h">
+      <Filter>BaseObj\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="GFrustum.h">
+      <Filter>BaseObj</Filter>
+    </ClInclude>
+    <ClInclude Include="GMeshBuffer.h">
+      <Filter>BaseObj</Filter>
+    </ClInclude>
+    <ClInclude Include="GMeshData.h">
+      <Filter>BaseObj</Filter>
+    </ClInclude>
+    <ClInclude Include="GNode.h">
+      <Filter>BaseObj</Filter>
+    </ClInclude>
+    <ClInclude Include="GObject.h">
+      <Filter>BaseObj</Filter>
+    </ClInclude>
+    <ClInclude Include="FiGameDemo.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="GCuller.h">
+      <Filter>BaseObj</Filter>
+    </ClInclude>
+    <ClInclude Include="GBound.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="GBitmap.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="GEnums.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="GEnumTypesStrings.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="GFactory.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="GGameOption.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="GMatrix.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="GText.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="GTexture.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="GTimer.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="XEvent.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="XMultiThread.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="XCursor.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="XArea.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="GEffect.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="GTerrainBrush.h">
+      <Filter>BaseObj\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="GTerrainCommon.h">
+      <Filter>BaseObj\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="GTerrainNode.h">
+      <Filter>BaseObj\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="GWorldCorrd.h">
+      <Filter>BaseObj</Filter>
+    </ClInclude>
+    <ClInclude Include="Particles.h">
+      <Filter>BaseObj</Filter>
+    </ClInclude>
+    <ClInclude Include="GWater.h">
+      <Filter>BaseObj</Filter>
+    </ClInclude>
+    <ClInclude Include="GTrailEffect.h">
+      <Filter>BaseObj</Filter>
+    </ClInclude>
+    <ClInclude Include="GGameMap.h">
+      <Filter>BaseObj</Filter>
+    </ClInclude>
+    <ClInclude Include="GFrameWork.h">
+      <Filter>BaseObj</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStaticObj.h">
+      <Filter>BaseObj</Filter>
+    </ClInclude>
+    <ClInclude Include="GFilm.h">
+      <Filter>Film</Filter>
+    </ClInclude>
+    <ClInclude Include="GFilmPlayer.h">
+      <Filter>Film</Filter>
+    </ClInclude>
+    <ClInclude Include="GFilmFrame.h">
+      <Filter>Film</Filter>
+    </ClInclude>
     <ClInclude Include="GResourceManager.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="GRenderEntity.h">
+      <Filter>BaseObj</Filter>
+    </ClInclude>
+    <ClInclude Include="GAnimEntity.h">
       <Filter>Animation</Filter>
     </ClInclude>
-    <ClInclude Include="GObject.h" />
-    <ClInclude Include="Game.h" />
-    <ClInclude Include="GCuller.h" />
-    <ClInclude Include="GTexture.h" />
-    <ClInclude Include="GWater.h" />
-    <ClInclude Include="GGameOption.h" />
-    <ClInclude Include="GEnumTypesStrings.h" />
-    <ClInclude Include="GEnums.h" />
-    <ClInclude Include="GMoviePlayer.h" />
-    <ClInclude Include="GHeightMap.h" />
-    <ClInclude Include="GTerrainCommon.h" />
-    <ClInclude Include="GBitmap.h" />
-    <ClInclude Include="GTerrainNode.h" />
-    <ClInclude Include="GFrustum.h" />
-    <ClInclude Include="GEffect.h" />
-    <ClInclude Include="GText.h" />
-    <ClInclude Include="GTerrainBrush.h" />
-    <ClInclude Include="GMatrix.h" />
+    <ClInclude Include="GStillEntity.h">
+      <Filter>BaseObj</Filter>
+    </ClInclude>
+    <ClInclude Include="GGameDemoHeader.h" />
+    <ClInclude Include="GInputEntityManager.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Animation">
@@ -144,9 +320,28 @@
     <Filter Include="Component">
       <UniqueIdentifier>{2edb1787-a609-4ce7-b921-47f01164ad44}</UniqueIdentifier>
     </Filter>
+    <Filter Include="BaseObj">
+      <UniqueIdentifier>{7b579ed0-c3be-40a8-82b5-14ac5ee689fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Device">
+      <UniqueIdentifier>{bd65cb48-f06b-4e78-aabc-a2d037215c46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BaseObj\Terrain">
+      <UniqueIdentifier>{67ae6f9a-5fac-4f01-9c99-3d153dae1677}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{762fa9c4-657f-4db2-aeec-de662b10091c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Film">
+      <UniqueIdentifier>{2d206f1a-aad7-46dd-8705-57cb8ad4f994}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="GEnums.inl" />
-    <None Include="GTerrain.h" />
+    <None Include="GEnums.inl">
+      <Filter>Common</Filter>
+    </None>
+    <None Include="GTerrain.h">
+      <Filter>BaseObj\Terrain</Filter>
+    </None>
   </ItemGroup>
 </Project>

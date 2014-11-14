@@ -27,41 +27,41 @@ GGame::~GGame ( void )
 {
     dSafeDelete ( mSceneMgr );
     CXSingleton<GResourceManager<GTexture>>::destoryInstance();
-	CXSingleton<GResourceManager<GAnimationResource>>::destoryInstance();
-	CXSingleton<GEffectManager>::destoryInstance();
+    CXSingleton<GResourceManager<GAnimationResource>>::destoryInstance();
+    CXSingleton<GEffectManager>::destoryInstance();
     CXSingleton<GMeshManager>::destoryInstance();
     CXSingleton<GGameOption>::destoryInstance();
     CXSingleton<GComponentFactory>::destoryInstance();
 
-	CXSingleton<GText>::destoryInstance();
+    CXSingleton<GText>::destoryInstance();
 
     CXSingleton<GD8Input>::destoryInstance();
     CXSingleton<GD9Device>::destoryInstance();
 }
 
-void GGame::loop()
+bool GGame::loop()
 {
+    if ( mFinished )
+        return false;
     TheTimer->update();
-
-	if ( mIsActive )
-	{
-		INPUTSYSTEM.Update();
-		getInput();
-	}
-
-	update();
-
+    if ( mIsActive )
+    {
+        INPUTSYSTEM.Update();
+        getInput();
+    }
+    update();
     render();
+    return true;
 }
 
 void GGame::getInput()
 {
     float fPass = TheTimer->getFrameTimeSec();
 
-
     if ( INPUTSYSTEM.IskeyUp ( DIK_ESCAPE ) )
     {
-        exit ( 0 );
+        finish();
+        return;
     }
 
     static DWORD dwGetInput = 0;
@@ -100,7 +100,7 @@ void GGame::getInput()
             mpSelectAnim->getInput ( fPass );
         }
 
-        GMeshBaseObj *pMeshBaseObj = NULL;
+        GStillEntity *pMeshBaseObj = NULL;
 
         POINT pt = INPUTSYSTEM.GetMousePoint();
 
@@ -108,7 +108,7 @@ void GGame::getInput()
 
         static bool bFlag = true;
 
-        //pMeshBaseObj = ( CXMeshBaseObj* )( GMeshManager::GetSingleton().GetInput( fPass ) );
+        //pMeshBaseObj = ( CXMeshBaseObj* )( GMeshManager::getSingleton().GetInput( fPass ) );
 
         if ( pMeshBaseObj != NULL )
         {
@@ -328,7 +328,7 @@ bool GGame::init ( HWND mainWnd )
         GSingletonD9Device::getInstance()->Init ( mMainWin )
     );
     CXASSERT_RETURN_FALSE (
-        GSingletonD8Input::GetSingleton().Init ( GSingletonD9Device::GetSingleton(),
+        GSingletonD8Input::getSingleton().Init ( GSingletonD9Device::getSingleton(),
                 mInst, mMainWin )
     );
 
@@ -340,9 +340,9 @@ bool GGame::init ( HWND mainWnd )
     if ( !bSuccess )
         return false;
 
-    MeshMgr.Init();
+    //MeshMgr.Init();
 
-	TextMgr->init();
+    TextMgr->init();
 
     //D9DEVICE->ResetRenderState();
 
@@ -384,7 +384,6 @@ bool GGame::init ( HWND mainWnd )
 
 void GGame::shutDown()
 {
-
 }
 
 GSceneManager* getSceneMgr()
@@ -422,10 +421,10 @@ DWORD WINAPI loadObj ( LPVOID pParam )
 
     if ( 1 )
     {
-		GAnimMeshObj *pAnimMesh = new GAnimMeshObj;
-		pAnimMesh->setMediaFile ( "..\\Data\\res\\Anim\\AnimMesh0002\\A0002.X" );
-		CXASSERT_RETURN_FALSE ( pAnimMesh->recreate() );
-		TheSceneMgr->addDynaObj ( pAnimMesh );
+        GAnimEntity *pAnimMesh = new GAnimEntity;
+        pAnimMesh->setMediaFile ( "..\\Data\\res\\Anim\\AnimMesh0002\\A0002.X" );
+        CXASSERT_RETURN_FALSE ( pAnimMesh->recreate() );
+        TheSceneMgr->addDynaObj ( pAnimMesh );
     }
     if ( 1 )
     {
@@ -443,27 +442,27 @@ DWORD WINAPI loadObj ( LPVOID pParam )
     //gLuaScript.init();
     if ( 1 )
     {
-		gLuaScript.init();
+        gLuaScript.init();
 
-		//luacpp::reg_cclass<GNode>::_reg(gLuaScript.getState(),"GNode");
+        //luacpp::reg_cclass<GNode>::_reg(gLuaScript.getState(),"GNode");
 
-		//luacpp::reg_cclass<GTerrain,GNode>::_reg(gLuaScript.getState(),"GTerrain")
-		//luacpp::reg_cclass<GTerrain>::_reg(gLuaScript.getState(),"GTerrain")
-		//	.constructor<void>()
-		//	.function("recreate",&GTerrain::recreate);
+        //luacpp::reg_cclass<GTerrain,GNode>::_reg(gLuaScript.getState(),"GTerrain")
+        //luacpp::reg_cclass<GTerrain>::_reg(gLuaScript.getState(),"GTerrain")
+        //	.constructor<void>()
+        //	.function("recreate",&GTerrain::recreate);
 
-		//luacpp::reg_cclass<GSceneManager>::_reg(gLuaScript.getState(),"GSceneManager")
-		//	.function("addDynaObj",&GSceneManager::addDynaObj);
+        //luacpp::reg_cclass<GSceneManager>::_reg(gLuaScript.getState(),"GSceneManager")
+        //	.function("addDynaObj",&GSceneManager::addDynaObj);
 
-		gLuaScript.regClass<GNode> ( "GNode" );
-		gLuaScript.regClass<GTerrain,GNode> ( "GTerrain" );
-		gLuaScript.regClassFunction<GTerrain> ( "recreate", &GTerrain::recreate );
-		gLuaScript.regClassCreator<GTerrain>();
-		gLuaScript.regClass<GSceneManager> ( "GSceneManager" );
-		gLuaScript.regClassFunction<GSceneManager> ( "addDynaObj", &GSceneManager::addDynaObj );
+        gLuaScript.regClass<GNode> ( "GNode" );
+        gLuaScript.regClass<GTerrain, GNode> ( "GTerrain" );
+        gLuaScript.regClassFunction<GTerrain> ( "recreate", &GTerrain::recreate );
+        gLuaScript.regClassCreator<GTerrain>();
+        gLuaScript.regClass<GSceneManager> ( "GSceneManager" );
+        gLuaScript.regClassFunction<GSceneManager> ( "addDynaObj", &GSceneManager::addDynaObj );
 
-		gLuaScript.regGlobalFun ( "getSceneMgr", getSceneMgr );
-		gLuaScript.regGlobalFun ( "logInfo", logInfo );
+        gLuaScript.regGlobalFun ( "getSceneMgr", getSceneMgr );
+        gLuaScript.regGlobalFun ( "logInfo", logInfo );
 
         CXASSERT ( gLuaScript.doFile ( "main.lua" ) );
         //GTerrain* xmap=new GTerrain();
@@ -485,7 +484,7 @@ DWORD WINAPI loadObj ( LPVOID pParam )
 void GGame::gameRender ( float fPass )
 {
     mSceneMgr->mSceneRootNode->draw();
-	TextMgr->drawText();
+    TextMgr->drawText();
 }
 
 void GGame::renderEye ( float fPass )
@@ -545,7 +544,7 @@ void GGame::renderEye ( float fPass )
     //}
 
     //ZeroMemory( strEye, sizeof( strEye ) );
-    //sprintf( strEye, "当前渲染对象数目：%d", GMeshBuffer::GetSingleton().mRenderObjNum + 1 );
+    //sprintf( strEye, "当前渲染对象数目：%d", GMeshBuffer::getSingleton().mRenderObjNum + 1 );
     //mpUIMgr->mText.SetCurrentFontSize( fs12 );
 
     //rcEye.top += 50;

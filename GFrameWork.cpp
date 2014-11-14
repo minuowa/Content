@@ -81,7 +81,7 @@ void GFrameWork::active ( bool active )
 {
 	mIsActive = active;
 
-	GSingletonD8Input::GetSingleton().Active ( active );
+	GSingletonD8Input::getSingleton().Active ( active );
 }
 
 bool GFrameWork::isActive() const

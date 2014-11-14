@@ -30,4 +30,4 @@ public:
 };
 
 #define __RegisterComponentCreator(className) \
-	CXSingleton<GComponentFactory>::GetSingleton().registerCreator(#className,className::ComponentType,className::createComponent)
+	CXSingleton<GComponentFactory>::getSingleton().registerCreator(#className,className::ComponentType,className::createComponent)

@@ -497,7 +497,7 @@ void GTerrain::AlterFace ( HitInfo* HI, EXVertex* MyVB )
     //for ( int i = 0; i < 3; i++ )
     //{
 
-    //    switch ( GxPlugin_TerrainTool.GetSingleton().CurrentBrush )
+    //    switch ( GxPlugin_TerrainTool.getSingleton().CurrentBrush )
     //    {
     //    case "A":
     //        MyVB[HI->Index[i]].Txt1.W += Delta;
@@ -522,7 +522,7 @@ void GTerrain::AlterFace ( HitInfo* HI, EXVertex* MyVB )
     //    {
     //        if ( CheckIndexInvalid ( inx ) )
     //        {
-    //            switch ( GxPlugin_TerrainTool.GetSingleton().CurrentBrush )
+    //            switch ( GxPlugin_TerrainTool.getSingleton().CurrentBrush )
     //            {
     //            case "R":
     //                MyVB[inx].Txt1.X += ( float ) ( pow ( factor, il.Key ) * Delta );

@@ -8,6 +8,7 @@
 #include "GCamera.h"
 #include "GD9Device.h"
 #include "GFactory.h"
+#include "GInputEntityManager.h"
 
 #define SCENENUM 5		//³¡¾°ÊýÁ¿	
 
@@ -26,7 +27,6 @@ enum eGameScene
 class CSceneMachine
 {
 public:
-
 	CSceneMachine();
 
 	~CSceneMachine();
@@ -66,7 +66,8 @@ public:
 	void addObj ( const char* parentName, const char* typeName );
 	void deleteObj(const char* name);
 
-	void ProcessEvent();
+	void addInputObj(GNode* node);
+
 	void selectObjByName ( const char* name );
 	GNode* getNodeByName ( const char* name );
 
@@ -84,17 +85,14 @@ public:
 	void initNodeFactory();
 	void initComponentFactory();
 	virtual void onCallBack ( const CXDelegate& delgate );
-
-
-	//virtual bool OnNotify(const EditorEvent& event);
-
-	int mRenderObjNum;
-
+public:
 	CXDelegate mDelegateReloadScene;
 
 	GCamera* mCurCamera;
 	GString mUsingCamera;
 	CSceneMachine mSceneMachine;
+
+	GInputEntityManager mInputEntityManager;
 
 	GNode* mSceneRootNode;
 	GNode* mSceneStaticRootNode;

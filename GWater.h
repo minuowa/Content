@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GMeshBaseObj.h"
+#include "GStillEntity.h"
 
 
 #define SEAPICNUM   64	//海水纹理图片的个数
@@ -44,7 +44,7 @@ private:
 };
 #define FVFSea D3DFVF_XYZ | D3DFVF_TEX1|D3DFVF_NORMAL
 
-class GWater : public GMeshBaseObj
+class GWater : public GStillEntity
 {
 	DeclareEditorType ( GWater );
 public:

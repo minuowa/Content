@@ -2,7 +2,7 @@
 #include "GMeshBuffer.h"
 
 #include "GTexture.h"
-#include "GMeshBaseObj.h"
+#include "GStillEntity.h"
 #include "GSceneMgr.h"
 #include "GD9Device.h"
 //////////////////////////////////////////////////////////////////////////

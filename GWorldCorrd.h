@@ -1,8 +1,8 @@
 #pragma once
-#include "GRenderObject.h"
+#include "GRenderEntity.h"
 
 
-class GWorldCorrd:public GRenderObject
+class GWorldCorrd:public GRenderEntity
 {
 	DeclareEditorType(GWorldCorrd);
 private:

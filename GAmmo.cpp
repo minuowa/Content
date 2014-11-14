@@ -68,7 +68,7 @@ void CAmmoParticles::update(  )
 
 {
 	m_bForceOnMap = false;
-	GRenderObject::update();
+	GRenderEntity::update();
 
 	mParticles.update();
 }

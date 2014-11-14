@@ -1,6 +1,6 @@
 #include "GGameDemoHeader.h"
 #include "GTrailEffect.h"
-#include "GAnimMeshObj.h"
+#include "GAnimEntity.h"
 
 GTrailEffect::GTrailEffect ( void )
 	: mLastTranslate ( 0, 0, 0 )
@@ -38,19 +38,19 @@ void GTrailEffect::Update()
 	}
 }
 
-void GTrailEffect::Init ( CChar* linkerName1, CChar* linkerName2 )
+void GTrailEffect::Init ( const char* linkerName1, const char* linkerName2 )
 {
 	mLinkerName1 = linkerName1;
 	mLinkerName2 = linkerName2;
 }
 
-void GTrailEffect::Attach ( GAnimMeshObj* anim )
+void GTrailEffect::Attach ( GAnimEntity* anim )
 {
 	CXASSERT_RETURN ( anim );
 	GAnimationResource* res = anim->GetResource();
 	CXASSERT ( res );
-	mLinker1 = res->GetBoneInfo ( mLinkerName1 );
-	mLinker2 = res->GetBoneInfo ( mLinkerName2 );
+	mLinker1 = res->getBoneInfo ( mLinkerName1 );
+	mLinker2 = res->getBoneInfo ( mLinkerName2 );
 
 	CXASSERT_RETURN ( mLinker1 && mLinker2 );
 }

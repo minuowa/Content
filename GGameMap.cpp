@@ -297,7 +297,7 @@ int GGameMap::AfterCreate()
 
 	recreateInsectMesh();
 
-	return _nID;
+	return mLocalID;
 }
 
 bool GGameMap::IsBlock ( D3DXVECTOR3 vPos, int *pCounter )

@@ -73,6 +73,7 @@
       <FunctionLevelLinking>
       </FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
+      <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>
       <AdditionalDependencies>CXBase.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -96,6 +97,9 @@
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
       <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
     </ProjectReference>
+    <Bscmake>
+      <PreserveSbr>true</PreserveSbr>
+    </Bscmake>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -132,16 +136,19 @@
     <ClCompile Include="GComponentInterface.cpp" />
     <ClCompile Include="GComponentMesh.cpp" />
     <ClCompile Include="GD9Device.cpp" />
+    <ClCompile Include="GFilm.cpp" />
     <ClCompile Include="GFrustum.cpp" />
     <ClCompile Include="GGameOption.cpp" />
     <ClCompile Include="GHeightMap.cpp" />
+    <ClCompile Include="GInputEntityManager.cpp" />
     <ClCompile Include="GMatrix.cpp" />
     <ClCompile Include="GMeshData.cpp" />
-    <ClCompile Include="GMoviePlayer.cpp" />
+    <ClCompile Include="GFilmFrame.cpp" />
+    <ClCompile Include="GFilmPlayer.cpp" />
     <ClCompile Include="GObject.cpp" />
-    <ClCompile Include="GRenderObject.cpp" />
+    <ClCompile Include="GRenderEntity.cpp" />
     <ClCompile Include="GAmmo.cpp" />
-    <ClCompile Include="GAnimMeshObj.cpp" />
+    <ClCompile Include="GAnimEntity.cpp" />
     <ClCompile Include="GBound.cpp" />
     <ClCompile Include="GTerrain.cpp" />
     <ClCompile Include="GTerrainBrush.cpp" />
@@ -167,7 +174,7 @@
     <ClCompile Include="GEffect.cpp" />
     <ClCompile Include="XEvent.cpp" />
     <ClCompile Include="GGameMap.cpp" />
-    <ClCompile Include="GMeshBaseObj.cpp" />
+    <ClCompile Include="GStillEntity.cpp" />
     <ClCompile Include="XMultiThread.cpp" />
     <ClCompile Include="GNode.cpp" />
     <ClCompile Include="GComponentTrans.cpp" />
@@ -182,7 +189,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GAmmo.h" />
     <ClInclude Include="GAnimationResource.h" />
-    <ClInclude Include="GAnimMeshObj.h" />
+    <ClInclude Include="GAnimEntity.h" />
     <ClInclude Include="GBitmap.h" />
     <ClInclude Include="GBound.h" />
     <ClInclude Include="GComponentBox.h" />
@@ -192,12 +199,15 @@
     <ClInclude Include="GEnums.h" />
     <ClInclude Include="GEnumTypesStrings.h" />
     <ClInclude Include="GFactory.h" />
+    <ClInclude Include="GFilm.h" />
     <ClInclude Include="GFrustum.h" />
     <ClInclude Include="GGameOption.h" />
     <ClInclude Include="GHeightMap.h" />
+    <ClInclude Include="GInputEntityManager.h" />
     <ClInclude Include="GMatrix.h" />
     <ClInclude Include="GMeshData.h" />
-    <ClInclude Include="GMoviePlayer.h" />
+    <ClInclude Include="GFilmFrame.h" />
+    <ClInclude Include="GFilmPlayer.h" />
     <ClInclude Include="GObject.h" />
     <ClInclude Include="GResourceManager.h" />
     <ClInclude Include="GTerrainBrush.h" />
@@ -215,7 +225,7 @@
     <ClInclude Include="GFrameWork.h" />
     <ClInclude Include="GGame.h" />
     <ClInclude Include="GameStaticObj.h" />
-    <ClInclude Include="GRenderObject.h" />
+    <ClInclude Include="GRenderEntity.h" />
     <ClInclude Include="Particles.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="GSceneMgr.h" />
@@ -226,7 +236,7 @@
     <ClInclude Include="GEffect.h" />
     <ClInclude Include="XEvent.h" />
     <ClInclude Include="GGameMap.h" />
-    <ClInclude Include="GMeshBaseObj.h" />
+    <ClInclude Include="GStillEntity.h" />
     <ClInclude Include="XMultiThread.h" />
     <ClInclude Include="GNode.h" />
     <ClInclude Include="GComponentTrans.h" />

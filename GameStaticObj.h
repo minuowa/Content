@@ -1,21 +1,13 @@
 #pragma once
-#include "GMeshBaseObj.h"
+#include "GStillEntity.h"
 
 class CGameStaticObj :
-	public GMeshBaseObj
+	public GStillEntity
 {
 	DeclareEditorType(CGameStaticObj);
 public:
-
 	CGameStaticObj(void);
-
 	~CGameStaticObj(void);
-
-public:
-
-	bool recreate(GNode *Parent,int OBJNum);
-
-
 public:
 	int m_nObjID;
 
