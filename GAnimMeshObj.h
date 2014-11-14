@@ -18,7 +18,7 @@ public:
 	void updateWorldInfo();
 	void setMediaFile(const char* file);
 
-	VOID	UpdateFrameMatrices( LPD3DXFRAME pFrameBase, LPD3DXMATRIX pParentMatrix );
+	VOID UpdateFrameMatrices( LPD3DXFRAME pFrameBase, const D3DXMATRIX* pParentMatrix );
 
 	void	DrawMeshContainer( D3DXMESHCONTAINER *pMeshContainerBase, D3DXFRAME *pFrameBase );
 

@@ -437,7 +437,7 @@ DWORD WINAPI loadObj ( LPVOID pParam )
         //sea->addQuakePoint ( -50, 0, 10.0f, 2.8f );
         //sea->addQuakePoint ( 50, 0, 10.0f, 2.8f );
         sea->recreate();
-        sea->setWorldTranslate ( D3DXVECTOR3 ( 0, 1, 0 ) );
+        //sea->setWorldTranslate ( D3DXVECTOR3 ( 0, 1, 0 ) );
         TheSceneMgr->addDynaObj ( sea );
     }
     //gLuaScript.init();

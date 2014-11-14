@@ -26,8 +26,8 @@ bool GText::init()
 }
 GText::~GText ( void )
 {
-    D9DEVICE->mOnLostDevice -= this;
-    D9DEVICE->mOnResetDevice -= this;
+    //D9DEVICE->mOnLostDevice -= this;
+    //D9DEVICE->mOnResetDevice -= this;
     clear();
 }
 
@@ -434,6 +434,11 @@ bool GText::recreate()
     mCurrentFont = mDefaultFont;
     CXASSERT_RESULT_FALSE ( D3DXCreateSprite ( D9DEVICE->GetDvc(), &mFontSprite ) ) ;
     return true;
+}
+
+void GText::removeText ( GString* str )
+{
+    mTextArray.remove ( str );
 }
 
 

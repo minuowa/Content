@@ -30,8 +30,8 @@ GCamera::GCamera ( void )
 
 GCamera::~GCamera ( void )
 {
-	dSafeDelete ( mFrustum );
-	dSafeDelete ( mCuller );
+    dSafeDelete ( mFrustum );
+    dSafeDelete ( mCuller );
     D9DEVICE->mOnResetDevice -= this;
 }
 
@@ -66,9 +66,9 @@ bool GCamera::recreate()
 
 void GCamera::setView()
 {
-    D3DXVECTOR3 vLookAtPos = getTrans().mTranslate + getTrans().mDir * 100;
+    D3DXVECTOR3 vLookAtPos = getTrans().getWorldTranslate() + getTrans().getWorldDir() * 100;
 
-    D3DXMatrixLookAtLH ( &mView, &getTrans().mTranslate, &vLookAtPos, &getTrans().mUpon );
+    D3DXMatrixLookAtLH ( &mView, &getTrans().getWorldTranslate(), &vLookAtPos, &getTrans().getWorldUpon() );
 
     if ( D9DEVICE != NULL )
     {
@@ -122,47 +122,45 @@ void GCamera::getInput ( DWORD frameTimeMs )
 
     if ( INPUTSYSTEM.isPressingButton ( eButtonType_RightButton ) )
     {
-        getTrans().TrunStepLeftRightWithUp ( -vMove.x / 800.0f );
+        getTrans().trunWithUpon ( -vMove.x / 800.0f );
 
-        getTrans().TrunWithRight ( -vMove.y / 800.0f );
+        getTrans().trunWithRight ( -vMove.y / 800.0f );
     }
+    updateWorld();
 }
 
 
 void GCamera::TraceMan(  )
 {
-    if ( mpTransMan == NULL || !mbTraceMan )
-    {
-        return;
-    }
+//   if ( mpTransMan == NULL || !mbTraceMan )
+//   {
+//       return;
+//   }
 
-    if ( !mpTransMan->getTrans().mCanMoveStep )
-    {
-        return;
-    }
+//   if ( !mpTransMan->getTrans().mCanMoveStep )
+//   {
+//       return;
+//   }
 
-    D3DXVECTOR3 Pos = ZEROVECTOR3;
+//   D3DXVECTOR3 Pos = ZEROVECTOR3;
 
-    Pos = mpTransMan->getTrans().mTranslate - mpTransMan->getTrans().mDir * mfLenTransMan * 2;
+//   Pos = mpTransMan->getTrans().mMatLocal.mTranslate - mpTransMan->getTrans().getDir() * mfLenTransMan * 2;
 
-    Pos += mpTransMan->getTrans().mUpon * mfLenTransMan;
+//   Pos += mpTransMan->getTrans().mMatLocal.mUpon * mfLenTransMan;
 
-    D3DXVECTOR3 vDist = Pos - getTrans().mTranslate;
+//   D3DXVECTOR3 vDist = Pos - getTrans().mMatLocal.mTranslate;
 
 
-    D3DXVECTOR3 Dir = mpTransMan->getTrans().mTranslate - Pos;
+//   D3DXVECTOR3 Dir = mpTransMan->getTrans().mMatLocal.mTranslate - Pos;
 
-    getTrans().mTranslate = Pos;
+//   getTrans().mMatLocal.mTranslate = Pos;
 
-    getTrans().mDir = Dir;
+//   getTrans().setDir(Dir) ;
 
-    D3DXVec3Cross ( &getTrans().mRight, & ( D3DXVECTOR3 ( 0, 1, 0 ) ), &getTrans().mDir );
+//   D3DXVec3Cross ( &getTrans().mMatLocal.mRight, & ( D3DXVECTOR3 ( 0, 1, 0 ) ), &getTrans().getDir() );
 
-    D3DXVec3Cross ( &getTrans().mUpon, &getTrans().mDir, &getTrans().mRight );
-
-    D3DXVec3Normalize ( &getTrans().mDir, &getTrans().mDir );
-    D3DXVec3Normalize ( &getTrans().mUpon, &getTrans().mUpon );
-    D3DXVec3Normalize ( &getTrans().mRight, &getTrans().mRight );
+//   D3DXVec3Cross ( &getTrans().mMatLocal.mUpon, &getTrans().getDir(), &getTrans().mMatLocal.mRight );
+    //getTrans().normalizeRotation();
 
 }
 
@@ -184,8 +182,6 @@ bool GCamera::InitTrack ( GNode *pWorldObj )
 void GCamera::update()
 {
     __super::update();
-    //if ( mCuller )
-    //    mCuller->Update ( & ( GetWorldMatrix ( false ) ) );
 }
 
 void GCamera::onCallBack ( const CXDelegate& delgate )
@@ -196,7 +192,7 @@ void GCamera::onCallBack ( const CXDelegate& delgate )
     }
 }
 
-void GCamera::moveTo ( D3DXMATRIX& matrix )
+void GCamera::moveTo ( const D3DXMATRIX& matrix )
 {
     getTrans().moveTo ( matrix, 3000 );
 }
@@ -234,22 +230,21 @@ GFrustum* GCamera::getFrustum() const
 void GCamera::getObjectCorrdPos ( D3DXVECTOR3& out, GNode* obj )
 {
     CXASSERT ( obj );
-    D3DXMATRIX mat;
-    obj->getTrans().GetWorldMatrix ( mat, false );
-	out = getTrans().mTranslate;
-	D3DXMatrixInverse ( &mat, 0, &mat );
+    D3DXMATRIX mat = obj->getTrans().getLocalD3D();
+    //obj->getTrans().GetWorldMatrix ( mat, false );
+    out = getTrans().getTranslate();
+    D3DXMatrixInverse ( &mat, 0, &mat );
     dMatrixTranslateVec3 ( out, mat );
 }
 
 void GCamera::updateCullerToObjectCoord ( GNode* obj )
 {
     D3DXVECTOR3 center = mFrustum->mCenter;
-    D3DXMATRIX matWorld;
-    getTrans().GetWorldMatrix ( matWorld );
+    D3DXMATRIX matWorld = getTrans().getLocalD3D();
+    //getTrans().GetWorldMatrix ( matWorld );
     dMatrixTranslateVec3 ( center, matWorld );
 
-    D3DXMATRIX objWorld;
-    obj->getTrans().GetWorldMatrix ( objWorld );
+    D3DXMATRIX objWorld = obj ->getTrans().getLocalD3D();
     dMatrixInverse ( objWorld );
 
     dMatrixTranslateVec3 ( center, objWorld );

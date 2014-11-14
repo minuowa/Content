@@ -20,7 +20,7 @@ GTerrain::GTerrain ( )
     //mHeightMax = 400.0f;
     //mHeightMin = -400.0f;
 
-    mRootLevel = 9;
+    mRootLevel = 4;
     mHeightMax = 3000.0f;
     mHeightMin = -2000.0f;
     mLODFactor = 6400.f;
@@ -139,7 +139,7 @@ bool GTerrain::render()
 
     //必须的，否则默认使用顶点颜色做光照
     //D9DEVICE->openAllLight ( true );
-    //D9DEVICE->openAlphaBlend ( false );
+    D9DEVICE->openAlphaBlend ( false );
     mTerrainEffect->setParams();
     mTerrainEffect->draw();
 
@@ -638,6 +638,8 @@ void GTerrain::SaveAlphaSplat()
 
 GTerrain::~GTerrain()
 {
+	TextMgr->removeText ( &mTerrainCountString );
+
     this->clear();
 }
 
@@ -689,7 +691,6 @@ bool GTerrain::recreate()
 {
     if ( !__super::recreate() )
         return false;
-
 
     if ( !createVertexDeclaretion() )
         return false;

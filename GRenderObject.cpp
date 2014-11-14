@@ -2,25 +2,23 @@
 #include "GRenderObject.h"
 
 
-GRenderObject::GRenderObject(void)
+GRenderObject::GRenderObject ( void )
 {
-	mVisible=true;
+    mVisible = true;
 
-	mChangeWhenPicked=false;
+    mChangeWhenPicked = false;
 }
 
 
-GRenderObject::~GRenderObject(void)
+GRenderObject::~GRenderObject ( void )
 {
-	mForceMap=NULL;
+    mForceMap = NULL;
 }
 
 bool GRenderObject::render()
 {
-	if(!mVisible)
-		return false;
-
-	GNode::GetWorldMatrix(false);
-
-	return true;
+    if ( !mVisible )
+        return false;
+    getTrans().set();
+    return true;
 }

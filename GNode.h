@@ -22,7 +22,6 @@ public:
 	virtual void clear();
 	virtual bool recreate();
 public:
-	DWORD getObjCount();					//获取所有创建的物体总数，包括已经销毁的对象
 	void setParentBone ( GNode *Parent, const char *sName );
 	void setCanGetInput(bool can);
 	int getObjID() const;
@@ -30,19 +29,20 @@ public:
 	bool removeChild ( GNode* child );
 	void deleteChild ( GNode* node );
 	GNode* getParent() const;
+
 	virtual bool draw();
 	virtual void getInput ( DWORD frameTimeMs );
 	virtual void update();
+	virtual void updateWorld();
 
 
 	//创建物体后更新一下，得到物体在地图上的位置
 	IntersectInfo *UpdateForForceOnMap();
 
 	IntersectInfo *UpdateForForceOnObj ( void *pObj );
-	D3DXMATRIX GetWorldMatrix ( bool bForTrans );
 	virtual eObjAnimState SetState ( eObjAnimState oas, bool bBack ) ;
 	virtual D3DXMATRIX GetWorldMatrixByBone ( const char *sBoneName, bool bForTrans = false );
-	void setWorldTranslate ( D3DXVECTOR3& v );
+	//void setWorldTranslate ( D3DXVECTOR3& v );
 	void setDir ( D3DXVECTOR3 vNormal );
 
 	void ForceOnMap ( void *pMap, float fForceHeight, eForceType ft );
@@ -77,7 +77,7 @@ public:
 	CXDynaArray<GNode*> mChildren;
 
 	GComponentOwner	mComponentOwner;
-
+	GMatrix mWorldMat;
 	//eHitType m_HitType;					//是否撞到物体
 
 	void *m_pOnObj;						//本对象下面的非地图对象
@@ -126,7 +126,7 @@ protected:
 
 	eObjAnimState m_ObjAnimState;		//骨骼动画对象当前状态
 
-	D3DXMATRIX _matWorld;				//物体的世界矩阵
+	//D3DXMATRIX _matWorld;				//物体的世界矩阵
 
 public:
 
@@ -169,5 +169,10 @@ public:
 		return mComponentOwner;
 	}
 };
-
+inline GComponentTrans& GNode::getTrans() const
+{
+	GComponentTrans* pTrans = ( GComponentTrans* ) mComponentOwner.getComponent ( eComponentType_Trans );
+	assert ( pTrans );
+	return *pTrans;
+}
 typedef CXDynaArray<GNode*> GNodeArr;

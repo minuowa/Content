@@ -36,7 +36,7 @@ GAnimMeshObj::~GAnimMeshObj ( void )
 
 
 
-VOID GAnimMeshObj::UpdateFrameMatrices ( LPD3DXFRAME pFrameBase, LPD3DXMATRIX pParentMatrix )
+VOID GAnimMeshObj::UpdateFrameMatrices( LPD3DXFRAME pFrameBase, const D3DXMATRIX* pParentMatrix )
 {
 	if ( pFrameBase == NULL )
 	{
@@ -458,7 +458,7 @@ void GAnimMeshObj::updateWorldInfo()
 	}
 	if ( mResource && mResource->mFrameRoot )
 	{
-		UpdateFrameMatrices ( mResource->mFrameRoot, &_matWorld );
+		UpdateFrameMatrices ( mResource->mFrameRoot, &getTrans().getWorldD3D() );
 	}
 	if ( mpAmmo != NULL )
 	{

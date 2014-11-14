@@ -132,7 +132,7 @@ bool CRectMesh::render()
 	D3DXMATRIX matTranslation = NORMALMATRIX;
 	D3DXMATRIX matRx, matRy, matWorld, matTmp;
 
-	matTmp = GNode::GetWorldMatrix( false );
+	//matTmp = GNode::updateWorld( false );
 
 	D9DEVICE->openAllLight( false );
 	D9DEVICE->openAlphaBlend( true );
@@ -151,7 +151,7 @@ bool CRectMesh::render()
 		matTranslation._43 = pSnow[i].Translate.z;
 
 		matWorld = matRx * matRy * matTranslation * matTmp;
-
+		CXASSERT(0);
 		D9DEVICE->GetDvc()->SetTransform( D3DTS_WORLD, &matWorld );
 
 		D9DEVICE->GetDvc()->SetStreamSource( 0, mpVB, 0, sizeof( VertexSnow ) );

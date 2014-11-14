@@ -135,6 +135,7 @@
     <ClCompile Include="GFrustum.cpp" />
     <ClCompile Include="GGameOption.cpp" />
     <ClCompile Include="GHeightMap.cpp" />
+    <ClCompile Include="GMatrix.cpp" />
     <ClCompile Include="GMeshData.cpp" />
     <ClCompile Include="GMoviePlayer.cpp" />
     <ClCompile Include="GObject.cpp" />
@@ -194,6 +195,7 @@
     <ClInclude Include="GFrustum.h" />
     <ClInclude Include="GGameOption.h" />
     <ClInclude Include="GHeightMap.h" />
+    <ClInclude Include="GMatrix.h" />
     <ClInclude Include="GMeshData.h" />
     <ClInclude Include="GMoviePlayer.h" />
     <ClInclude Include="GObject.h" />

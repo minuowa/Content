@@ -199,7 +199,7 @@ inline void getVector3Ease ( D3DXVECTOR3& out, D3DXVECTOR3* start, D3DXVECTOR3* 
     out.y = gEaser.getEase ( start->y, end->y, e, t );
     out.z = gEaser.getEase ( start->z, end->z, e, t );
 }
-inline void dGetTranslateFromMatrix ( D3DXVECTOR3& out, D3DXMATRIX* mat )
+inline void dGetTranslateFromMatrix ( D3DXVECTOR3& out, const D3DXMATRIX* mat )
 {
     out.x = mat->_41;
     out.y = mat->_42;
