@@ -8,34 +8,35 @@ class GAnimationResource;
 class GAnimEntity: public GRenderEntity
 {
     DeclareEditorType ( GAnimEntity );
+    DeclareFilmObjBase ( GAnimEntity, GRenderEntity );
 public:
     GAnimEntity ( void );
     ~GAnimEntity ( void );
 public:
-    void updateWorldInfo();
-    void setMediaFile ( const char* file );
+    DeclareFilmTool void setMediaFile ( const char* file );
 
-    void play ( const char* animSetName );
-    void changeTo ( const char* animSetName );
+	//DeclareFilmTool void play ( const char* animSetName );
+	//DeclareFilmTool void changeTo ( const char* animSetName );
 
-    void attachOnBone ( const char* boneName, GNode* entity );
-    void detachOnBone ( const char* boneName, GNode* entity );
-    GNode* getEntityOnBone ( const char* boneName, const char* entityName );
+	//DeclareFilmTool void attachOnBone ( const char* boneName, GNode* entity );
+	//DeclareFilmTool void detachOnBone ( const char* boneName, GNode* entity );
+	//DeclareFilmTool GNode* getEntityOnBone ( const char* boneName, const char* entityName );
 
-    inline GAnimationResource* GetResource() const;
+    inline GAnimationResource* getResource() const;
 public:
-    virtual bool recreate() override;
+	void updateWorldInfo();
+	virtual bool recreate() override;
     virtual void update();
 protected:
     virtual bool render();
 protected:
     bool Pick ( ID3DXMesh *pMesh, POINT pt );
-    VOID UpdateFrameMatrices ( LPD3DXFRAME pFrameBase, const D3DXMATRIX* pParentMatrix );
+    void UpdateFrameMatrices ( LPD3DXFRAME pFrameBase, const D3DXMATRIX* pParentMatrix );
     void DrawMeshContainer ( D3DXMESHCONTAINER *pMeshContainerBase, D3DXFRAME *pFrameBase );
     void DrawFrame ( D3DXFRAME *pFrameBase );
     virtual D3DXMATRIX GetWorldMatrixByBone ( char *sBoneName, bool bForTrans = false );
 private:
-    LPD3DXANIMATIONSET mpAnimSet;						//当前动作集
+    LPD3DXANIMATIONSET mAnimSet;						//当前动作集
     bool mbPlayDone;									//上一个动作集是否播放完成
     DWORD mdwOldAnimSetFrame;							//当前动画集上一次播放到的帧数
     DWORD mdwCurAnimSetFrame;							//当前动画集此次播放到的帧数
@@ -44,7 +45,7 @@ private:
     ID3DXAnimationController *mCloneAnimationController;			//动画控制器
 public:
 };
-inline GAnimationResource* GAnimEntity::GetResource() const
+inline GAnimationResource* GAnimEntity::getResource() const
 {
     return mResource;
 }

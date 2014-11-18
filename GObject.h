@@ -34,6 +34,8 @@ public:
 	GObject ( void );
 	virtual ~GObject ( void );
 public:
+	void setName ( const char* name );
+
 	template<typename T>
 	void registerProperty ( const char* categoryName, const char* propName, const T& var );
 	template<>
@@ -51,14 +53,14 @@ public:
 protected:
 	virtual void registerAllProperty();
 	CategoryPropertyMap mOption;
-	GString	mNodeName;
+	GString	mName;
 public:
 	static GString mTargetName;
 	static GString mOperatorObjectName;
 	static CXDelegate mDelegateAlterName;
 
 	bool isRegist();
-	const char* getObjectName() const;
+	const char* getName() const;
 };
 
 

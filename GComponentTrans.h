@@ -91,11 +91,11 @@ public:
     void update();
     void updateTranslate();
     void updateRotation();
-    void moveTo ( const D3DXMATRIX& target, DWORD millSeconds );
+	void moveTo ( const GMatrix& target, DWORD millSeconds );
 private:
     void setRotation ( D3DXMATRIX& mat );
 
-    virtual const char* GetComponentName();
+    virtual const char* getComponentName();
 protected:
     GMatrix mMatLocal;
     GMatrix mMatWorld;

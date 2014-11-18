@@ -4,10 +4,8 @@ class GStillEntity;
 class GFilmFrame
 {
 public:
-	GFilmFrame(void);
-	~GFilmFrame(void);
-
-	void addAnimEntity(GAnimEntity* obj);
-	void addStillEntity(GStillEntity* obj);
+    GFilmFrame ( void );
+    ~GFilmFrame ( void );
+    void reload();
 };
 

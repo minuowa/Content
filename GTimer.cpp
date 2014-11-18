@@ -15,6 +15,7 @@ GTimer::GTimer ( void )
 
 GTimer::~GTimer ( void )
 {
+    TextMgr->removeText ( &mFPSString );
 }
 
 
@@ -35,8 +36,8 @@ void GTimer::update()
         mFPS = ( DWORD ) ( 1000.0f * FPSCount / mFPSAccuTime );
         mFPSString.Format ( "FPS:%d", mFPS );
 
-		mFPSFrameCount = 0;
-		mFPSAccuTime = 0;
+        mFPSFrameCount = 0;
+        mFPSAccuTime = 0;
     }
     mFPSAccuTime += mFrameTime;
     mFPSFrameCount++;

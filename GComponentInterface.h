@@ -19,18 +19,18 @@ class GComponentInterface :
 public:
 	GComponentInterface ( void );
 	virtual ~GComponentInterface ( void );
-	void SetTarget(GNode* target);
-	GNode* GetTarget() const;
+	void setOwner(GNode* target);
+	GNode* getOwner() const;
 protected:
 	eComponentType	mComponentType;
-	GNode*	mAutoTargetRotation;
+	GNode*	mOwner;
 	bool	mCanDetach;
 public:
-	inline eComponentType GetType()
+	inline eComponentType getType()
 	{
 		return mComponentType;
 	}
-	inline const char* GetComponentName()
+	inline const char* getComponentName()
 	{
 		return categoryName();
 	}

@@ -11,7 +11,8 @@ GCamera::GCamera ( void )
     mFieldOfView = ( float ) D3DX_PI / 4.0f;
     mFar = 100000.0f;
 
-    mCanGetInput = true;
+    setCanGetInput ( true );
+
     mpTransMan = NULL;
 
     mbTraceMan = false;
@@ -78,8 +79,6 @@ void GCamera::setView()
 
 void GCamera::getInput ( DWORD frameTimeMs )
 {
-    if ( !mCanGetInput )
-        return;
     if ( INPUTSYSTEM.IsPressKey ( DIK_ADD ) )
         getTrans().mSpeedMove += 0.03f * frameTimeMs;
 
@@ -190,7 +189,7 @@ void GCamera::onCallBack ( const CXDelegate& delgate )
     }
 }
 
-void GCamera::moveTo ( const D3DXMATRIX& matrix )
+void GCamera::moveTo( const GMatrix& matrix )
 {
     getTrans().moveTo ( matrix, 3000 );
 }

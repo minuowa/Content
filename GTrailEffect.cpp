@@ -47,7 +47,7 @@ void GTrailEffect::Init ( const char* linkerName1, const char* linkerName2 )
 void GTrailEffect::Attach ( GAnimEntity* anim )
 {
 	CXASSERT_RETURN ( anim );
-	GAnimationResource* res = anim->GetResource();
+	GAnimationResource* res = anim->getResource();
 	CXASSERT ( res );
 	mLinker1 = res->getBoneInfo ( mLinkerName1 );
 	mLinker2 = res->getBoneInfo ( mLinkerName2 );

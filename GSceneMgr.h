@@ -1,6 +1,5 @@
 #pragma once
 
-#include "GGameMap.h"
 #include "GameStaticObj.h"
 
 #include "GNode.h"
@@ -46,6 +45,7 @@ public:
 
 class GSceneManager: public CXCallBack
 {
+	DeclareFilmObj(GSceneManager);
 public:
 	GSceneManager ( void );
 	~GSceneManager ( void );
@@ -61,12 +61,10 @@ public:
 	bool saveScene ( CChar* xmlFile );
 	bool loadScene ( const char* xmlFile );
 	void addStaticObj ( GNode* node );
-	void addDynaObj ( GNode* node );
+	DeclareFilmTool void addDynaObj ( GNode* node );
 	void addObj ( GNode* node, GNode* parent = nullptr );
 	void addObj ( const char* parentName, const char* typeName );
 	void deleteObj(const char* name);
-
-	void addInputObj(GNode* node);
 
 	void selectObjByName ( const char* name );
 	GNode* getNodeByName ( const char* name );
@@ -91,8 +89,6 @@ public:
 	GCamera* mCurCamera;
 	GString mUsingCamera;
 	CSceneMachine mSceneMachine;
-
-	GInputEntityManager mInputEntityManager;
 
 	GNode* mSceneRootNode;
 	GNode* mSceneStaticRootNode;

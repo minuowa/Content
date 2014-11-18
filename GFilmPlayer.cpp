@@ -13,5 +13,5 @@ GFilmPlayer::~GFilmPlayer ( void )
 
 bool GFilmPlayer::play ( const char* filename )
 {
-    gLuaScript.doFile ( filename );
+    return gLuaScript.doFile ( filename );
 }

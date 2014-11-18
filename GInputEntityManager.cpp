@@ -33,5 +33,10 @@ for ( auto i: mFreeIDList )
     {
         mInputObjIDList.remove ( i );
     }
-	mFreeIDList.clear();
+    mFreeIDList.clear();
+}
+
+void GInputEntityManager::remove ( u32 objID )
+{
+    mInputObjIDList.remove ( objID );
 }

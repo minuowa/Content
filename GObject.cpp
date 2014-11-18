@@ -4,8 +4,8 @@
 int gCount = 0;
 GObject::GObject ( void )
 {
-	mNodeName.clear();
-	mNodeName.Format ( "GObject%d", gCount );
+	mName.clear();
+	mName.Format ( "GObject%d", gCount );
 
 	gCount++;
 }
@@ -18,7 +18,7 @@ GObject::~GObject ( void )
 
 void GObject::registerAllProperty()
 {
-	registerProperty ( "GObject", "mNodeName", mNodeName );
+	registerProperty ( "GObject", "mName", mName );
 	//__RegisterProperty(mEObjectName);
 }
 
@@ -73,12 +73,12 @@ void GObject::unRegisterAll()
 
 void GObject::onPropertyChange ( void* pre, void* changed )
 {
-	if ( pre == &mNodeName )
+	if ( pre == &mName )
 	{
 		GString changedName;
 		dCast ( changedName, changed );
 		mTargetName = changedName;
-		mOperatorObjectName = mNodeName;
+		mOperatorObjectName = mName;
 		mDelegateAlterName.trigger();
 	}
 }
@@ -109,11 +109,14 @@ bool GObject::isRegist()
 	return !mOption.empty();
 }
 
-const char* GObject::getObjectName() const
+const char* GObject::getName() const
 {
-	return mNodeName.c_str();
+	return mName.c_str();
 }
-
+void GObject::setName( const char* name )
+{
+	mName = name;
+}
 void GObject::setProperty ( const char* categoryName, const char* propName, const char* var )
 {
 	PropertyMap* propMap = 0;

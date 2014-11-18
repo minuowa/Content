@@ -20,7 +20,7 @@ GTerrain::GTerrain ( )
     //mHeightMax = 400.0f;
     //mHeightMin = -400.0f;
 
-    mRootLevel = 4;
+    mRootLevel = 8;
     mHeightMax = 3000.0f;
     mHeightMin = -2000.0f;
     mLODFactor = 6400.f;
@@ -227,7 +227,7 @@ void GTerrain::computerNormals()
     {
         mOriginalIndexBuffer = new CXBuffer();
         mOriginalIndexBuffer->setElementByteCount ( sizeof ( int ) );
-        mOriginalIndexBuffer->reAllocateByElementCount ( getCellCount() * getCellCount() * 2 * 3 );
+        mOriginalIndexBuffer->reallocateByElementCount ( getCellCount() * getCellCount() * 2 * 3 );
         int Stride = getLineCount();
         for ( u32 i = 0; i < getCellCount() / 2; i++ )
         {
@@ -756,7 +756,7 @@ bool GTerrain::createNodes()
 
     mDynamicIndexBuffer = new CXBuffer;
     mDynamicIndexBuffer->setElementByteCount ( sizeof ( u32 ) );
-    mDynamicIndexBuffer->reAllocateByElementCount ( mCellCount * mCellCount * 2 * 3 * 2 );
+    mDynamicIndexBuffer->reallocateByElementCount ( mCellCount * mCellCount * 2 * 3 * 2 );
 
     D9DEVICE->GetDvc()->CreateIndexBuffer ( mCellCount * mCellCount * 2 * 3 * 2 * sizeof ( DWORD ), 0, D3DFMT_INDEX32, D3DPOOL_MANAGED, &mIndexBuffer, 0 );
     mRootNode = new GTerrainNode();

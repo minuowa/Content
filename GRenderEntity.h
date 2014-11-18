@@ -1,14 +1,15 @@
 #pragma once
 #include "GNode.h"
 class GRenderEntity :
-	public GNode
+    public GNode
 {
+    DeclareFilmObjBase ( GRenderEntity, GNode );
 public:
-	GRenderEntity(void);
-	~GRenderEntity(void);
-	virtual bool render();
+    GRenderEntity ( void );
+    ~GRenderEntity ( void );
+    virtual bool render();
 public:
-	bool mVisible;
-	bool mChangeWhenPicked;
+    bool mVisible;
+    bool mChangeWhenPicked;
 };
 

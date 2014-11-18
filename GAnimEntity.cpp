@@ -15,7 +15,7 @@ GAnimEntity::GAnimEntity ( void )
     , mCloneAnimationController ( 0 )
 {
     mbPlayDone = false;
-    mpAnimSet = NULL;
+    mAnimSet = NULL;
     attachComponent ( eComponentType_Mesh, false );
 }
 
@@ -101,7 +101,7 @@ void GAnimEntity::DrawMeshContainer ( D3DXMESHCONTAINER *pMeshContainerBase, D3D
 
             if ( m_bHit )
             {
-                toggle ( getTrans().mCanMoveStep );
+                dToggle ( getTrans().mCanMoveStep );
             }
         }
     }
@@ -417,13 +417,13 @@ void GAnimEntity::updateWorldInfo()
     {
         mCloneAnimationController->AdvanceTime ( TheTimer->getFrameTimeSec(), NULL );
 
-        if ( mpAnimSet != NULL )
+        if ( mAnimSet != NULL )
         {
             D3DXTRACK_DESC trackDesc;
 
             mCloneAnimationController->GetTrackDesc ( 0, &trackDesc );
 
-            double dbPassTime = mpAnimSet->GetPeriodicPosition ( trackDesc.Position );
+            double dbPassTime = mAnimSet->GetPeriodicPosition ( trackDesc.Position );
 
             mdwCurAnimSetFrame = dbPassTime * 300000;
 

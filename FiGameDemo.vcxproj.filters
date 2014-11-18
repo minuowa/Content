@@ -118,9 +118,6 @@
     <ClCompile Include="GTrailEffect.cpp">
       <Filter>BaseObj</Filter>
     </ClCompile>
-    <ClCompile Include="GGameMap.cpp">
-      <Filter>BaseObj</Filter>
-    </ClCompile>
     <ClCompile Include="GFrameWork.cpp">
       <Filter>BaseObj</Filter>
     </ClCompile>
@@ -149,6 +146,7 @@
     <ClCompile Include="GInputEntityManager.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="luaRegister.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
@@ -278,9 +276,6 @@
     <ClInclude Include="GTrailEffect.h">
       <Filter>BaseObj</Filter>
     </ClInclude>
-    <ClInclude Include="GGameMap.h">
-      <Filter>BaseObj</Filter>
-    </ClInclude>
     <ClInclude Include="GFrameWork.h">
       <Filter>BaseObj</Filter>
     </ClInclude>
@@ -311,6 +306,9 @@
     <ClInclude Include="GGameDemoHeader.h" />
     <ClInclude Include="GInputEntityManager.h">
       <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="GFilmCommon.h">
+      <Filter>Film</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

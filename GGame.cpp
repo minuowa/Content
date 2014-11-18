@@ -8,6 +8,7 @@
 #include "GResourceManager.h"
 #include "GTerrain.h"
 #include "GText.h"
+#include "GFilmPlayer.h"
 
 /******************************************************************/
 //天空在MeshBuffer中，海面和地图不在
@@ -32,6 +33,7 @@ GGame::~GGame ( void )
     CXSingleton<GMeshManager>::destoryInstance();
     CXSingleton<GGameOption>::destoryInstance();
     CXSingleton<GComponentFactory>::destoryInstance();
+    CXSingleton<GInputEntityManager>::destoryInstance();
 
     CXSingleton<GText>::destoryInstance();
 
@@ -56,199 +58,32 @@ bool GGame::loop()
 
 void GGame::getInput()
 {
-    float fPass = TheTimer->getFrameTimeSec();
-
     if ( INPUTSYSTEM.IskeyUp ( DIK_ESCAPE ) )
     {
         finish();
         return;
     }
-
-    static DWORD dwGetInput = 0;
-
-    eGameScene gs = mSceneMgr->mSceneMachine.GetNowScene();
-
-    switch ( gs )
+    if ( INPUTSYSTEM.IskeyUp ( DIK_TAB ) )
     {
-    case gsLoading:
-
-        break;
-    case gslogin:
-        break;
-
-    case  gsGame:
-
-        if ( INPUTSYSTEM.getKeyAction ( DIK_F9 ) == DI_BUTTONUP )
-        {
-        }
-
-        //if (INPUTSYSTEM.GetKeyAction(DIK_TAB)==DI_BUTTONUP)
-        //{
-        //	dwGetInput++;
-        //	if (0==dwGetInput%2)
-        //	{
-        //		mpSelectAnim=&gAnimMesh[0];
-        //	}
-        //	else
-        //	{
-        //		mpSelectAnim=&gAnimMesh[1];
-        //	}
-        //}
-
-        if ( mpSelectAnim != NULL )
-        {
-            mpSelectAnim->getInput ( fPass );
-        }
-
-        GStillEntity *pMeshBaseObj = NULL;
-
-        POINT pt = INPUTSYSTEM.GetMousePoint();
-
-        bool bHit = false;
-
-        static bool bFlag = true;
-
-        //pMeshBaseObj = ( CXMeshBaseObj* )( GMeshManager::getSingleton().GetInput( fPass ) );
-
-        if ( pMeshBaseObj != NULL )
-        {
-            mpSelectObj = pMeshBaseObj;
-            //        if ( mEditor )
-            //        {
-            //CXASSERT(0);
-            //            //mEditor->SetObject ( pMeshBaseObj );
-            //        }
-        }
-
-        if ( mpSelectObj != NULL )
-        {
-            if ( mpSelectAnim != NULL )
-            {
-                if ( !mpSelectAnim->getTrans().mCanMoveStep )
-                {
-                    mpSelectObj->getInput ( fPass );
-                }
-                else
-                {
-                    mpSelectObj = NULL;
-                }
-            }
-
-        }
-
-        if ( mpSelectObj != NULL )
-        {
-            if ( INPUTSYSTEM.IsPressKey ( DIK_COMMA ) )
-            {
-                //>增加速度
-                mpSelectObj->getTrans().mSpeedMove += 0.8f;
-            }
-
-            if ( INPUTSYSTEM.IsPressKey ( DIK_PERIOD ) )
-            {
-                //<减小速度
-                mpSelectObj->getTrans().mSpeedMove -= 0.8f;
-            }
-
-            if ( DI_BUTTONUP == INPUTSYSTEM.getKeyAction ( DIK_DELETE ) )
-            {
-                mSceneMgr->destroy ( ( CGameStaticObj* ) mpSelectObj );
-
-            }
-
-        }
-
-
-        //↑放大，↓缩小
-        if ( INPUTSYSTEM.IsPressKey ( DIK_UPARROW ) )
-        {
-            if ( mpSelectObj != NULL )
-            {
-                mpSelectObj->getTrans().mZoom += D3DXVECTOR3 ( 0.01f, 0.01f, 0.01f );
-            }
-
-            if ( mpSelectAnim != NULL )
-            {
-                mpSelectAnim->getTrans().mSpeedMove += 0.5f;
-            }
-
-        }
-
-        if ( INPUTSYSTEM.IsPressKey ( DIK_DOWNARROW ) )
-        {
-            if ( mpSelectObj != NULL )
-            {
-                mpSelectObj->getTrans().mZoom -= D3DXVECTOR3 ( 0.01f, 0.01f, 0.01f );
-            }
-
-            if ( mpSelectAnim != NULL )
-            {
-                mpSelectAnim->getTrans().mSpeedMove -= 0.5f;
-            }
-
-        }
-
-        if ( INPUTSYSTEM.getKeyAction ( DIK_F2 ) == DI_BUTTONUP )
-        {
-
-            if ( bFlag )
-            {
-                D9DEVICE->GetDvc()->SetRenderState ( D3DRS_FILLMODE, D3DFILL_SOLID );
-            }
-            else
-            {
-                D9DEVICE->GetDvc()->SetRenderState ( D3DRS_FILLMODE, D3DFILL_WIREFRAME );
-            }
-
-            toggle ( bFlag );
-
-            //OPENCLOSE( mpNowMap->mLighting );
-        }
-
-        if ( INPUTSYSTEM.getKeyAction ( DIK_F3 ) == DI_BUTTONUP )
-        {
-            //gAnimMesh[0].mXPos.mvPos = D3DXVECTOR3( 0, 0, 0 );
-            //gAnimMesh[0].UpdateForForceOnMap();
-        }
-
-        mSceneMgr->getInput ( fPass );
-        break;
+        FilmPlayer->play ( "film.lua" );
     }
-
+    InputEntityMgr->getInput ( TheTimer->getFrameTimems() );
 }
 
 void GGame::update( )
 {
-
-    if ( INPUTSYSTEM.IskeyUp ( DIK_TAB ) )
-    {
-        mSceneMgr->saveScene ( "gameSceneEditor.xml" );
-        //DWORD FillMode = 0;
-        //D9DEVICE->GetDvc()->GetRenderState( D3DRS_FILLMODE, &FillMode );
-        //D9DEVICE->GetDvc()->SetRenderState( D3DRS_FILLMODE, FillMode == D3DFILL_WIREFRAME ? D3DFILL_SOLID : D3DFILL_WIREFRAME );
-    }
-
-
     eGameScene gs = mSceneMgr->mSceneMachine.GetNowScene();
 
     float fPass = TheTimer->getFrameTimeSec();
 
     switch ( gs )
     {
-
     case gsLoading:
-
         break;
-
     case gsGame:
         mSceneMgr->update ( fPass );
-        //gAnimMesh[0].Update();
-        //mSea.Update( fPass );
-
         break;
     }
-
-
 }
 
 void GGame::render( )
@@ -311,11 +146,7 @@ bool GGame::init ( HWND mainWnd )
     HRESULT hr = NULL;
 
     bool bSuccess = false;
-
     int nSuccess = ERR_INT;
-
-
-
     CoInitialize ( NULL );
     //初始化鼠标
     bSuccess = gCursor.Init();
@@ -344,27 +175,6 @@ bool GGame::init ( HWND mainWnd )
 
     TextMgr->init();
 
-    //D9DEVICE->ResetRenderState();
-
-    //bSuccess = gEffect.createFromFile( "..\\Data\\Effect\\SimpleEffect.fx" );
-
-    //gEffect.m_hWorldViewProj = gEffect.mD3DEffect->GetParameterByName ( 0, "matWorldViewProj" );
-
-    //gEffect.m_hWorld = gEffect.mD3DEffect->GetParameterByName ( 0, "matWorld" );
-
-    //gEffect.m_Tech = gEffect.mD3DEffect->GetTechniqueByName ( "TShader" );
-
-    //gEffect.m_hUseMaterialOnly = gEffect.mD3DEffect->GetParameterByName ( 0, "bUseMaterialOnly" );
-
-    //gEffect.m_hTexture = gEffect.mD3DEffect->GetParameterByName ( 0, "TexObj" );
-
-    //gEffect.m_hMtrlAmbient = gEffect.mD3DEffect->GetParameterByName ( 0, "materialAmbient" );
-
-    //gEffect.m_hMtrlDiffuse = gEffect.mD3DEffect->GetParameterByName ( 0, "materialDiffuse" );
-
-    //gEffect.m_hOpenLight = gEffect.mD3DEffect->GetParameterByName ( 0, "bOpenLight" );
-
-
     //加载渲染对象大概3000ms
 
     CoUninitialize();
@@ -374,6 +184,10 @@ bool GGame::init ( HWND mainWnd )
     //gEvent.SetUsed();
 
     //mMTLoadObj.Init(&LoadObj,(LPVOID)this,true);
+
+	gLuaScript.init();
+	luaRegistAll();
+
     loadObj ( this );
 
     mSceneMgr->mSceneMachine.ChangeToScene ( gsGame );
@@ -386,14 +200,9 @@ void GGame::shutDown()
 {
 }
 
-GSceneManager* getSceneMgr()
-{
-    return TheSceneMgr;
-}
-void logInfo ( const char* s )
-{
-    OutputDebugStringA ( s );
-}
+
+
+#define LuaModel(name) 
 DWORD WINAPI loadObj ( LPVOID pParam )
 {
     CoInitialize ( NULL );
@@ -442,7 +251,6 @@ DWORD WINAPI loadObj ( LPVOID pParam )
     //gLuaScript.init();
     if ( 1 )
     {
-        gLuaScript.init();
 
         //luacpp::reg_cclass<GNode>::_reg(gLuaScript.getState(),"GNode");
 
@@ -453,16 +261,19 @@ DWORD WINAPI loadObj ( LPVOID pParam )
 
         //luacpp::reg_cclass<GSceneManager>::_reg(gLuaScript.getState(),"GSceneManager")
         //	.function("addDynaObj",&GSceneManager::addDynaObj);
+		//LuaModel(GTerrain)
+		//{
+		//	gLuaScript.regClass<GNode> ( "GNode" );
+		//	gLuaScript.regClass<GTerrain, GNode> ( "GTerrain" );
+		//	gLuaScript.regClassFunction<GTerrain> ( "recreate", &GTerrain::recreate );
+		//	gLuaScript.regClassCreator<GTerrain>();
+		//}
 
-        gLuaScript.regClass<GNode> ( "GNode" );
-        gLuaScript.regClass<GTerrain, GNode> ( "GTerrain" );
-        gLuaScript.regClassFunction<GTerrain> ( "recreate", &GTerrain::recreate );
-        gLuaScript.regClassCreator<GTerrain>();
-        gLuaScript.regClass<GSceneManager> ( "GSceneManager" );
-        gLuaScript.regClassFunction<GSceneManager> ( "addDynaObj", &GSceneManager::addDynaObj );
+  //      gLuaScript.regClass<GSceneManager> ( "GSceneManager" );
+  //      gLuaScript.regClassFunction<GSceneManager> ( "addDynaObj", &GSceneManager::addDynaObj );
 
-        gLuaScript.regGlobalFun ( "getSceneMgr", getSceneMgr );
-        gLuaScript.regGlobalFun ( "logInfo", logInfo );
+  //      gLuaScript.regGlobalFun ( "getSceneMgr", getSceneMgr );
+  //      gLuaScript.regGlobalFun ( "logInfo", logInfo );
 
         CXASSERT ( gLuaScript.doFile ( "main.lua" ) );
         //GTerrain* xmap=new GTerrain();
@@ -557,6 +368,8 @@ void GGame::finish()
 {
     mFinished = true;
 }
+
+
 
 
 

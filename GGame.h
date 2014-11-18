@@ -8,7 +8,6 @@
 #include "GWater.h"
 #include "GMeshBuffer.h"
 #include "GWorldCorrd.h"
-#include "GGameMap.h"
 #include "GStillEntity.h"
 #include "GFrameWork.h"
 #include "GTimer.h"
@@ -36,10 +35,8 @@ public:
 	void shutDown();
 
 	void finish();
-public:
 
-	GSceneManager* getSceneMgr( ) { return mSceneMgr;}
-
+	GSceneManager* getSceneMgr( ) const;
 private:
 
 	void getInput();
@@ -47,9 +44,7 @@ private:
 	void update();
 
 	void render( );
-
 public:
-
 	CXMultiThread mMTLoadObj;
 
 	GSceneManager *mSceneMgr;
@@ -67,6 +62,17 @@ private:
 
 	bool	mFinished;
 };
-
+inline GSceneManager* GGame::getSceneMgr() const
+{
+	return mSceneMgr;
+}
+DeclareFilmTool inline GSceneManager* getSceneMgr()
+{
+	return GGame::getSingleton().getSceneMgr();
+}
+DeclareFilmTool inline void logInfo ( const char* s )
+{
+	OutputDebugStringA ( s );
+}
 #define TheGame GGame::getInstance() 
 #define TheSceneMgr GGame::getSingleton().getSceneMgr()

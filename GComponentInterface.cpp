@@ -9,7 +9,7 @@
 GComponentInterface::GComponentInterface ( void )
 	: mComponentType ( eComponentType_Count )
 	, mCanDetach ( true )
-	, mAutoTargetRotation ( 0 )
+	, mOwner ( 0 )
 {
 }
 
@@ -18,14 +18,14 @@ GComponentInterface::~GComponentInterface ( void )
 {
 }
 
-void GComponentInterface::SetTarget ( GNode* target )
+void GComponentInterface::setOwner( GNode* target )
 {
-	mAutoTargetRotation = target;
+	mOwner = target;
 }
 
-GNode* GComponentInterface::GetTarget() const
+GNode* GComponentInterface::getOwner() const
 {
-	return mAutoTargetRotation;
+	return mOwner;
 }
 
 

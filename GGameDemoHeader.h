@@ -66,27 +66,14 @@ typedef CXDynaArray<GString> CharStringArr;
 
 #define SAFE_DELETE_ARRAY(p) { if(p!=NULL) { delete[] (p);   (p)=NULL; } }
 
-inline void toggle ( bool b )
-{
-    b = !b;
-}
-
-//游戏中定义参数
-
-#define Default_Force_Height 1.0f				//物体默认在地图上的高度
+//inline void dToggle ( bool b )
+//{
+//    b = !b;
+//}
 
 #define STATIC_MESH_MAX_NUM_ON_MAP 10					//地图上静态模型最大数量
 
-#define MAP_MAX_NUM	999								//地图的最大数量
 //#define STATICMESHCOUNT							//资源中模型数量
-
-#define MESH_PATH    "..\\Data\\res\\StaticMesh\\"				//模型文件的路径
-
-#define FILE_NAME_LENGTH 256						//文件名字最大长度
-//跳跃高度
-
-
-
 
 //为了使物体跳跃时增加在空中停留的时长，跳跃方法中不使用重力加速度
 
@@ -100,20 +87,9 @@ inline void toggle ( bool b )
 #define WINDOW_WIDTH 1024						//窗口宽度
 #define WINDOW_HEIGHT 700						//窗口高度
 
-#define Max_Eye_Distance 30000						//能看到的最远距离
-
-#define LIGHT_NUM 1								//光源数量
-
-#define SEA_DEPTH_FACTOR 0.18f						//地图零高度定义,占总高度的比例
 
 
 
-//物体初始速度
-#define DEFAULT_SPEED_MOVE 100.0f
-#define DEAULT_SPEED_TRUN 1.5f
-
-
-#define MAX_QUAKE_COUNT 8							//海水振动源的最大个数
 
 //结构体和枚举类型
 
@@ -398,5 +374,7 @@ struct VertexXYZAndColor
 };
 typedef void* GHandle;
 extern const char* GetMediaPath();
+
+int luaRegistAll();
 //--------------------------------------------------------------------------------------------------
 #endif // StdAfx_h__

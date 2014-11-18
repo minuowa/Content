@@ -1,6 +1,5 @@
 #include "GGameDemoHeader.h"
 #include "GStillEntity.h"
-#include "GGameMap.h"
 #include "GComponentTrans.h"
 #include "GEffect.h"
 

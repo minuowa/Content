@@ -3,6 +3,9 @@
 #include "GTimer.h"
 #include "GD9Device.h"
 
+static const float DEAULT_SPEED_TRUN = 2.0f;
+static const float DEFAULT_SPEED_MOVE = 1.0f;
+
 GComponentTrans::GComponentTrans ( void )
 {
     mAutoMoveInfo = nullptr;
@@ -176,7 +179,7 @@ int GComponentTrans::Jump()
 
         mSpeed.y = JUMP_HEIGHT / 0.5f / JUMP_TIME;
 
-        toggle ( mJump );
+        dToggle ( mJump );
     }
 
     return TRUE_INT;
@@ -269,7 +272,7 @@ void GComponentTrans::update(  )
         updateRotation();
 }
 
-const char* GComponentTrans::GetComponentName()
+const char* GComponentTrans::getComponentName()
 {
     throw std::exception ( "The method or operation is not implemented." );
 }
@@ -297,25 +300,18 @@ void GComponentTrans::registerAllProperty()
     //__RegisterProperty ( mBodyRote.z );
 }
 
-void GComponentTrans::moveTo ( const D3DXMATRIX& target, DWORD millSeconds )
+void GComponentTrans::moveTo ( const GMatrix& target, DWORD millSeconds )
 {
     dSafeDelete ( mAutoMoveInfo );
     mAutoMoveInfo = new GAutoMoveInfo;
     mAutoMoveInfo->mAutoInitTime = TheTimer->getAccuTime();
     mAutoMoveInfo->mAutoLifeTime = millSeconds;
 
-    D3DXMATRIX rotNow (
-        mMatLocal.mRight.x, mMatLocal.mRight.y, mMatLocal.mRight.z, 0,
-        mMatLocal.mUpon.x, mMatLocal.mUpon.y, mMatLocal.mUpon.z, 0,
-        mMatLocal.mDir.x, mMatLocal.mDir.y, mMatLocal.mDir.z, 0,
-        mMatLocal.mTranslate.x, mMatLocal.mTranslate.y, mMatLocal.mTranslate.z, 1.0f
-    );
+    D3DXQuaternionRotationMatrix ( &mAutoMoveInfo->mAutoTargetRotation, ( const D3DXMATRIX* ) &target );
+    D3DXQuaternionRotationMatrix ( &mAutoMoveInfo->mAutoInitRotation, ( const D3DXMATRIX* ) &mMatWorld );
 
-    D3DXQuaternionRotationMatrix ( &mAutoMoveInfo->mAutoTargetRotation, &target );
-    D3DXQuaternionRotationMatrix ( &mAutoMoveInfo->mAutoInitRotation, &rotNow );
-
-    dGetTranslateFromMatrix ( mAutoMoveInfo->mAutoTargetTranslate, &target );
-    dGetTranslateFromMatrix ( mAutoMoveInfo->mAutoInitTranslate, &rotNow );
+    mAutoMoveInfo->mAutoTargetTranslate = target.mTranslate;
+    mAutoMoveInfo->mAutoInitTranslate = mMatWorld.mTranslate;
 
     mAutoTrun = true;
     mAutoMove = true;

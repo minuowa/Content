@@ -8,19 +8,19 @@
 class GNode: public GObject
 {
     DeclareEditorType ( GNode );
+    DeclareFilmObj ( GNode )
 public:
 
     GNode();
 
     virtual ~GNode();
 
-    void setNodeName ( const char* name );
     GNode* getNodeByName ( const char* name );
     GNode* getFirstNodeByCategoryName ( const char* category );
 
     void linkTo ( CXRapidxmlNode* parent );
     virtual void clear();
-    virtual bool recreate();
+    DeclareFilmTool virtual bool recreate();
 public:
     void setCanGetInput ( bool can );
     u32 getLocalID() const;
@@ -60,7 +60,7 @@ protected:
     virtual void beginRender();
     virtual void endRender();
     virtual bool render();
-    void	MakeXMLNode ( CXRapidxmlNode& node );
+    void	makeXMLNode ( CXRapidxmlNode& node );
 
 public:
     static CXDelegate mDelegateCreateObj;
@@ -85,9 +85,6 @@ public:
 
     bool m_bForceOnMap;					//是否依附于地图
 
-    float m_fForceHeight;				//依附于地图上的高度
-
-    void *mForceMap;					//依附的地图的指针
 
     eForceType m_ForceType;				//依附于地图上的类型
 
@@ -116,21 +113,19 @@ public:
 
     bool m_bBlock;
 
-    bool mCanGetInput;
     bool mDynamic;
 
     float m_fBoundRadius;
-
 public:
-	static CXIDObjectManager<GNode> mObjectIDManager;
+    static CXIDObjectManager<GNode> mObjectIDManager;
     /** @brief 物体在所有的创建的物体中的绝对ID  **/
     u32 mLocalID;
 public:
     /** @brief refer to eObjState **/
     CXBitArray mNodeState;
 
-	protected:
-	GNode *mParent;							//依附的对象
+protected:
+    GNode *mParent;							//依附的对象
 
 public:
 
@@ -168,6 +163,6 @@ inline u32 GNode::getLocalID() const
 }
 inline GNode* GNode::getParent() const
 {
-	return mParent;
+    return mParent;
 }
 typedef CXDynaArray<GNode*> GNodeArr;

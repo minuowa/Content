@@ -1,6 +1,5 @@
 #include "GGameDemoHeader.h"
 #include "GSceneMgr.h"
-#include "GGameMap.h"
 #include "GGame.h"
 #include "GComponentTrans.h"
 #include "GComponentMesh.h"
@@ -33,17 +32,17 @@ bool GSceneManager::init()
     initComponentFactory();
 
     mSceneRootNode = new GNode();
-    mSceneRootNode->setNodeName ( gRootNodeName );
+    mSceneRootNode->setName ( gRootNodeName );
 
     mSceneStaticRootNode = new GNode();
     mSceneDynamicRootNode = new GNode();
-    mSceneStaticRootNode->setNodeName ( gRootStaticNodeName );
-    mSceneDynamicRootNode->setNodeName ( gRootDynamicNodeName  );
+    mSceneStaticRootNode->setName ( gRootStaticNodeName );
+    mSceneDynamicRootNode->setName ( gRootDynamicNodeName  );
     mSceneRootNode->addChild ( mSceneStaticRootNode );
     mSceneRootNode->addChild ( mSceneDynamicRootNode );
 
     mCurCamera = new GCamera;
-    mCurCamera->setNodeName ( "Current Camera" );
+    mCurCamera->setName ( "Current Camera" );
     if ( mCurCamera->recreate()  )
     {
         //GComponentTrans* trans = get
@@ -56,9 +55,7 @@ bool GSceneManager::init()
         mCurCamera->getTrans().normalizeRotation();
 
         mCurCamera->getTrans().mSpeedMove = 150.0f;
-
         addDynaObj ( mCurCamera );
-        addInputObj ( mCurCamera );
         return true;
     }
 
@@ -67,7 +64,7 @@ bool GSceneManager::init()
 
 void* GSceneManager::getInput ( float fPass )
 {
-    mInputEntityManager.getInput ( fPass );
+    InputEntityMgr->getInput ( fPass );
     //mSceneDynamicRootNode->getInput ( fPass );
     return 0;
 }
@@ -237,7 +234,7 @@ GNode* getNodeByName ( CXDynaArray<GNode*>& list, const char* name )
 {
 for ( auto n: list )
     {
-        if ( !strcmp ( n->getObjectName(), name ) )
+        if ( !strcmp ( n->getName(), name ) )
         {
             return n;
         }
@@ -314,8 +311,7 @@ bool GSceneManager::setInnerNode ( GNode* rootNode )
 
     mCurCamera = nullptr;
     mCurCamera = findFirstCameraInScene ( mSceneRootNode );
-    addInputObj ( mCurCamera );
-    mUsingCamera = mCurCamera->getObjectName();
+    mUsingCamera = mCurCamera->getName();
     CXASSERT_RETURN_FALSE ( mCurCamera );
     setProj();
     return mCurCamera != nullptr;
@@ -353,8 +349,7 @@ GCamera* GSceneManager::changeToNextCamera()
             mCurCamera->setCanGetInput ( false );
         mCurCamera = next;
         mCurCamera->setCanGetInput ( true );
-        addInputObj ( mCurCamera );
-        mUsingCamera = next->getObjectName();
+        mUsingCamera = next->getName();
         this->setProj();
     }
     return mCurCamera;
@@ -367,8 +362,8 @@ void GSceneManager::moveToNextCamera()
     GCamera* next = ( GCamera* ) dFindNextElementInTreeCycle ( mSceneRootNode, cur, isCamera );
     if ( next )
     {
-        mUsingCamera = next->getObjectName();
-        mCurCamera->moveTo ( next->getTrans().getWorldD3D() );
+        mUsingCamera = next->getName();
+        mCurCamera->moveTo ( next->getTrans().getWorld() );
     }
 
 }
@@ -378,10 +373,6 @@ GCamera* GSceneManager::getCurCamera() const
     return mCurCamera;
 }
 
-void GSceneManager::addInputObj ( GNode* node )
-{
-    mInputEntityManager.addInputObj ( node );
-}
 
 
 CSceneMachine::CSceneMachine()

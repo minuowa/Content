@@ -12,7 +12,6 @@ GRenderEntity::GRenderEntity ( void )
 
 GRenderEntity::~GRenderEntity ( void )
 {
-    mForceMap = NULL;
 }
 
 bool GRenderEntity::render()

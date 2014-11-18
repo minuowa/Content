@@ -1,6 +1,5 @@
 #include "GGameDemoHeader.h"
 #include "GNode.h"
-#include "GGameMap.h"
 #include "GMeshBuffer.h"
 #include "GBound.h"
 #include "GTimer.h"
@@ -8,7 +7,7 @@
 
 void GNode::getInput ( DWORD frameTimeMs )
 {
-    if ( mCanGetInput )
+    if ( 0 )
     {
         /*************************************************************
         控制规则：
@@ -102,7 +101,7 @@ void GNode::getInput ( DWORD frameTimeMs )
 void GNode::updateWorld()
 {
     if ( mParent )
-        getTrans().updateWorld ( mParent->getTrans().getLocal() );
+        getTrans().updateWorld ( mParent->getTrans().getWorld() );
 
 for ( auto c : mChildren )
     {
@@ -130,19 +129,14 @@ for ( auto c : mChildren )
 }
 
 GNode::GNode()
-    : mCanGetInput ( false )
-    , mNodeState ( 1, true )
+    : mNodeState ( 1, true )
     , mLocalID ( 0 )
 {
     mLocalID = mObjectIDManager.addObj ( this );
 
     mParent = nullptr;
-    mNodeState.setBit ( eObjState_Render );
+    mNodeState.setBit ( eObjState_Render  );
     m_fBoundRadius = 0.01f;
-
-    mForceMap = NULL;										//依附的地图的指针
-
-    m_fForceHeight = Default_Force_Height;
 
     m_ForceType = ftUpWithMap;
 
@@ -460,7 +454,7 @@ void GNode::linkTo ( CXRapidxmlNode* parent )
     CXRapidxmlAttr* attrType = parent->document()->allocate_attribute ( XML_OBJ_NODE_TYPE );
     CXRapidxmlAttr* attrParent = parent->document()->allocate_attribute ( XML_OBJ_NODE_PARENT );
     attrType->value ( categoryName() );
-    attrParent->value ( mParent ? mParent->getObjectName() : XML_OBJ_NODE_NULL );
+    attrParent->value ( mParent ? mParent->getName() : XML_OBJ_NODE_NULL );
     me->append_attribute ( attrType );
     me->append_attribute ( attrParent );
 
@@ -502,7 +496,7 @@ for ( auto i: mChildren )
         i->linkTo ( parent );
 }
 
-void GNode::MakeXMLNode ( CXRapidxmlNode& node )
+void GNode::makeXMLNode ( CXRapidxmlNode& node )
 {
     node.name ( "Object" );
     CXRapidxmlAttr* attr = node.document()->allocate_attribute ( "Type", this->categoryName() );
@@ -521,10 +515,7 @@ void GNode::MakeXMLNode ( CXRapidxmlNode& node )
     //}
 }
 
-void GNode::setNodeName ( const char* name )
-{
-    mNodeName = name;
-}
+
 
 bool GNode::render()
 {
@@ -533,7 +524,7 @@ bool GNode::render()
 
 GNode* GNode::getNodeByName ( const char* name )
 {
-    if ( mNodeName == name )
+    if ( mName == name )
         return this;
 
     GNode* target = 0;
@@ -877,7 +868,7 @@ void GNode::onComponentChange ( GComponentInterface* component,  bool canDetach 
 {
     if ( component )
     {
-        component->SetTarget ( this );
+        component->setOwner ( this );
         component->setCanDetach ( canDetach );
     }
     if ( notifyEditor )
@@ -909,7 +900,7 @@ void GNode::clear()
 
 //void GNode::setWorldTranslate ( D3DXVECTOR3& v )
 //{
-//    //getTrans().mMatLocal.mTranslate = v;
+//    getTrans().setWorldTranslate ( v );
 //}
 
 void GNode::onPropertyChangeEnd ( void* cur )
@@ -954,8 +945,13 @@ void GNode::deleteChild ( GNode* node )
 
 void GNode::setCanGetInput ( bool can )
 {
-    mCanGetInput = can;
+    mNodeState.setBit ( eObjState_GetInput, can );
+    if ( can )
+        InputEntityMgr->addInputObj ( this );
+    else
+        InputEntityMgr->remove ( this->getLocalID() );
 }
+
 
 CXDynaArray<GNode*>& GNode::getChildren()
 {
