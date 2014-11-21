@@ -46,15 +46,15 @@ bool GSceneManager::init()
     if ( mCurCamera->recreate()  )
     {
         //GComponentTrans* trans = get
-        mCurCamera->getTrans().setDir ( D3DXVECTOR3 ( ZEROFLOAT, -200.0f, 200.0f ) );
-        mCurCamera->getTrans().setRight ( D3DXVECTOR3 ( 1.0f, ZEROFLOAT, ZEROFLOAT ) );
+        mCurCamera->getTrans()->setDir ( D3DXVECTOR3 ( ZEROFLOAT, -200.0f, 200.0f ) );
+        mCurCamera->getTrans()->setRight ( D3DXVECTOR3 ( 1.0f, ZEROFLOAT, ZEROFLOAT ) );
         D3DXVECTOR3 upon;
-        dVector3Cross ( upon, mCurCamera->getTrans().getDir(), mCurCamera->getTrans().getRight() );
-        mCurCamera->getTrans().setUpon ( upon );
+        dVector3Cross ( upon, mCurCamera->getTrans()->getDir(), mCurCamera->getTrans()->getRight() );
+        mCurCamera->getTrans()->setUpon ( upon );
 
-        mCurCamera->getTrans().normalizeRotation();
+        mCurCamera->getTrans()->normalizeRotation();
 
-        mCurCamera->getTrans().mSpeedMove = 150.0f;
+        mCurCamera->getTrans()->mSpeedMove = 150.0f;
         addDynaObj ( mCurCamera );
         return true;
     }
@@ -131,7 +131,7 @@ void GSceneManager::addDynaObj ( GNode* node )
 }
 
 
-GNode* GSceneManager::getNodeByName ( const char* name )
+GNode* GSceneManager::getObj ( const char* name )
 {
     if ( mSceneRootNode )
         return mSceneRootNode->getNodeByName ( name );
@@ -221,7 +221,7 @@ void GSceneManager::addObj ( GNode* node, GNode* parent/*=nullptr*/ )
 
 void GSceneManager::addObj ( const char* parentName, const char* typeName )
 {
-    GNode* parent = getNodeByName ( parentName );
+    GNode* parent = getObj ( parentName );
     GNode* child = createObjByTypeName ( typeName );
     addObj ( child , parent );
 }
@@ -363,7 +363,7 @@ void GSceneManager::moveToNextCamera()
     if ( next )
     {
         mUsingCamera = next->getName();
-        mCurCamera->moveTo ( next->getTrans().getWorld() );
+        mCurCamera->moveTo ( next->getTrans()->getWorld(), 3000 );
     }
 
 }
@@ -371,6 +371,13 @@ void GSceneManager::moveToNextCamera()
 GCamera* GSceneManager::getCurCamera() const
 {
     return mCurCamera;
+}
+
+DeclareFilmTool void GSceneManager::moveCameraToObj ( const char* name, u32 timeMS )
+{
+    GNode* obj = getObj ( name );
+    CXASSERT_RETURN ( obj );
+    mCurCamera->moveTo ( obj->getTrans()->getWorld(), timeMS );
 }
 
 

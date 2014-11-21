@@ -38,4 +38,9 @@ GTexture::~GTexture()
     //dSafeRelease ( mD3DTexture );
 }
 
+void GTexture::destory()
+{
+    delete this;
+}
+
 

@@ -47,6 +47,12 @@ T* GResourceManager<T>::getResource ( const char* name )
 template<typename T>
 GResourceManager<T>::~GResourceManager ( void )
 {
-    dSafeDeleteMap2 ( mResourceMap );
+for ( auto p: mResourceMap )
+    {
+        p.second->destory();
+    }
+	mResourceMap.clear();
+    //mResourceMap.destroySecond();
+    //dSafeDeleteMap2 ( mResourceMap );
 }
 

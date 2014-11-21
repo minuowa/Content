@@ -9,6 +9,8 @@ public:
 	bool createFromFile ( const char* name );
 
 	inline IDirect3DTexture9* getTexture();
+
+	void destory();
 public:
 	GString			mFileName;
 protected:

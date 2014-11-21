@@ -146,7 +146,9 @@
     <ClCompile Include="GInputEntityManager.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="luaRegister.cpp" />
+    <ClCompile Include="luaRegister.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />

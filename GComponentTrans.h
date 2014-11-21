@@ -33,6 +33,7 @@ struct GAutoMoveInfo
 class GComponentTrans: public GComponentBase<eComponentType_Trans>
 {
     DeclareComponentType ( GComponentTrans )
+    DeclareFilmObj ( GComponentTrans );
 public:
     GComponentTrans ( void );
     ~GComponentTrans ( void );
@@ -63,7 +64,9 @@ public:
     void setDir ( const D3DXVECTOR3& v );
     void setUpon ( const D3DXVECTOR3& v );
     void setRight ( const D3DXVECTOR3& v );
-    void setTranslate ( const D3DXVECTOR3& v );
+    void setTranslateV ( const D3DXVECTOR3& v );
+
+    DeclareFilmTool void setTranslate ( float x, float y, float z );
 
     void setWorldDir ( const D3DXVECTOR3& v );
     void setWorldUpon ( const D3DXVECTOR3& v );
@@ -76,9 +79,9 @@ public:
     void normalizeRotation();
 
     D3DXVECTOR3 MoveStep ( float fPass );
-    D3DXVECTOR3 TrunStepLeftRight ( float fPara );
-    D3DXVECTOR3 trunWithUpon ( float fpara );
-    D3DXVECTOR3 trunWithRight ( float fPara );
+    void TrunStepLeftRight ( float fPara );
+    void trunWithUpon ( float fpara );
+    void trunWithRight ( float fPara );
 
     int Jump();
 
@@ -87,29 +90,30 @@ public:
     D3DXVECTOR3 TrunToDir ( D3DXVECTOR3 vTargetDir );
 
     D3DXVECTOR3 SetDirWithUpon ( D3DXVECTOR3 vUpon );
-
     void update();
-    void updateTranslate();
-    void updateRotation();
-	void moveTo ( const GMatrix& target, DWORD millSeconds );
+    void moveTo ( const GMatrix& target, DWORD millSeconds );
+    void setYawPitchRow ( float yDegree, float pDegree, float rDegree );
+	void noitifyWorldNeedUpdate();
 private:
     void setRotation ( D3DXMATRIX& mat );
-
+    void updateDirUponRight2YawPitchRoll();
+    void updateYawPitchRowRotation();
+    void updateAutoTranslate();
+    void updateAutoMoveRotation();
     virtual const char* getComponentName();
+
+    virtual void onPropertyChangeEnd ( void* cur );
+
 protected:
     GMatrix mMatLocal;
     GMatrix mMatWorld;
-
+    float mDegreeYaw;
+    float mDegreePitch;
+    float mDegreeRoll;
 public:
 
     D3DXVECTOR3 mvLastPos;
-    //位置
-    //D3DXVECTOR3 mWorld.mTranslate;
 
-    //方向，右方向，上方向
-    //D3DXVECTOR3 mWorld.mDir;
-    //D3DXVECTOR3 mWorld.mRight;
-    //D3DXVECTOR3 mWorld.mUpon;
 
     //缩放系数
     D3DXVECTOR3 mZoom;
@@ -136,6 +140,9 @@ public:
     bool mCanMoveStep;					//是否可以步进移动
 
     bool mBack;						//是否向后行走
+
+    bool mNeedUpdate;
+	bool mNeedUpdateYawPitchRow;
 
     GAutoMoveInfo* mAutoMoveInfo;
 };
@@ -170,6 +177,7 @@ inline void GComponentTrans::normalizeRotation()
     normalizeDir();
     normalizeUpon();
     normalizeRight();
+	updateDirUponRight2YawPitchRoll();
 }
 
 inline const D3DXVECTOR3& GComponentTrans::getDir() const
@@ -203,30 +211,42 @@ inline const D3DXVECTOR3& GComponentTrans::getWorldRight() const
 inline void GComponentTrans::setDir ( const D3DXVECTOR3& v )
 {
     mMatLocal.mDir = v;
+    normalizeDir();
+    mNeedUpdate = true;
+	mNeedUpdateYawPitchRow=true;
 }
 
 inline void GComponentTrans::setUpon ( const D3DXVECTOR3& v )
 {
     mMatLocal.mUpon = v;
+    normalizeUpon();
+    mNeedUpdate = true;
+	mNeedUpdateYawPitchRow=true;
 }
 
 inline void GComponentTrans::setRight ( const D3DXVECTOR3& v )
 {
     mMatLocal.mRight = v;
+    normalizeRight();
+    mNeedUpdate = true;
+	mNeedUpdateYawPitchRow=true;
 }
 inline void GComponentTrans::setWorldDir ( const D3DXVECTOR3& v )
 {
     mMatWorld.mDir = v;
+    mNeedUpdate = true;
 }
 
 inline void GComponentTrans::setWorldUpon ( const D3DXVECTOR3& v )
 {
     mMatWorld.mUpon = v;
+    mNeedUpdate = true;
 }
 
 inline void GComponentTrans::setWorldRight ( const D3DXVECTOR3& v )
 {
     mMatWorld.mRight = v;
+    mNeedUpdate = true;
 }
 inline const D3DXMATRIX& GComponentTrans::getLocalD3D() const
 {
@@ -241,7 +261,7 @@ inline const D3DXVECTOR3& GComponentTrans::getWorldTranslate() const
 {
     return mMatWorld.mTranslate;
 }
-inline void GComponentTrans::setTranslate ( const D3DXVECTOR3& v )
+inline void GComponentTrans::setTranslateV ( const D3DXVECTOR3& v )
 {
-    mMatLocal.mTranslate = v;
+    setTranslate ( v.x, v.y, v.z );
 }

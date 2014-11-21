@@ -23,7 +23,7 @@ public:
     ~GCamera ( void );
 
 public:
-	void moveTo ( const GMatrix& matrix );
+	void moveTo ( const GMatrix& matrix,u32 timeMS );
 
     virtual bool recreate();
 

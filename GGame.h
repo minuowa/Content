@@ -66,12 +66,13 @@ inline GSceneManager* GGame::getSceneMgr() const
 {
 	return mSceneMgr;
 }
-DeclareFilmTool inline GSceneManager* getSceneMgr()
+DeclareFilmToolGlobal inline GSceneManager* getSceneMgr()
 {
 	return GGame::getSingleton().getSceneMgr();
 }
-DeclareFilmTool inline void logInfo ( const char* s )
+DeclareFilmToolGlobal inline void logInfo ( const char* s )
 {
+	OutputDebugStringA ( "\n" );
 	OutputDebugStringA ( s );
 }
 #define TheGame GGame::getInstance() 

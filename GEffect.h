@@ -15,6 +15,10 @@ public:
 	void setParams();
 	bool recreate();
 	inline ID3DXEffect* getD3DEffect();
+	void destory()
+	{
+		delete this;
+	}
 public:
 	GString	mFileName;
 public:

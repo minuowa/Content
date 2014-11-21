@@ -67,9 +67,9 @@ bool GCamera::recreate()
 
 void GCamera::setView()
 {
-    D3DXVECTOR3 vLookAtPos = getTrans().getWorldTranslate() + getTrans().getWorldDir() * 100;
+    D3DXVECTOR3 vLookAtPos = getTrans()->getWorldTranslate() + getTrans()->getWorldDir() * 100;
 
-    D3DXMatrixLookAtLH ( &mView, &getTrans().getWorldTranslate(), &vLookAtPos, &getTrans().getWorldUpon() );
+    D3DXMatrixLookAtLH ( &mView, &getTrans()->getWorldTranslate(), &vLookAtPos, &getTrans()->getWorldUpon() );
 
     if ( D9DEVICE != NULL )
     {
@@ -80,10 +80,10 @@ void GCamera::setView()
 void GCamera::getInput ( DWORD frameTimeMs )
 {
     if ( INPUTSYSTEM.IsPressKey ( DIK_ADD ) )
-        getTrans().mSpeedMove += 0.03f * frameTimeMs;
+        getTrans()->mSpeedMove += 0.03f * frameTimeMs;
 
     if ( INPUTSYSTEM.IsPressKey ( DIK_SUBTRACT ) )
-        getTrans().mSpeedMove -= 0.03f * frameTimeMs;
+        getTrans()->mSpeedMove -= 0.03f * frameTimeMs;
 
     POINT pt = INPUTSYSTEM.GetMousePoint();
 
@@ -115,13 +115,13 @@ void GCamera::getInput ( DWORD frameTimeMs )
 
     }
 
-    getTrans().MoveStep ( vMove.z / 120 * 5.0f );
+    getTrans()->MoveStep ( vMove.z / 120 * 5.0f );
 
     if ( INPUTSYSTEM.isPressingButton ( eButtonType_RightButton ) )
     {
-        getTrans().trunWithUpon ( -vMove.x / 800.0f );
+        getTrans()->trunWithUpon ( -vMove.x / 800.0f );
 
-        getTrans().trunWithRight ( -vMove.y / 800.0f );
+        getTrans()->trunWithRight ( -vMove.y / 800.0f );
     }
     updateWorld();
 }
@@ -134,30 +134,30 @@ void GCamera::TraceMan(  )
 //       return;
 //   }
 
-//   if ( !mpTransMan->getTrans().mCanMoveStep )
+//   if ( !mpTransMan->getTrans()->mCanMoveStep )
 //   {
 //       return;
 //   }
 
 //   D3DXVECTOR3 Pos = ZEROVECTOR3;
 
-//   Pos = mpTransMan->getTrans().mMatLocal.mTranslate - mpTransMan->getTrans().getDir() * mfLenTransMan * 2;
+//   Pos = mpTransMan->getTrans()->mMatLocal.mTranslate - mpTransMan->getTrans()->getDir() * mfLenTransMan * 2;
 
-//   Pos += mpTransMan->getTrans().mMatLocal.mUpon * mfLenTransMan;
+//   Pos += mpTransMan->getTrans()->mMatLocal.mUpon * mfLenTransMan;
 
-//   D3DXVECTOR3 vDist = Pos - getTrans().mMatLocal.mTranslate;
+//   D3DXVECTOR3 vDist = Pos - getTrans()->mMatLocal.mTranslate;
 
 
-//   D3DXVECTOR3 Dir = mpTransMan->getTrans().mMatLocal.mTranslate - Pos;
+//   D3DXVECTOR3 Dir = mpTransMan->getTrans()->mMatLocal.mTranslate - Pos;
 
-//   getTrans().mMatLocal.mTranslate = Pos;
+//   getTrans()->mMatLocal.mTranslate = Pos;
 
-//   getTrans().setDir(Dir) ;
+//   getTrans()->setDir(Dir) ;
 
-//   D3DXVec3Cross ( &getTrans().mMatLocal.mRight, & ( D3DXVECTOR3 ( 0, 1, 0 ) ), &getTrans().getDir() );
+//   D3DXVec3Cross ( &getTrans()->mMatLocal.mRight, & ( D3DXVECTOR3 ( 0, 1, 0 ) ), &getTrans()->getDir() );
 
-//   D3DXVec3Cross ( &getTrans().mMatLocal.mUpon, &getTrans().getDir(), &getTrans().mMatLocal.mRight );
-    //getTrans().normalizeRotation();
+//   D3DXVec3Cross ( &getTrans()->mMatLocal.mUpon, &getTrans()->getDir(), &getTrans()->mMatLocal.mRight );
+    //getTrans()->normalizeRotation();
 
 }
 
@@ -179,6 +179,7 @@ bool GCamera::InitTrack ( GNode *pWorldObj )
 void GCamera::update()
 {
     __super::update();
+	getTrans()->update();
 }
 
 void GCamera::onCallBack ( const CXDelegate& delgate )
@@ -189,9 +190,9 @@ void GCamera::onCallBack ( const CXDelegate& delgate )
     }
 }
 
-void GCamera::moveTo( const GMatrix& matrix )
+void GCamera::moveTo( const GMatrix& matrix,u32 timeMS )
 {
-    getTrans().moveTo ( matrix, 3000 );
+    getTrans()->moveTo ( matrix, timeMS );
 }
 
 void GCamera::cliper ( GNode* n )
@@ -227,9 +228,9 @@ GFrustum* GCamera::getFrustum() const
 void GCamera::getObjectCorrdPos ( D3DXVECTOR3& out, GNode* obj )
 {
     CXASSERT ( obj );
-    D3DXMATRIX mat = obj->getTrans().getLocalD3D();
-    //obj->getTrans().GetWorldMatrix ( mat, false );
-    out = getTrans().getTranslate();
+    D3DXMATRIX mat = obj->getTrans()->getLocalD3D();
+    //obj->getTrans()->GetWorldMatrix ( mat, false );
+    out = getTrans()->getTranslate();
     D3DXMatrixInverse ( &mat, 0, &mat );
     dMatrixTranslateVec3 ( out, mat );
 }
@@ -237,11 +238,11 @@ void GCamera::getObjectCorrdPos ( D3DXVECTOR3& out, GNode* obj )
 void GCamera::updateCullerToObjectCoord ( GNode* obj )
 {
     D3DXVECTOR3 center = mFrustum->mCenter;
-    D3DXMATRIX matWorld = getTrans().getLocalD3D();
-    //getTrans().GetWorldMatrix ( matWorld );
+    D3DXMATRIX matWorld = getTrans()->getLocalD3D();
+    //getTrans()->GetWorldMatrix ( matWorld );
     dMatrixTranslateVec3 ( center, matWorld );
 
-    D3DXMATRIX objWorld = obj ->getTrans().getLocalD3D();
+    D3DXMATRIX objWorld = obj ->getTrans()->getLocalD3D();
     dMatrixInverse ( objWorld );
 
     dMatrixTranslateVec3 ( center, objWorld );

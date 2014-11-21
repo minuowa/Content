@@ -54,6 +54,10 @@ public:
 	{
 	}
 	~GAnimationResource();
+	void destory()
+	{
+		delete this;
+	}
 public:
 	bool createFromFile ( const char* name );
 	void updateBones();

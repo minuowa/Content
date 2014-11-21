@@ -2,8 +2,7 @@
 #include "GAmmo.h"
 #include "XString.h"
 #include "GRenderEntity.h"
-
-class GAnimationResource;
+#include "GAnimationResource.h"
 
 class GAnimEntity: public GRenderEntity
 {

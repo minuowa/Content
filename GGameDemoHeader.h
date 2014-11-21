@@ -167,6 +167,8 @@ bool IsPointInRect ( POINT pt, RECT *rc );
 
 //»ñÈ¡°üÎ§Çò°ë¾¶
 bool GetBoundRadius ( ID3DXMesh *pMesh, float *pfRadiusOut );
+#define dDegreeToAngle(d) ((d)*D3DX_PI/180.0f)
+#define dAgngleToDegree(a) ((a)*180/D3DX_PI)
 inline void getVector3Ease ( D3DXVECTOR3& out, D3DXVECTOR3* start, D3DXVECTOR3* end, DWORD elpaseTime, DWORD totalTime )
 {
     float e = elpaseTime * 0.001f;
@@ -174,6 +176,33 @@ inline void getVector3Ease ( D3DXVECTOR3& out, D3DXVECTOR3* start, D3DXVECTOR3* 
     out.x = gEaser.getEase ( start->x, end->x, e, t );
     out.y = gEaser.getEase ( start->y, end->y, e, t );
     out.z = gEaser.getEase ( start->z, end->z, e, t );
+}
+inline void dGetYawPitchRollFromMatrix ( const D3DXMATRIX& mat, float& roll, float& pitch, float& yaw )
+{
+    // Assuming the angles are in radians.
+    float sp = -mat._23;
+    if ( sp <=-1.0f )
+    {
+        pitch = -D3DX_PI / 2;
+    }
+    else if ( sp > 1.0f )
+    {
+        pitch = D3DX_PI / 2;
+    }
+    else
+    {
+        pitch = -asin ( sp );
+    }
+    if ( sp > 0.99998 ) // singularity at north pole
+    {
+        roll = 0.0f;
+        yaw = atan2 ( -mat._31, mat._11 );
+    }
+    else
+    {
+        yaw = atan2 ( mat._13, mat._33 );
+        roll = atan2 ( mat._21, mat._22 );
+    }
 }
 inline void dGetTranslateFromMatrix ( D3DXVECTOR3& out, const D3DXMATRIX* mat )
 {

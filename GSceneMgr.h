@@ -67,7 +67,7 @@ public:
 	void deleteObj(const char* name);
 
 	void selectObjByName ( const char* name );
-	GNode* getNodeByName ( const char* name );
+	DeclareFilmTool GNode* getObj ( const char* name );
 
 	const CharStringArr& getGameObjectTypes();
 	const CharStringArr& getObjectComponentTypes();
@@ -78,6 +78,7 @@ public:
 	GCamera* changeToNextCamera();
 	GCamera* getCurCamera()const;
 	void moveToNextCamera();
+	DeclareFilmTool void moveCameraToObj(const char* name,u32 timeMS);
 public:
 	bool setInnerNode(GNode* rootNode);
 	void initNodeFactory();

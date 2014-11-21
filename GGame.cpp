@@ -35,6 +35,8 @@ GGame::~GGame ( void )
     CXSingleton<GComponentFactory>::destoryInstance();
     CXSingleton<GInputEntityManager>::destoryInstance();
 
+    CXSingleton<GFilmPlayer>::destoryInstance();
+
     CXSingleton<GText>::destoryInstance();
 
     CXSingleton<GD8Input>::destoryInstance();
@@ -81,8 +83,11 @@ void GGame::update( )
     case gsLoading:
         break;
     case gsGame:
+    {
+        FilmPlayer->process();
         mSceneMgr->update ( fPass );
-        break;
+    }
+    break;
     }
 }
 
@@ -185,8 +190,8 @@ bool GGame::init ( HWND mainWnd )
 
     //mMTLoadObj.Init(&LoadObj,(LPVOID)this,true);
 
-	gLuaScript.init();
-	luaRegistAll();
+    gLuaScript.init();
+    luaRegistAll();
 
     loadObj ( this );
 
@@ -202,7 +207,7 @@ void GGame::shutDown()
 
 
 
-#define LuaModel(name) 
+#define LuaModel(name)
 DWORD WINAPI loadObj ( LPVOID pParam )
 {
     CoInitialize ( NULL );
@@ -261,21 +266,27 @@ DWORD WINAPI loadObj ( LPVOID pParam )
 
         //luacpp::reg_cclass<GSceneManager>::_reg(gLuaScript.getState(),"GSceneManager")
         //	.function("addDynaObj",&GSceneManager::addDynaObj);
-		//LuaModel(GTerrain)
-		//{
-		//	gLuaScript.regClass<GNode> ( "GNode" );
-		//	gLuaScript.regClass<GTerrain, GNode> ( "GTerrain" );
-		//	gLuaScript.regClassFunction<GTerrain> ( "recreate", &GTerrain::recreate );
-		//	gLuaScript.regClassCreator<GTerrain>();
-		//}
+        //LuaModel(GTerrain)
+        //{
+        //	gLuaScript.regClass<GNode> ( "GNode" );
+        //	gLuaScript.regClass<GTerrain, GNode> ( "GTerrain" );
+        //	gLuaScript.regClassFunction<GTerrain> ( "recreate", &GTerrain::recreate );
+        //	gLuaScript.regClassCreator<GTerrain>();
+        //}
 
-  //      gLuaScript.regClass<GSceneManager> ( "GSceneManager" );
-  //      gLuaScript.regClassFunction<GSceneManager> ( "addDynaObj", &GSceneManager::addDynaObj );
+        //      gLuaScript.regClass<GSceneManager> ( "GSceneManager" );
+        //      gLuaScript.regClassFunction<GSceneManager> ( "addDynaObj", &GSceneManager::addDynaObj );
 
-  //      gLuaScript.regGlobalFun ( "getSceneMgr", getSceneMgr );
-  //      gLuaScript.regGlobalFun ( "logInfo", logInfo );
+        //      gLuaScript.regGlobalFun ( "getSceneMgr", getSceneMgr );
+        //      gLuaScript.regGlobalFun ( "logInfo", logInfo );
 
         CXASSERT ( gLuaScript.doFile ( "main.lua" ) );
+        //int n=luacpp::call<int>(gLuaScript.getState(),"addNum",3);
+        //luacpp::call<void>(gLuaScript.getState(),"addInfo");
+        int n = 0;
+        gLuaScript.call ( n, "addNum", 3 );
+        gLuaScript.call ( "addInfo" );
+
         //GTerrain* xmap=new GTerrain();
         //xmap->recreate();
         //TheSceneMgr->addDynaObj ( xmap );

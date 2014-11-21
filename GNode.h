@@ -8,7 +8,7 @@
 class GNode: public GObject
 {
     DeclareEditorType ( GNode );
-    DeclareFilmObj ( GNode )
+    DeclareFilmObjBase ( GNode, GObject )
 public:
 
     GNode();
@@ -48,7 +48,7 @@ public:
     IntersectInfo *GetBlockPoint();
 
 
-    GComponentTrans& getTrans() const;
+    DeclareFilmTool GComponentTrans* getTrans();
     void updateTrans();
     void onComponentChange ( GComponentInterface* component, bool canDetach, bool notifyEditor );
     virtual void onPropertyChange ( void* pre, void* changed );
@@ -151,11 +151,11 @@ public:
         return mComponentOwner;
     }
 };
-inline GComponentTrans& GNode::getTrans() const
+inline GComponentTrans* GNode::getTrans()
 {
     GComponentTrans* pTrans = ( GComponentTrans* ) mComponentOwner.getComponent ( eComponentType_Trans );
     assert ( pTrans );
-    return *pTrans;
+    return pTrans;
 }
 inline u32 GNode::getLocalID() const
 {

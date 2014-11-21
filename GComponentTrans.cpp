@@ -2,6 +2,7 @@
 #include "GComponentTrans.h"
 #include "GTimer.h"
 #include "GD9Device.h"
+#include "GNode.h"
 
 static const float DEAULT_SPEED_TRUN = 2.0f;
 static const float DEFAULT_SPEED_MOVE = 1.0f;
@@ -11,7 +12,9 @@ GComponentTrans::GComponentTrans ( void )
     mAutoMoveInfo = nullptr;
     mAutoMove = false;
     mZoom = D3DXVECTOR3 ( 1.0f, 1.0f, 1.0f );
-
+    mDegreeYaw = 0;
+    mDegreeRoll = 0;
+    mDegreePitch = 0;
     mvLastPos = ZEROVECTOR3;
     //mWorld.mTranslate = ZEROVECTOR3;
     //mWorld.mRight = D3DXVECTOR3 ( 1.0f, 0.0f, 0.0f );
@@ -20,7 +23,7 @@ GComponentTrans::GComponentTrans ( void )
 
     mSpeedTrun = DEAULT_SPEED_TRUN;
     mSpeedMove = DEFAULT_SPEED_MOVE;
-
+    noitifyWorldNeedUpdate();
     mSpeed = ZEROVECTOR3;
 
     mBodyPass = ZEROVECTOR3;
@@ -112,7 +115,7 @@ D3DXVECTOR3 GComponentTrans::MoveStep ( float fPass )
     return mMatLocal.mTranslate;
 }
 
-D3DXVECTOR3 GComponentTrans::TrunStepLeftRight ( float fPara )
+void GComponentTrans::TrunStepLeftRight ( float fPara )
 {
     D3DXMATRIX matRotation;
     D3DXVECTOR3 vRotation ( mMatLocal.mUpon );
@@ -121,11 +124,11 @@ D3DXVECTOR3 GComponentTrans::TrunStepLeftRight ( float fPara )
     D3DXVec3TransformCoord ( &mMatLocal.mRight, &mMatLocal.mRight, &matRotation );
     D3DXVec3TransformCoord ( &mMatLocal.mDir, &mMatLocal.mDir, &matRotation );
     normalizeRotation();
-
-    return mMatLocal.mDir;
+    noitifyWorldNeedUpdate();
+    mNeedUpdateYawPitchRow = true;
 }
 
-D3DXVECTOR3 GComponentTrans::trunWithRight ( float fPara )
+void GComponentTrans::trunWithRight ( float fPara )
 {
     D3DXMATRIX matRotation;
     D3DXVECTOR3 vRotation ( mMatLocal.mRight );
@@ -136,9 +139,8 @@ D3DXVECTOR3 GComponentTrans::trunWithRight ( float fPara )
     D3DXVec3Cross ( &mMatLocal.mRight, &mMatLocal.mUpon, &mMatLocal.mDir );
 
     normalizeRotation();
-
-    return mMatLocal.mDir;
-
+    noitifyWorldNeedUpdate();
+    mNeedUpdateYawPitchRow = true;
 }
 
 
@@ -150,11 +152,12 @@ D3DXVECTOR3 GComponentTrans::SetDirWithUpon ( D3DXVECTOR3 vUpon )
     D3DXVec3Cross ( &mMatLocal.mDir, &mMatLocal.mRight, &vUpon );
 
     normalizeRotation();
+    mNeedUpdateYawPitchRow = true;
 
     return mMatLocal.mDir;
 }
 
-D3DXVECTOR3 GComponentTrans::trunWithUpon ( float fpara )
+void GComponentTrans::trunWithUpon ( float fpara )
 {
     D3DXMATRIX matRotation;
     D3DXVECTOR3 vRotation ( ZEROFLOAT, 1.0f, ZEROFLOAT );
@@ -165,8 +168,6 @@ D3DXVECTOR3 GComponentTrans::trunWithUpon ( float fpara )
     D3DXVec3Cross ( &mMatLocal.mRight, &mMatLocal.mUpon, &mMatLocal.mDir );
 
     normalizeRotation();
-
-    return mMatLocal.mDir;
 }
 
 int GComponentTrans::Jump()
@@ -256,6 +257,17 @@ D3DXVECTOR3 GComponentTrans::TrunToDir ( D3DXVECTOR3 vTargetDir )
 
 void GComponentTrans::update(  )
 {
+    if ( mNeedUpdateYawPitchRow )
+    {
+        updateDirUponRight2YawPitchRoll();
+        mNeedUpdateYawPitchRow = false;
+    }
+    if ( mNeedUpdate )
+    {
+        if ( mOwner )
+            mOwner->updateWorld();
+        mNeedUpdate = false;
+    }
     if ( mAutoMoveInfo )
     {
         if ( TheTimer->getAccuTime() > mAutoMoveInfo->mAutoInitTime + mAutoMoveInfo->mAutoLifeTime )
@@ -267,9 +279,9 @@ void GComponentTrans::update(  )
         }
     }
     if ( mAutoMove )
-        updateTranslate();
+        updateAutoTranslate();
     if ( mAutoTrun )
-        updateRotation();
+        updateAutoMoveRotation();
 }
 
 const char* GComponentTrans::getComponentName()
@@ -283,17 +295,20 @@ void GComponentTrans::registerAllProperty()
     __RegisterProperty ( mMatLocal.mTranslate.y );
     __RegisterProperty ( mMatLocal.mTranslate.z );
 
-    __RegisterProperty ( mMatLocal.mDir.x );
-    __RegisterProperty ( mMatLocal.mDir.y );
-    __RegisterProperty ( mMatLocal.mDir.z );
+    __RegisterProperty ( mDegreeYaw );
+    __RegisterProperty ( mDegreePitch );
+    __RegisterProperty ( mDegreeRoll );
+    //__RegisterProperty ( mMatLocal.mDir.x );
+    //__RegisterProperty ( mMatLocal.mDir.y );
+    //__RegisterProperty ( mMatLocal.mDir.z );
 
-    __RegisterProperty ( mMatLocal.mRight.x );
-    __RegisterProperty ( mMatLocal.mRight.y );
-    __RegisterProperty ( mMatLocal.mRight.z );
+    //__RegisterProperty ( mMatLocal.mRight.x );
+    //__RegisterProperty ( mMatLocal.mRight.y );
+    //__RegisterProperty ( mMatLocal.mRight.z );
 
-    __RegisterProperty ( mMatLocal.mUpon.x );
-    __RegisterProperty ( mMatLocal.mUpon.y );
-    __RegisterProperty ( mMatLocal.mUpon.z );
+    //__RegisterProperty ( mMatLocal.mUpon.x );
+    //__RegisterProperty ( mMatLocal.mUpon.y );
+    //__RegisterProperty ( mMatLocal.mUpon.z );
 
     //__RegisterProperty ( mBodyRote.x );
     //__RegisterProperty ( mBodyRote.y );
@@ -317,7 +332,7 @@ void GComponentTrans::moveTo ( const GMatrix& target, DWORD millSeconds )
     mAutoMove = true;
 }
 
-void GComponentTrans::updateTranslate()
+void GComponentTrans::updateAutoTranslate()
 {
     getVector3Ease ( mMatLocal.mTranslate
                      , &mAutoMoveInfo->mAutoInitTranslate
@@ -327,7 +342,7 @@ void GComponentTrans::updateTranslate()
                    );
 }
 
-void GComponentTrans::updateRotation()
+void GComponentTrans::updateAutoMoveRotation()
 {
     CXASSERT ( mAutoMoveInfo->getElpaseTime() <= mAutoMoveInfo->mAutoLifeTime );
     D3DXQUATERNION now;
@@ -412,6 +427,61 @@ void GComponentTrans::set()
 void GComponentTrans::updateWorld ( const GMatrix& parentWorldMat )
 {
     parentWorldMat.product ( mMatWorld, mMatLocal );
+}
+
+void GComponentTrans::setTranslate ( float x, float y, float z )
+{
+    mMatLocal.mTranslate.x = x;
+    mMatLocal.mTranslate.y = y;
+    mMatLocal.mTranslate.z = z;
+    noitifyWorldNeedUpdate();
+}
+
+void GComponentTrans::setYawPitchRow ( float yDegree, float pDegree, float rDegree )
+{
+    mDegreeYaw = yDegree;
+    mDegreePitch = pDegree;
+    mDegreeRoll = rDegree;
+    noitifyWorldNeedUpdate();
+}
+
+void GComponentTrans::updateYawPitchRowRotation()
+{
+    D3DXMATRIX mat;
+    D3DXMatrixRotationYawPitchRoll ( &mat, dDegreeToAngle ( mDegreeYaw ), dDegreeToAngle ( mDegreePitch ), dDegreeToAngle ( mDegreeRoll ) );
+    setRotation ( mat );
+}
+
+void GComponentTrans::onPropertyChangeEnd ( void* cur )
+{
+    if (
+        cur == &mDegreePitch
+        || cur == &mDegreeYaw
+        || cur == &mDegreeRoll )
+    {
+        updateYawPitchRowRotation();
+        noitifyWorldNeedUpdate();
+    }
+    else if ( cur == &mMatLocal.mTranslate.x
+              || cur == &mMatLocal.mTranslate.y
+              || cur == &mMatLocal.mTranslate.z )
+    {
+        noitifyWorldNeedUpdate();
+    }
+}
+
+void GComponentTrans::updateDirUponRight2YawPitchRoll()
+{
+    float yaw, pitch, roll;
+    dGetYawPitchRollFromMatrix ( ( const D3DXMATRIX& ) mMatLocal, yaw, pitch, roll );
+    mDegreeYaw = dAgngleToDegree ( yaw );
+    mDegreePitch = dAgngleToDegree ( pitch );
+    mDegreeRoll = dAgngleToDegree ( roll );
+}
+
+void GComponentTrans::noitifyWorldNeedUpdate()
+{
+    mNeedUpdate = true;
 }
 
 

@@ -173,7 +173,7 @@ bool GStillEntity::checkIntersect ( const D3DXVECTOR4& vPos, /*世界坐标系中的点 
     HRESULT hr = S_FALSE;
 
     //将Pos和Dir转换到物体本地坐标系中
-    D3DXMATRIX matWorld = getTrans().getLocalD3D();
+    D3DXMATRIX matWorld = getTrans()->getLocalD3D();
     D3DXMatrixInverse ( &matWorld, NULL, &matWorld );
 
     D3DXVec4Transform ( ( D3DXVECTOR4 * ) &vDir, ( D3DXVECTOR4 * ) &vDir, &matWorld );
@@ -264,7 +264,7 @@ bool GStillEntity::checkIntersect ( const D3DXVECTOR4& vPos, /*世界坐标系中的点 
 
         updateWorld ();
 
-        D3DXVec4Transform ( &vHitPos, &vHitPos, &getTrans().getLocalD3D() );
+        D3DXVec4Transform ( &vHitPos, &vHitPos, &getTrans()->getLocalD3D() );
         m_InsectInfo.vHitPos = D3DXVECTOR3 ( vHitPos.x, vHitPos.y, vHitPos.z );
 
         D3DXVec3Cross ( ( D3DXVECTOR3* ) &vNormal, &vTmp1, &vTmp2 );

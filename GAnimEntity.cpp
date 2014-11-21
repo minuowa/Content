@@ -101,7 +101,7 @@ void GAnimEntity::DrawMeshContainer ( D3DXMESHCONTAINER *pMeshContainerBase, D3D
 
             if ( m_bHit )
             {
-                dToggle ( getTrans().mCanMoveStep );
+                dToggle ( getTrans()->mCanMoveStep );
             }
         }
     }
@@ -201,7 +201,7 @@ void GAnimEntity::DrawFrame ( D3DXFRAME *pFrameBase )
 //		return m_ObjAnimState;
 //	}
 //
-//	getTrans().mBack = bBack;
+//	getTrans()->mBack = bBack;
 //
 //	if ( mCloneAnimationController == NULL )
 //	{
@@ -266,7 +266,7 @@ void GAnimEntity::DrawFrame ( D3DXFRAME *pFrameBase )
 //	{
 //		//设置动作速度
 //
-//		if ( getTrans().mBack )
+//		if ( getTrans()->mBack )
 //		{
 //			mCloneAnimationController->SetTrackSpeed ( 0, -1 );
 //		}
@@ -389,6 +389,7 @@ bool GAnimEntity::recreate()
 
 void GAnimEntity::update()
 {
+	__super::update();
     return;
 }
 
@@ -437,7 +438,7 @@ void GAnimEntity::updateWorldInfo()
     }
     if ( mResource && mResource->mFrameRoot )
     {
-        UpdateFrameMatrices ( mResource->mFrameRoot, &getTrans().getWorldD3D() );
+        UpdateFrameMatrices ( mResource->mFrameRoot, &getTrans()->getWorldD3D() );
     }
 }
 

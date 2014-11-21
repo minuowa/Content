@@ -18,6 +18,6 @@ bool GRenderEntity::render()
 {
     if ( !mVisible )
         return false;
-    getTrans().set();
+    getTrans()->set();
     return true;
 }
