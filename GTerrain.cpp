@@ -789,7 +789,7 @@ void GTerrain::renderNodes()
 
 }
 
-void GTerrain::onCallBack ( const CXDelegate& d )
+void GTerrain::onCallBack ( const CXDelegate& d, CXEventArgs*   )
 {
     if ( mTerrainEffect  )
     {

@@ -16,7 +16,7 @@ extern "C"
         TheGame->shutDown();
     }
 }
-#if 0
+#ifndef _LIB
 int WINAPI WinMain ( __in HINSTANCE hInstance, __in_opt HINSTANCE hPrevInstance, __in_opt LPSTR lpCmdLine, __in int nShowCmd )
 {
     if ( !FiGameDemo_Init ( 0 ) )

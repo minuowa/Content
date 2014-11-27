@@ -9,19 +9,19 @@
 #include "XSingleton.h"
 #include "GTimer.h"
 #include "GD8Input.h"
+#include "GAnimController.h"
 
 GAnimEntity::GAnimEntity ( void )
     : mResource ( 0 )
-    , mCloneAnimationController ( 0 )
+    , mAnimationController ( 0 )
 {
-    mbPlayDone = false;
-    mAnimSet = NULL;
+
     attachComponent ( eComponentType_Mesh, false );
 }
 
 GAnimEntity::~GAnimEntity ( void )
 {
-    dSafeRelease ( mCloneAnimationController );
+    dSafeDelete ( mAnimationController );
 }
 
 
@@ -95,11 +95,11 @@ void GAnimEntity::DrawMeshContainer ( D3DXMESHCONTAINER *pMeshContainerBase, D3D
 
     if ( INPUTSYSTEM.isPressingButton ( eButtonType_LeftButton ) )
     {
-        if ( pMeshContainerEx != NULL && pMeshContainerEx->MeshData.pMesh != NULL && !m_bHit )
+        if ( pMeshContainerEx != NULL && pMeshContainerEx->MeshData.pMesh != NULL && !mNodeState[eObjState_Picked] )
         {
-            m_bHit = Pick ( pMeshContainerEx->MeshData.pMesh, pt );
+            mNodeState.setBit ( eObjState_Picked, Pick ( pMeshContainerEx->MeshData.pMesh, pt ) );
 
-            if ( m_bHit )
+            if ( mNodeState[eObjState_Picked] )
             {
                 dToggle ( getTrans()->mCanMoveStep );
             }
@@ -133,7 +133,7 @@ void GAnimEntity::DrawMeshContainer ( D3DXMESHCONTAINER *pMeshContainerBase, D3D
 
             D9DEVICE->GetDvc()->SetMaterial ( &pMeshContainerEx->pMaterials[pBoneComb[iAttr].AttribId].MatD3D );
 
-            if ( m_bHit )
+            if ( mNodeState[eObjState_Picked] )
             {
                 gCursor.SetNowCursor ( curGrasp );
                 D9DEVICE->GetDvc()->SetTexture ( 0, NULL );
@@ -370,18 +370,10 @@ bool GAnimEntity::recreate()
     CXASSERT_RESULT_FALSE ( componentMesh );
     mResource = GAnimationManager::getSingleton().getResource ( componentMesh->MeshFile().c_str() );
     CXASSERT_RETURN_FALSE ( mResource );
-    ID3DXAnimationController* orginal = mResource->mAnimationController;
-    if ( orginal )
+    if ( mResource->mAnimationController )
     {
-        CXASSERT_RESULT_FALSE ( orginal->CloneAnimationController
-                                (
-                                    orginal->GetMaxNumAnimationOutputs()
-                                    , orginal->GetMaxNumAnimationSets()
-                                    , orginal->GetMaxNumTracks()
-                                    , orginal->GetMaxNumEvents()
-                                    , &mCloneAnimationController
-                                )
-                              );
+		mAnimationController = new GAnimController;
+		mAnimationController->setBaseController ( mResource->mAnimationController );
     }
 
     return true;
@@ -389,7 +381,7 @@ bool GAnimEntity::recreate()
 
 void GAnimEntity::update()
 {
-	__super::update();
+    __super::update();
     return;
 }
 
@@ -401,7 +393,7 @@ bool GAnimEntity::render()
     updateWorldInfo();
     if ( mResource && mResource->mFrameRoot )
         DrawFrame ( mResource->mFrameRoot );
-    m_bHit = false;
+    mNodeState.clearBit ( eObjState_Picked );
     return true;
 }
 
@@ -414,32 +406,17 @@ void GAnimEntity::setMediaFile ( const char* file )
 
 void GAnimEntity::updateWorldInfo()
 {
-    if ( mCloneAnimationController )
-    {
-        mCloneAnimationController->AdvanceTime ( TheTimer->getFrameTimeSec(), NULL );
+    if ( mAnimationController )
+        mAnimationController->update();
 
-        if ( mAnimSet != NULL )
-        {
-            D3DXTRACK_DESC trackDesc;
-
-            mCloneAnimationController->GetTrackDesc ( 0, &trackDesc );
-
-            double dbPassTime = mAnimSet->GetPeriodicPosition ( trackDesc.Position );
-
-            mdwCurAnimSetFrame = dbPassTime * 300000;
-
-            if ( mdwCurAnimSetFrame < mdwOldAnimSetFrame )
-            {
-                mbPlayDone = true;
-            }
-
-            mdwOldAnimSetFrame = mdwCurAnimSetFrame;
-        }
-    }
     if ( mResource && mResource->mFrameRoot )
-    {
         UpdateFrameMatrices ( mResource->mFrameRoot, &getTrans()->getWorldD3D() );
-    }
+}
+
+void GAnimEntity::play ( const char* animSetName )
+{
+    assert ( mAnimationController );
+    mAnimationController->play ( animSetName );
 }
 
 

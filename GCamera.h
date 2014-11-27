@@ -34,8 +34,8 @@ public:
     inline const D3DXMATRIX* getView() const;
     inline const D3DXMATRIX* getProjection() const;
     virtual void update();
-    virtual void onCallBack ( const CXDelegate& delgate );
-    void cliper ( GNode* n );
+	virtual void onCallBack ( const CXDelegate& , CXEventArgs*  )override;
+	void cliper ( GNode* n );
     float getNear() const;
     float getFar() const;
     float getFov() const;

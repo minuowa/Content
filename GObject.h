@@ -26,7 +26,11 @@ struct  EPropertyVar
 };
 typedef CXMap<GString, EPropertyVar*> PropertyMap;
 typedef CXMap<GString, PropertyMap*> CategoryPropertyMap;
-
+struct CXAlterNameArgs:public CXEventArgs 
+{
+	GString mCurName;
+	GString mChangedName;
+};
 class GObject: public CXCallBack
 {
     DeclareCategoryName ( GObject );
@@ -56,8 +60,7 @@ protected:
     CategoryPropertyMap mOption;
     GString	mName;
 public:
-    static GString mTargetName;
-    static GString mOperatorObjectName;
+
     static CXDelegate mDelegateAlterName;
 
     bool isRegist();

@@ -60,7 +60,7 @@ GEffectManager::GEffectManager()
     recreate();
 }
 
-void GEffectManager::onCallBack ( const CXDelegate& delgate )
+void GEffectManager::onCallBack ( const CXDelegate& delgate, CXEventArgs* )
 {
     if ( delgate == D9DEVICE->mOnLostDevice )
     {

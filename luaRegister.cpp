@@ -31,6 +31,7 @@ int luaRegistAll()
 	gLuaScript.regClass<GAnimEntity,GRenderEntity>( "GAnimEntity" );
 	gLuaScript.regClassCreator<GAnimEntity>( );
 	gLuaScript.regClassFunction<GAnimEntity>( "setMediaFile", &GAnimEntity::setMediaFile );
+	gLuaScript.regClassFunction<GAnimEntity>( "play", &GAnimEntity::play );
 
 	gLuaScript.regClass<GComponentTrans>( "GComponentTrans" );
 	gLuaScript.regClassCreator<GComponentTrans>( );

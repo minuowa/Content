@@ -2,12 +2,12 @@
 
 
 
-class CXEvent
+class GXEvent
 {
 public:
-	CXEvent ( void );
+	GXEvent ( void );
 
-	~CXEvent ( void );
+	~GXEvent ( void );
 
 public:
 
@@ -22,4 +22,4 @@ public:
 	GHandle mGHandle;
 };
 
-extern CXEvent gEvent;
+extern GXEvent gEvent;

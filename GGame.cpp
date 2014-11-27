@@ -240,7 +240,7 @@ DWORD WINAPI loadObj ( LPVOID pParam )
         CXASSERT_RETURN_FALSE ( pAnimMesh->recreate() );
         TheSceneMgr->addDynaObj ( pAnimMesh );
     }
-    if ( 1 )
+    if ( 0 )
     {
         MeshPara seaPara (  80.0f, 0, 64, "..\\Data\\res\\water\\BlueShort\\A21C_000.jpg", NULL );
 

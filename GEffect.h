@@ -36,7 +36,7 @@ public:
 	GEffectManager();
 	~GEffectManager();
 	ID3DXEffectPool*& getPool();
-	virtual void onCallBack( const CXDelegate& );
+	virtual void onCallBack ( const CXDelegate& , CXEventArgs*  )override;
 	void clear();
 	bool recreate();
 private:

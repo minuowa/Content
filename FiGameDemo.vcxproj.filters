@@ -124,9 +124,6 @@
     <ClCompile Include="GameStaticObj.cpp">
       <Filter>BaseObj</Filter>
     </ClCompile>
-    <ClCompile Include="GFilm.cpp">
-      <Filter>Film</Filter>
-    </ClCompile>
     <ClCompile Include="GFilmPlayer.cpp">
       <Filter>Film</Filter>
     </ClCompile>
@@ -146,8 +143,12 @@
     <ClCompile Include="GInputEntityManager.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="luaRegister.cpp">
-      <Filter>Common</Filter>
+    <ClCompile Include="GAnimController.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="luaRegister.cpp" />
+    <ClCompile Include="GFilmRecord.cpp">
+      <Filter>Film</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -284,9 +285,6 @@
     <ClInclude Include="GameStaticObj.h">
       <Filter>BaseObj</Filter>
     </ClInclude>
-    <ClInclude Include="GFilm.h">
-      <Filter>Film</Filter>
-    </ClInclude>
     <ClInclude Include="GFilmPlayer.h">
       <Filter>Film</Filter>
     </ClInclude>
@@ -310,6 +308,12 @@
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="GFilmCommon.h">
+      <Filter>Film</Filter>
+    </ClInclude>
+    <ClInclude Include="GAnimController.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="GFilmRecord.h">
       <Filter>Film</Filter>
     </ClInclude>
   </ItemGroup>

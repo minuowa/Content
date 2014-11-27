@@ -42,7 +42,7 @@ public:
         D3DCOLOR dwColor //纹理掩盖色
     );
 
-    virtual void onCallBack ( const CXDelegate& );
+	virtual void onCallBack ( const CXDelegate& , CXEventArgs*  )override;
 
     //2D3D都可使用
 

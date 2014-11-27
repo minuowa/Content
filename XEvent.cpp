@@ -1,20 +1,20 @@
 #include "GGameDemoHeader.h"
 #include "XEvent.h"
 
-CXEvent gEvent;
+GXEvent gEvent;
 
-CXEvent::CXEvent(void)
+GXEvent::GXEvent(void)
 {
 	mGHandle=NULL;
 }
 
-CXEvent::~CXEvent(void)
+GXEvent::~GXEvent(void)
 {
 }
 
 
 
-GHandle CXEvent::Create( char *sEventName )
+GHandle GXEvent::Create( char *sEventName )
 {
 	GHandle GHandle=OpenEventA(EVENT_ALL_ACCESS,FALSE,sEventName);
 
@@ -31,7 +31,7 @@ GHandle CXEvent::Create( char *sEventName )
 	return mGHandle;
 }
 
-void CXEvent::SetUsed()
+void GXEvent::SetUsed()
 {
 	if (mGHandle!=NULL)
 	{
@@ -39,7 +39,7 @@ void CXEvent::SetUsed()
 	}
 }
 
-void CXEvent::SetNoUse()
+void GXEvent::SetNoUse()
 {
 	if (mGHandle!=NULL)
 	{
@@ -47,7 +47,7 @@ void CXEvent::SetNoUse()
 	}
 }
 
-void CXEvent::WaitForUse( DWORD dwWaitTime )
+void GXEvent::WaitForUse( DWORD dwWaitTime )
 {
 	if (mGHandle!=NULL)
 	{

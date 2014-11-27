@@ -158,9 +158,6 @@ GNode::GNode()
 
     m_bUseMatrialColor = false;
 
-    m_bHit = false;
-
-
     mCulledByCamera = true;
     ZeroMemory ( &m_InsectInfo, sizeof ( m_InsectInfo ) );			//Åö×²ÐÅÏ¢
     attachComponent ( eComponentType_Trans, false, false );
@@ -266,7 +263,7 @@ IntersectInfo * GNode::GetBlockPoint()
 
 void GNode::update(  )
 {
-	getTrans()->update();
+    getTrans()->update();
 
 for ( auto child: mChildren )
     {
@@ -367,9 +364,10 @@ GNode* GNode::addChild ( GNode* c )
     mChildren.push_back ( c );
     c->mParent = this;
 
-    mOperatorParentObj = this;
-    mOperatorObj = c;
-    mDelegateAddObj.trigger();
+    GNodeAddArgs args;
+    args.mAddNode = c->getName();
+    args.mAddNodeParent = this->getName();
+    mDelegateAddObj.trigger ( &args );
 
     return c;
 }
@@ -870,8 +868,9 @@ void GNode::onComponentChange ( GComponentInterface* component,  bool canDetach 
     if ( notifyEditor )
     {
         registerAll();
-        mOperatorObj = this;
-        mDelegateComponentChange.trigger();
+        GNodeComponentChangeArgs args;
+        args.mChangedNode = this->getName();
+        mDelegateComponentChange.trigger ( &args );
     }
 }
 
@@ -932,8 +931,10 @@ for ( auto child: mChildren )
 void GNode::deleteChild ( GNode* node )
 {
     removeChild ( node );
-    mOperatorObj = node;
-    mDelegateDeleteObj.trigger();
+
+    GNodeDeleteArgs args;
+    args.mDeleteNode = node->getName();
+    mDelegateDeleteObj.trigger ( &args );
     dSafeDelete ( node );
 }
 
@@ -962,11 +963,4 @@ CXDelegate GNode::mDelegateDeleteObj;
 CXDelegate GNode::mDelegateComponentChange;
 
 CXDelegate GNode::mDelegateAddObj;
-
-GNode* GNode::mOperatorObj = nullptr;
-
-GNode* GNode::mOperatorParentObj = nullptr;
-
-
-CXDelegate GNode::mDelegateCreateObj;
 

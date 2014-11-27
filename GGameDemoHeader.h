@@ -328,7 +328,7 @@ enum eObjState
     eObjState_Picked				, //是否被点击了
     eObjState_ChangeWhenPicked		, //点击时是否发生改变
     eObjState_CanBeSelect			, //是否可以被选择
-    eObjState_BeSelect				, //是否被选择了
+	eObjState_BeSelect				, //是否被选择了
 };
 
 

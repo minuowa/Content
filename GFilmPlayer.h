@@ -1,24 +1,56 @@
 #pragma once
-class GFilm;
+#include "GFilmCommon.h"
+class GFilmRecord;
 class GFilmFrame;
+struct GFilmAddFrameEvent:public CXEventArgs
+{
+	GString mFrameName;
+	GString mPrevName;
+	GString mNextName;
+};
+struct GFilmDeleteFrameEvent:public CXEventArgs
+{
+	GString mFrameName;
+};
 class GFilmPlayer
 {
     DeclareFilmObj ( GFilmPlayer )
+public:
+	CXDelegate mDelegateAddFrame;
+	CXDelegate mDelegateDeleteFrame;
 public:
     GFilmPlayer ( void );
     ~GFilmPlayer ( void );
     bool play ( const char* filename );
     void gotoFrame ( u32 id );
     void gotoFrame ( const char* name );
-	DeclareFilmTool void addFrame ( u32 id, int lifeSeconds );
+
+	void deleteFrame(const char* frame);
+    DeclareFilmTool void addFrame ( const char* name,const char* nextName,int lifeSeconds );
+
+    void addFrameBehind ( const char* prev );
+
+    void save();
+    void beginRecord();
+    void endRecord();
+    void beginRecordFrame();
+    void endRecordFrame();
     void process();
+
+
+	void renameFrame(const char* name,const char* newName);
+	GFilmFrame* getFrame ( const char* name );
+	GFilmFrame* updateHeader();
 protected:
+	void setAllPrev();
+	void clear();
     bool start();
+	void updateList();
 protected:
-    CXDynaArray<GFilmFrame*> mFilmSequence;
-    GFilmFrame* mLastFrame;
-	GFilmFrame* mCurFrame;
-	bool mEnd;
+    eFilmMode mFilmMode;
+    CXMap<GString, GFilmFrame*> mNameMap;
+    GFilmFrame* mCurFrame;
+    bool mEnd;
 };
 #define FilmPlayer CXSingleton<GFilmPlayer>::getInstance()
 

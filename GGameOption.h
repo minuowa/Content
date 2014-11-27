@@ -19,7 +19,7 @@ public:
 
 	void updateRenderState();
 
-	virtual void onCallBack( const CXDelegate& );
+	virtual void onCallBack ( const CXDelegate& , CXEventArgs*  )override;
 
 protected:
 	eFillMode FillMode;

@@ -192,7 +192,7 @@ void GSceneManager::setOperatorObj ( int objID )
     mOperatoredObj = objID;
 }
 
-void GSceneManager::onCallBack ( const CXDelegate& delgate )
+void GSceneManager::onCallBack ( const CXDelegate& delgate, CXEventArgs* )
 {
 }
 

@@ -1,12 +1,19 @@
 #include "GGameDemoHeader.h"
 #include "GFilmFrame.h"
+#include "GFilmPlayer.h"
 
 
 GFilmFrame::GFilmFrame ( void )
     : mLifeTime ( 0 )
     , mElapsedTime ( 0 )
-    , mNext ( nullptr )
 {
+    do
+    {
+        int id = mIDGenerator.alloc();
+        mName.Format ( "FilmFrame%d", id );
+    }
+    while ( nullptr != FilmPlayer->getFrame ( mName.c_str() ) );
+
 }
 
 
@@ -14,16 +21,10 @@ GFilmFrame::~GFilmFrame ( void )
 {
 }
 
-void GFilmFrame::setInfo ( CXMillSecond lifeMS, u32 id )
+void GFilmFrame::setInfo ( CXMillSecond life, const char* name)
 {
-    mLifeTime = lifeMS;
-    mID = id;
-}
-
-void GFilmFrame::tail ( GFilmFrame* next )
-{
-    CXASSERT ( next );
-    mNext = next;
+    mLifeTime = life;
+    mName = name;
 }
 
 bool GFilmFrame::advanceTime ( u32 timeMS )
@@ -39,7 +40,40 @@ bool GFilmFrame::advanceTime ( u32 timeMS )
 
 void GFilmFrame::start()
 {
-    luacpp::call<void> ( gLuaScript.getState(), "playFrame", mID );
+    luacpp::call<void> ( gLuaScript.getState(), "playFrame", mName.c_str() );
 }
+
+const char* GFilmFrame::getName()
+{
+    return mName.c_str();
+}
+
+void GFilmFrame::setName ( const char* name )
+{
+    assert ( name );
+    mName = name;
+}
+
+const char* GFilmFrame::getNext()
+{
+    return mNextFrame.c_str();
+}
+
+void GFilmFrame::setNext ( const char* next )
+{
+    mNextFrame = next;
+}
+
+const char* GFilmFrame::getPrev()
+{
+    return mPrevFrame;
+}
+
+void GFilmFrame::setPrev ( const char* prev )
+{
+    mPrevFrame = prev;
+}
+
+CXIDGenerator GFilmFrame::mIDGenerator ( 1, 500 );
 
 

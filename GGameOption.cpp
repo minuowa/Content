@@ -52,7 +52,7 @@ void GGameOption::updateRenderState()
 	}
 }
 
-void GGameOption::onCallBack ( const CXDelegate& delegate )
+void GGameOption::onCallBack ( const CXDelegate& delegate, CXEventArgs* )
 {
 	if ( delegate == D9DEVICE->mOnResetDevice )
 	{

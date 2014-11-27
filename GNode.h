@@ -4,6 +4,19 @@
 #include "GObject.h"
 #include "GFactory.h"
 
+struct GNodeDeleteArgs:public CXEventArgs 
+{
+	GString mDeleteNode;
+};
+struct GNodeAddArgs:public CXEventArgs
+{
+	GString mAddNode;
+	GString mAddNodeParent;
+};
+struct GNodeComponentChangeArgs:public CXEventArgs 
+{
+	GString mChangedNode;
+};
 //有坐标属性的物体
 class GNode: public GObject
 {
@@ -63,13 +76,8 @@ protected:
     void	makeXMLNode ( CXRapidxmlNode& node );
 
 public:
-    static CXDelegate mDelegateCreateObj;
-
-    static GNode* mOperatorParentObj;
-    static GNode* mOperatorObj;
     static CXDelegate mDelegateAddObj;
     static CXDelegate mDelegateDeleteObj;
-
     static CXDelegate mDelegateComponentChange;
 
     CXDynaArray<GNode*> mChildren;
@@ -108,8 +116,6 @@ public:
     bool m_bUseMatrialColor;
 
     D3DXVECTOR3 m_vBlockPoint;
-
-    bool m_bHit;
 
     bool m_bBlock;
 

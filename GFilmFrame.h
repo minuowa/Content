@@ -7,20 +7,22 @@ class GFilmFrame
 public:
     GFilmFrame ( void );
     ~GFilmFrame ( void );
-	void setInfo(CXMillSecond life,u32 id);
+	void setInfo(CXMillSecond life,const char* name);
     void reload();
 	bool isEnd();
 	void start();
-	void tail(GFilmFrame* next);
 	bool advanceTime(u32 timeMS);
-	GFilmFrame* next() const;
+	const char* getName();
+	const char* getNext();
+	const char* getPrev();
+	void setNext(const char* next);
+	void setPrev(const char* prev);
+	void setName(const char* name);
 protected:
+	GString mName;
+	GString mNextFrame;
+	GString mPrevFrame;
 	CXMillSecond mLifeTime;
 	u32 mElapsedTime;
-	u32 mID;
-	GFilmFrame* mNext;
+	static CXIDGenerator mIDGenerator;
 };
-inline GFilmFrame* GFilmFrame::next() const
-{
-	return mNext;
-}

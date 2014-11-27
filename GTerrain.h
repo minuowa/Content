@@ -65,7 +65,7 @@ protected:
 
     virtual void clear();
 
-    virtual void onCallBack ( const CXDelegate& );
+    virtual void onCallBack ( const CXDelegate& , CXEventArgs*  )override;
 
 public:
 

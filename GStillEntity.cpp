@@ -193,7 +193,7 @@ bool GStillEntity::checkIntersect ( const D3DXVECTOR4& vPos, /*世界坐标系中的点 
              NULL, NULL
          );
 
-    m_bHit = ( bool ) bHit;
+    mNodeState.setBit ( eObjState_Picked, ( bool ) bHit );
     DebugMsgBox ( hr, "碰撞失败！" );
 
     if ( FAILED ( hr ) )
@@ -201,7 +201,7 @@ bool GStillEntity::checkIntersect ( const D3DXVECTOR4& vPos, /*世界坐标系中的点 
         return false;
     }
 
-    if ( bInsectInfo && m_bHit )
+    if ( bInsectInfo && mNodeState[eObjState_Picked] )
     {
         D3DXVECTOR3 v[3];
         DWORD dwIndex[3];
@@ -278,7 +278,7 @@ bool GStillEntity::checkIntersect ( const D3DXVECTOR4& vPos, /*世界坐标系中的点 
 
     }
 
-    return m_bHit;
+    return mNodeState[eObjState_Picked];
 
 }
 

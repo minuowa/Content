@@ -182,7 +182,7 @@ void GCamera::update()
 	getTrans()->update();
 }
 
-void GCamera::onCallBack ( const CXDelegate& delgate )
+void GCamera::onCallBack ( const CXDelegate& delgate, CXEventArgs* )
 {
     if ( delgate == D9DEVICE->mOnResetDevice )
     {

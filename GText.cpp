@@ -380,7 +380,7 @@ for ( auto tex : mTextArray )
     mFontSprite->End();
 }
 
-void GText::onCallBack ( const CXDelegate& delgate )
+void GText::onCallBack ( const CXDelegate& delgate, CXEventArgs* )
 {
     if ( delgate == D9DEVICE->mOnLostDevice )
     {

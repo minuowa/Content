@@ -11,4 +11,5 @@
 #include "GGameOption.h"
 #include "GEnums.h"
 #include "GEnumTypesStrings.h"
+#include "GFilmPlayer.h"
 #endif // Game_h__

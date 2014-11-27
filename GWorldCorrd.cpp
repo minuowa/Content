@@ -64,7 +64,7 @@ void GWorldCorrd::operator= ( GWorldCorrd cd )
 	mIBLines = cd.mIBLines;
 }
 
-void GWorldCorrd::onCallBack ( const CXDelegate& delgate )
+void GWorldCorrd::onCallBack ( const CXDelegate& delgate, CXEventArgs* )
 {
 	if ( delgate == D9DEVICE->mOnLostDevice )
 	{

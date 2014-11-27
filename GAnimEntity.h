@@ -3,7 +3,7 @@
 #include "XString.h"
 #include "GRenderEntity.h"
 #include "GAnimationResource.h"
-
+class GAnimController;
 class GAnimEntity: public GRenderEntity
 {
     DeclareEditorType ( GAnimEntity );
@@ -14,17 +14,19 @@ public:
 public:
     DeclareFilmTool void setMediaFile ( const char* file );
 
-	//DeclareFilmTool void play ( const char* animSetName );
-	//DeclareFilmTool void changeTo ( const char* animSetName );
+    DeclareFilmTool void play ( const char* animSetName );
 
-	//DeclareFilmTool void attachOnBone ( const char* boneName, GNode* entity );
-	//DeclareFilmTool void detachOnBone ( const char* boneName, GNode* entity );
-	//DeclareFilmTool GNode* getEntityOnBone ( const char* boneName, const char* entityName );
+    //DeclareFilmTool void moveTo ( float  x, float z );
+    //DeclareFilmTool void changeTo ( const char* animSetName );
+
+    //DeclareFilmTool void attachOnBone ( const char* boneName, GNode* entity );
+    //DeclareFilmTool void detachOnBone ( const char* boneName, GNode* entity );
+    //DeclareFilmTool GNode* getEntityOnBone ( const char* boneName, const char* entityName );
 
     inline GAnimationResource* getResource() const;
 public:
-	void updateWorldInfo();
-	virtual bool recreate() override;
+    void updateWorldInfo();
+    virtual bool recreate() override;
     virtual void update();
 protected:
     virtual bool render();
@@ -34,14 +36,11 @@ protected:
     void DrawMeshContainer ( D3DXMESHCONTAINER *pMeshContainerBase, D3DXFRAME *pFrameBase );
     void DrawFrame ( D3DXFRAME *pFrameBase );
     virtual D3DXMATRIX GetWorldMatrixByBone ( char *sBoneName, bool bForTrans = false );
-private:
-    LPD3DXANIMATIONSET mAnimSet;						//当前动作集
-    bool mbPlayDone;									//上一个动作集是否播放完成
-    DWORD mdwOldAnimSetFrame;							//当前动画集上一次播放到的帧数
-    DWORD mdwCurAnimSetFrame;							//当前动画集此次播放到的帧数
+
 private:
     GAnimationResource*	mResource;
-    ID3DXAnimationController *mCloneAnimationController;			//动画控制器
+	/** @brief 	动画控制器 **/
+    GAnimController *mAnimationController;
 public:
 };
 inline GAnimationResource* GAnimEntity::getResource() const

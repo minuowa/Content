@@ -14,7 +14,7 @@ private:
 
 public:
 	GWorldCorrd(void);
-	virtual void onCallBack(const CXDelegate& delgate);
+	virtual void onCallBack ( const CXDelegate& , CXEventArgs*  )override;
 	virtual bool recreate();
 	virtual bool render();
 	virtual bool recreateAll();

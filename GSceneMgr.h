@@ -83,7 +83,7 @@ public:
 	bool setInnerNode(GNode* rootNode);
 	void initNodeFactory();
 	void initComponentFactory();
-	virtual void onCallBack ( const CXDelegate& delgate );
+	virtual void onCallBack ( const CXDelegate& , CXEventArgs*  )override;
 public:
 	CXDelegate mDelegateReloadScene;
 
