@@ -139,7 +139,6 @@
     <ClCompile Include="GStillEntity.cpp">
       <Filter>BaseObj</Filter>
     </ClCompile>
-    <ClCompile Include="GGameDemoHeader.cpp" />
     <ClCompile Include="GInputEntityManager.cpp">
       <Filter>Common</Filter>
     </ClCompile>
@@ -150,6 +149,16 @@
     <ClCompile Include="GFilmRecord.cpp">
       <Filter>Film</Filter>
     </ClCompile>
+    <ClCompile Include="GRectNode.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUINode.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUIManager.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="common.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
@@ -316,6 +325,18 @@
     <ClInclude Include="GFilmRecord.h">
       <Filter>Film</Filter>
     </ClInclude>
+    <ClInclude Include="GRectNode.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUIManager.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUINode.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="common.h" />
+    <ClInclude Include="G3DEngine.h" />
+    <ClInclude Include="GPlatform.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Animation">
@@ -338,6 +359,9 @@
     </Filter>
     <Filter Include="Film">
       <UniqueIdentifier>{2d206f1a-aad7-46dd-8705-57cb8ad4f994}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{b38fdc6d-8bac-4010-886e-b344430406a7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

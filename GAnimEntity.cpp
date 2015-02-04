@@ -89,7 +89,7 @@ void GAnimEntity::DrawMeshContainer ( D3DXMESHCONTAINER *pMeshContainerBase, D3D
     DWORD dwAmbient = 0;
     D9DEVICE->GetDvc()->GetRenderState ( D3DRS_AMBIENT, &dwAmbient );
 
-    POINT pt = INPUTSYSTEM.GetMousePoint();
+    POINT pt = INPUTSYSTEM.getMousePoint();
 
     bool bHit = false;
 
@@ -335,7 +335,7 @@ bool GAnimEntity::Pick ( ID3DXMesh *pMesh, POINT pt )
         return false;
     }
 
-    return ( BOOL ) bHit;
+    return  bHit;
 }
 
 
@@ -344,7 +344,7 @@ bool GAnimEntity::Pick ( ID3DXMesh *pMesh, POINT pt )
 
 D3DXMATRIX GAnimEntity::GetWorldMatrixByBone ( char *sBoneName, bool bForTrans/*=false*/ )
 {
-    if ( IsStrEmpty ( sBoneName ) )
+    if ( dIsStrEmpty ( sBoneName ) )
     {
         return GNode::GetWorldMatrixByBone ( sBoneName, bForTrans );
     }
@@ -393,7 +393,7 @@ bool GAnimEntity::render()
     updateWorldInfo();
     if ( mResource && mResource->mFrameRoot )
         DrawFrame ( mResource->mFrameRoot );
-    mNodeState.clearBit ( eObjState_Picked );
+    mNodeState.bitClear ( eObjState_Picked );
     return true;
 }
 

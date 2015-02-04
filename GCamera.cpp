@@ -85,7 +85,7 @@ void GCamera::getInput ( DWORD frameTimeMs )
     if ( INPUTSYSTEM.IsPressKey ( DIK_SUBTRACT ) )
         getTrans()->mSpeedMove -= 0.03f * frameTimeMs;
 
-    POINT pt = INPUTSYSTEM.GetMousePoint();
+    POINT pt = INPUTSYSTEM.getMousePoint();
 
     if ( pt.x < 0 || pt.x > D9DEVICE->mWidth || pt.y < 0 || pt.y > D9DEVICE->mHeight )
     {

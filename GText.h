@@ -6,6 +6,12 @@ enum OBJTYPE
     otEye, otWorld, otBillBoard, otUI
 };
 
+enum TextPos
+{
+	tpCenter,
+	tpLeft,
+	tpRight,
+};
 
 enum eFontSize
 {
@@ -17,6 +23,9 @@ class GText: public CXCallBack
 public:
     GText ( void );
     ~GText ( void );
+
+	CXDelegate mDelegateOnDrawTextBegin;
+
     bool init();
     void clear();
     bool recreate();
@@ -24,7 +33,7 @@ public:
     void removeText ( GString* str );
     void drawText();
     void setCurrentFontSize ( eFontSize fs );
-
+	ID3DXSprite* getSprite() const;
     int DrawTextDefault ( char* sText, D3DVECTOR pos );
     //2D中使用,其坐标原点为屏幕左上角
 
@@ -56,4 +65,10 @@ private:
     eFontSize	mFontSize;
     LPD3DXSPRITE mFontSprite;
 };
+
+inline ID3DXSprite* GText::getSprite() const
+{
+	return mFontSprite;
+}
+
 #define TextMgr CXSingleton<GText>::getInstance()

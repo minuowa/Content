@@ -44,7 +44,7 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 	/////Œª÷√
 	bool IsWheelMButton();
-	POINT GetMousePoint();
+	POINT getMousePoint();
 	POINT GetMouseMove();
 	D3DVECTOR GetMouseMoveEX();
 	int getMouseWheel();

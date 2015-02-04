@@ -1,12 +1,14 @@
 #ifndef FiGameDemo_h__
 #define FiGameDemo_h__
 
-//#ifdef FiGameDemo_EXPORTS
+//#ifdef _LIB
 //#define FiGameDemo_API __declspec(dllexport)
 //#else
 //#define FiGameDemo_API __declspec(dllimport)
 //#endif
+
 #define FiGameDemo_API
+
 extern "C"
 {
 	FiGameDemo_API int FiGameDemo_Init(HWND mainWnd);

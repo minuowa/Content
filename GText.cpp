@@ -351,6 +351,8 @@ void GText::addText ( GString* str )
 
 void GText::drawText()
 {
+	mDelegateOnDrawTextBegin.trigger();
+
     int x = 15, y = 15, z = 0;
 
     static const u32 color = 0XFFFFFFFF;
@@ -378,6 +380,7 @@ for ( auto tex : mTextArray )
         y += iH + 2;
     }
     mFontSprite->End();
+
 }
 
 void GText::onCallBack ( const CXDelegate& delgate, CXEventArgs* )

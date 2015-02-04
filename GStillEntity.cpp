@@ -194,7 +194,7 @@ bool GStillEntity::checkIntersect ( const D3DXVECTOR4& vPos, /*世界坐标系中的点 
          );
 
     mNodeState.setBit ( eObjState_Picked, ( bool ) bHit );
-    DebugMsgBox ( hr, "碰撞失败！" );
+    dDebugMsgBox ( hr, "碰撞失败！" );
 
     if ( FAILED ( hr ) )
     {

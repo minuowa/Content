@@ -3,8 +3,6 @@
 
 class GTimer
 {
-    FiDeclareSingleton ( GTimer );
-
 public:
 
     static const int FPSCount = 100;
@@ -38,5 +36,5 @@ private:
 
 	GString mFPSString;
 };
-
-#define TheTimer GTimer::getInstance()
+typedef CXSingleton<GTimer> GTimerSingleton;
+#define TheTimer GTimerSingleton::getInstance()

@@ -35,7 +35,7 @@ bool CRectMesh::recreate()
 
 	if ( FAILED( hr ) )
 	{
-		return hr;
+		return false;
 	}
 
 	VertexSnow vertex[] =
@@ -55,7 +55,7 @@ bool CRectMesh::recreate()
 
 	if ( FAILED( hr ) )
 	{
-		return hr;
+		return false;
 	}
 
 	memcpy( pVertex, vertex, sizeof( vertex ) );
@@ -66,26 +66,25 @@ bool CRectMesh::recreate()
 
 	hr = D3DXCreateTextureFromFileA( D9DEVICE->GetDvc(), "..\\Data\\res\\Particles\\snow\\snow.tga", &mpFace );
 
-	DebugMsgBox( hr, "..\\Data\\res\\Particles\\snow\\snow.tga找不到！" );
+	dDebugMsgBox( hr, "..\\Data\\res\\Particles\\snow\\snow.tga找不到！" );
 
 	//为每个粒子赋初始随即值
 
 	mAreaSphere.Init( 600 );
 
-	PreRandom();
 
 	//加载10W个用时171ms，平均每个耗时0.00171ms
 	for ( int i = 0; i < LnNumParticles; i++ )
 	{
 		pSnow[i].Translate = mAreaSphere.GeneratePos();
 
-		pSnow[i].Rotate.x = RandFloatEx( ZEROFLOAT, 2 * D3DX_PI );
-		pSnow[i].Rotate.y = RandFloatEx( ZEROFLOAT, 2 * D3DX_PI );
+		pSnow[i].Rotate.x = gRandom.randF( ZEROFLOAT, 2 * D3DX_PI );
+		pSnow[i].Rotate.y = gRandom.randF( ZEROFLOAT, 2 * D3DX_PI );
 		pSnow[i].Rotate.z = ZEROFLOAT;
 
-		pSnow[i].Speed = D3DXVECTOR3( RAND % 3 - 3, RAND % 3 - 3, RAND % 3 - 3 );
+		pSnow[i].Speed = D3DXVECTOR3( gRandom.randI() % 3 - 3, gRandom.randI() % 3 - 3, gRandom.randI() % 3 - 3 );
 
-		pSnow[i].SpeedRotate = 1.0f + RAND % 10 / 10.0f;
+		pSnow[i].SpeedRotate = 1.0f + gRandom.randI() % 10 / 10.0f;
 
 	}
 
@@ -96,7 +95,6 @@ bool CRectMesh::recreate()
 
 void CRectMesh::update( )
 {
-	PreRandom();
 	float fPass = TheTimer->getFrameTimems() / 1000.0f;
 
 	for ( int i = 0; i < LnNumParticles; i++ )

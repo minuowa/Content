@@ -1,7 +1,28 @@
 #pragma once
 
 #include "GStillEntity.h"
+struct MeshPara
+{
+public:
 
+	float mCellWidth;	    //地图中格子宽度
+	float mMaxHeight;	    //地图的最大高度
+	int	  mCellCount;	    //地图中格子数量
+	GString mFileName;     //纹理文件名字，X文件名字
+	GString mHeightMap;    //高度图文件名字
+
+public:
+	MeshPara() {};
+
+	MeshPara ( float CellWidth, float MaxHight, int CellCount, const char *strFileName, const  char *strHeightMap )
+	{
+		mCellWidth = CellWidth;
+		mMaxHeight = MaxHight;
+		mCellCount = CellCount;
+		mFileName = strFileName;
+		mHeightMap = strHeightMap;
+	}
+};
 
 #define SEAPICNUM   64	//海水纹理图片的个数
 

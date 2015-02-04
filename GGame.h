@@ -22,8 +22,6 @@ class GGame:public GFrameWork
 {
 public:
 	typedef GFrameWork Super;
-
-	FiDeclareSingleton( GGame );
 public:
 	GGame(void);
 	~GGame(void);
@@ -31,7 +29,7 @@ public:
 	virtual bool init(HWND mainWnd);
 
 	virtual bool loop();
-
+	
 	void shutDown();
 
 	void finish();
@@ -62,18 +60,21 @@ private:
 
 	bool	mFinished;
 };
+
+typedef CXSingleton<GGame> GGameSingleton;
+#define TheGame GGameSingleton::getInstance()
+#define TheSceneMgr TheGame->getSceneMgr()
+
 inline GSceneManager* GGame::getSceneMgr() const
 {
 	return mSceneMgr;
 }
 DeclareFilmToolGlobal inline GSceneManager* getSceneMgr()
 {
-	return GGame::getSingleton().getSceneMgr();
+	return TheGame->getSceneMgr();
 }
 DeclareFilmToolGlobal inline void logInfo ( const char* s )
 {
 	OutputDebugStringA ( "\n" );
 	OutputDebugStringA ( s );
 }
-#define TheGame GGame::getInstance() 
-#define TheSceneMgr GGame::getSingleton().getSceneMgr()

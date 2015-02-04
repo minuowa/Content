@@ -94,7 +94,7 @@ void GSceneManager::destroy ( CGameStaticObj *pObj )
     GString sConfigFile;
     sConfigFile.Format ( "Data\\StaticObj\\Save\\StaticObj%03d.txt", pObj->m_nObjID );
 
-    if ( IsFileExist ( sConfigFile.c_str() ) )
+    if ( dIsFileExist ( sConfigFile.c_str() ) )
     {
         DeleteFileA ( sConfigFile );
     }

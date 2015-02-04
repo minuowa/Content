@@ -82,7 +82,7 @@ GTerrain::GTerrain ( )
 
 void GTerrain::LoadAlphaMap()
 {
-    if ( !IsFileExist ( File_AlphaSplat.c_str() ) )
+    if ( !dIsFileExist ( File_AlphaSplat.c_str() ) )
     {
         mUsingAlphasplatMap = false;
         return;
@@ -207,7 +207,7 @@ void GTerrain::createVertexBuffer()
 
 void GTerrain::loadHeightMap()
 {
-    if ( !IsFileExist ( mFileHeightMap.c_str() ) )
+    if ( !dIsFileExist ( mFileHeightMap.c_str() ) )
     {
         mUsingHeightMap = false;
         return;

@@ -1,7 +1,11 @@
 #pragma once
 #include "GBound.h"
 #include "GRenderEntity.h"
-
+enum eMeshUsage
+{
+	eMeshUsageRender,
+	eMeshUsageInsect,
+};
 class GMeshBufferNode;
 class GStillEntity :
 	public GRenderEntity

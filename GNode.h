@@ -3,16 +3,40 @@
 #include "GComponentTrans.h"
 #include "GObject.h"
 #include "GFactory.h"
+enum eObjState
+{
+	eObjState_Lighting				, //是否开灯光
+	eObjState_Render				, //是否渲染
+	eObjState_GetInput				, //是否可以操控
+	eObjState_Update				, //是否可以更新
+	eObjState_Picked				, //是否被点击了
+	eObjState_ChangeWhenPicked		, //点击时是否发生改变
+	eObjState_CanBeSelect			, //是否可以被选择
+	eObjState_BeSelect				, //是否被选择了
 
+	eUINodeState_CanAcpectEvent,	///是否可接受事件
+	eUINodeState_CanHover,
+	eUINodeState_IsHover,
+	eUINodeState_CanCapture,
+	eUINodeState_IsCapture,
+};
+enum eForceType
+{
+	ftUpAlways,			//上方向总是（0,1,0）
+	ftUpWithMap,		//上方向与地面垂直，随地图而改变
+};
+/** 删除场景节点 **/
 struct GNodeDeleteArgs:public CXEventArgs 
 {
 	GString mDeleteNode;
 };
+/** 添加场景节点 **/
 struct GNodeAddArgs:public CXEventArgs
 {
 	GString mAddNode;
 	GString mAddNodeParent;
 };
+/** 场景节点组件发生了变化 **/
 struct GNodeComponentChangeArgs:public CXEventArgs 
 {
 	GString mChangedNode;
@@ -35,6 +59,10 @@ public:
     virtual void clear();
     DeclareFilmTool virtual bool recreate();
 public:
+
+	void setState(eObjState state,bool b);
+	bool isState(eObjState state) const;
+
     void setCanGetInput ( bool can );
     u32 getLocalID() const;
     GNode* addChild ( GNode* c );
@@ -47,19 +75,12 @@ public:
     virtual void update();
     virtual void updateWorld();
 
-
-    //创建物体后更新一下，得到物体在地图上的位置
-    IntersectInfo *UpdateForForceOnMap();
-
-    IntersectInfo *UpdateForForceOnObj ( void *pObj );
     virtual D3DXMATRIX GetWorldMatrixByBone ( const char *sBoneName, bool bForTrans = false );
-    //void setWorldTranslate ( D3DXVECTOR3& v );
     void setDir ( D3DXVECTOR3 vNormal );
 
     void ForceOnMap ( void *pMap, float fForceHeight, eForceType ft );
 
     IntersectInfo *GetBlockPoint();
-
 
     DeclareFilmTool GComponentTrans* getTrans();
     void updateTrans();
@@ -128,7 +149,7 @@ public:
     u32 mLocalID;
 public:
     /** @brief refer to eObjState **/
-    CXBitArray mNodeState;
+    CXBitArray32 mNodeState;
 
 protected:
     GNode *mParent;							//依附的对象

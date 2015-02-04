@@ -12,4 +12,6 @@
 #include "GEnums.h"
 #include "GEnumTypesStrings.h"
 #include "GFilmPlayer.h"
+#include "GUINode.h"
+#include "GUIManager.h"
 #endif // Game_h__

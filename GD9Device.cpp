@@ -5,6 +5,8 @@ GD9Device::GD9Device ( void )
 {
     mD9Device = NULL;
     mD3D9 = 0;
+    mBackColor = 0;
+    mHwnd = 0;
 }
 
 GD9Device::~GD9Device ( void )
@@ -15,7 +17,7 @@ GD9Device::~GD9Device ( void )
 
 bool GD9Device::Init ( HWND hWnd )
 {
-    mhWnd = hWnd;
+    mHwnd = hWnd;
     //后台缓冲区和客户区大小一致，避免图形失真
     RECT rcClient;
     GetClientRect ( hWnd, &rcClient );
@@ -55,7 +57,7 @@ bool GD9Device::BeginRender()
     //d3dRc[3].x2=500;
     //d3dRc[3].y2=700;
 
-    if ( FAILED ( mD9Device->Clear ( 0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0x00000000, 1.0f, 0 ) ) )
+    if ( FAILED ( mD9Device->Clear ( 0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, mBackColor, 1.0f, 0 ) ) )
     {
         assert ( 0 && "Clear device failed!" );
         return false;
@@ -78,7 +80,7 @@ void GD9Device::EndRender()
         mD9Device->EndScene();
     }
 
-    if ( D3DERR_DEVICELOST == mD9Device->Present ( 0, 0, mhWnd, 0 ) )
+    if ( D3DERR_DEVICELOST == mD9Device->Present ( 0, 0, mHwnd, 0 ) )
     {
         CXASSERT ( 0 );
     }
@@ -110,7 +112,7 @@ void GD9Device::SetLight()
         mLight[i].Specular.b = SPECULAR_INTENSITY;
     }
 
-    mLight[0].Direction = Vector ( 1.0f, -0.5f, 0.0f );
+    dVector ( mLight[0].Direction, 1.0f, -0.5f , 0.0f );
 
     //mLight[0].Direction=Vector(-3.0f,-2.0f,-1.732f);
     //mLight[1].Direction=Vector(3.0f,-2.0f,-1.732f);
@@ -245,7 +247,7 @@ void GD9Device::ResetRenderState()
     //填充模式
     //D9DEVICE->SetRenderState(D3DRS_FILLMODE,D3DFILL_POINT);//点填充
     //mD9Device->SetRenderState ( D3DRS_FILLMODE, D3DFILL_SOLID ); //多边形填充
-    //D9DEVICE->SetRenderState(D3DRS_FILLMODE,D3DFILL_WIREFRAME);//线框填充
+    //mD9Device->SetRenderState(D3DRS_FILLMODE,D3DFILL_WIREFRAME);//线框填充
 
     //关闭Alpha混合
     mD9Device->SetRenderState ( D3DRS_ALPHABLENDENABLE, false );
@@ -358,6 +360,10 @@ void GD9Device::OnResize ( int w, int h )
 
 bool GD9Device::ResetDevice ( int w, int h )
 {
+    if ( mHwnd == 0 )
+    {
+        return false;
+    }
     //测试用
     HRESULT hr = 0;
 
@@ -365,9 +371,6 @@ bool GD9Device::ResetDevice ( int w, int h )
     D3DDISPLAYMODE d9DisplayMode;
 
     //设备性能参数
-
-    //渲染区域
-    RECT rcClient;
 
     //多重采样支持度
     DWORD dwMultiSampleQulity = 0;
@@ -413,7 +416,7 @@ bool GD9Device::ResetDevice ( int w, int h )
     d3dp.EnableAutoDepthStencil = TRUE;			//开启模板缓存和深度缓存
     d3dp.Flags = 0;								//默认为0
     d3dp.FullScreen_RefreshRateInHz = 0;			//窗口显示时必须设置为0
-    d3dp.hDeviceWindow = mhWnd;
+    d3dp.hDeviceWindow = mHwnd;
     d3dp.MultiSampleQuality = dwMultiSampleQulity - 1;
     d3dp.MultiSampleType = D3DMULTISAMPLE_8_SAMPLES;		//SwapEffect不为D3DSWAPEFFECT_DISCARD时，该参数必须设置为D3DMULTISAMPLE_NONE
     d3dp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
@@ -431,7 +434,7 @@ bool GD9Device::ResetDevice ( int w, int h )
                  D3DADAPTER_DEFAULT,
                  //D3DDEVTYPE_REF,
                  D3DDEVTYPE_HAL,
-                 mhWnd,
+                 mHwnd,
                  dwBehavior | D3DCREATE_MULTITHREADED,
                  &d3dp,
                  &mD9Device
@@ -446,8 +449,74 @@ bool GD9Device::ResetDevice ( int w, int h )
     }
     ResetRenderState();
     SetLight();
+    return true;
+}
+
+void GD9Device::setBackColor ( DWORD color )
+{
+    mBackColor = color;
+}
+
+bool GD9Device::beginRenderUI()
+{
+    mD9Device->SetRenderState ( D3DRS_LIGHTING, FALSE );
+    mD9Device->SetRenderState ( D3DRS_FOGENABLE, FALSE );
+    mD9Device->SetRenderState ( D3DRS_ZENABLE, D3DZB_FALSE );
+    mD9Device->SetRenderState ( D3DRS_ALPHATESTENABLE, FALSE );
+    mD9Device->SetRenderState ( D3DRS_CULLMODE, D3DCULL_NONE );
+    mD9Device->SetRenderState ( D3DRS_FILLMODE, D3DFILL_SOLID );
+    mD9Device->SetRenderState ( D3DRS_SCISSORTESTENABLE, TRUE );
+    mD9Device->SetRenderState ( D3DRS_ZWRITEENABLE, FALSE );
+
+    // setup texture addressing settings
+    mD9Device->SetSamplerState ( 0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP );
+    mD9Device->SetSamplerState ( 0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP );
+
+    // setup colour calculations
+    mD9Device->SetTextureStageState ( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
+    mD9Device->SetTextureStageState ( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
+    //mD9Device->SetTextureStageState ( 0, D3DTSS_COLOROP, D3DTOP_MODULATE );
+    mD9Device->SetTextureStageState ( 0, D3DTSS_COLOROP, D3DTOP_SELECTARG2 );
+
+    // setup alpha calculations
+    mD9Device->SetTextureStageState ( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
+    mD9Device->SetTextureStageState ( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
+    //mD9Device->SetTextureStageState ( 0, D3DTSS_ALPHAOP, D3DTOP_MODULATE );
+    mD9Device->SetTextureStageState ( 0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG2 );
+
+    // setup filtering
+    mD9Device->SetSamplerState ( 0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR );
+    mD9Device->SetSamplerState ( 0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR );
+
+    // disable texture stages we do not need.
+    mD9Device->SetTextureStageState ( 1, D3DTSS_COLOROP, D3DTOP_DISABLE );
+
+    // setup scene alpha blending
+    mD9Device->SetRenderState ( D3DRS_ALPHABLENDENABLE, TRUE );
 
     return true;
+}
+
+void GD9Device::renderFirstGraph ( bool useTexture )
+{
+    //mD9Device->SetRenderState ( D3DRS_FILLMODE, D3DFILL_WIREFRAME );
+    //mD9Device->SetSamplerState ( 0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP );
+    //mD9Device->SetSamplerState ( 0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP );
+
+    mD9Device->SetRenderState ( D3DRS_ALPHABLENDENABLE, FALSE );
+
+    mD9Device->SetTextureStageState ( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
+    mD9Device->SetTextureStageState ( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
+    mD9Device->SetTextureStageState ( 0, D3DTSS_COLOROP, useTexture ? D3DTOP_MODULATE : D3DTOP_SELECTARG2 );
+
+    mD9Device->SetTextureStageState ( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
+    mD9Device->SetTextureStageState ( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
+    mD9Device->SetTextureStageState ( 0, D3DTSS_ALPHAOP, useTexture ? D3DTOP_MODULATE : D3DTOP_SELECTARG2 );
+}
+
+DWORD GD9Device::getBackColor()
+{
+    return mBackColor;
 }
 
 

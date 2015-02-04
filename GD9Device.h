@@ -14,7 +14,7 @@ private:
 
 public:
 
-    HWND mhWnd;
+    HWND mHwnd;
 
     int mWidth;	    //渲染区域宽度
     int mHeight;	    //渲染区域高度
@@ -36,6 +36,9 @@ public:
 
     void SetLight();	    //设置初始灯光
 
+    void setBackColor ( DWORD color );
+	DWORD getBackColor();
+
     void OpenLight ( int nIndex, bool bOpen, bool bUseMatrialColor = false ); //开启或者关闭指定的光源
 
     void OpenlightEx ( int nIndex, bool bOpen, float fDiffuseIntensity, bool bUseMatrialColor = false );
@@ -54,12 +57,17 @@ public:
 
     bool VertexShaderSurport() const;
 
+	bool beginRenderUI();
+
     inline IDirect3DDevice9 *GetDvc() const;
     inline int TestDevice();
     void OnDeviceLost();
     void OnResize ( int w, int h );
+
+	void renderFirstGraph(bool useTexture);
 protected:
     bool ResetDevice ( int w, int h );
+    DWORD mBackColor;
 public:
     CXDelegate mOnLostDevice;
     CXDelegate mOnResetDevice;

@@ -92,7 +92,7 @@ bool GEffectManager::recreate()
 {
     if ( mEffectPool == nullptr )
     {
-        CHECK_RESULT_BOOL ( D3DXCreateEffectPool ( &mEffectPool ) );
+        CXASSERT_RESULT_FALSE ( D3DXCreateEffectPool ( &mEffectPool ) );
     }
 for ( auto & p: mResourceMap )
     {

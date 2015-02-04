@@ -2,15 +2,12 @@
 #include "GTimer.h"
 #include "GText.h"
 //--------------------------------------------------------------------------------------------------
-FiImplateSingleton ( GTimer )
-//--------------------------------------------------------------------------------------------------
 GTimer::GTimer ( void )
     : mAccuTime ( 0 )
     , mFrameTime ( ~0 )
     , mLastTime ( 0 )
 {
     TextMgr->addText ( &mFPSString );
-    FiMarkSingleton();
 }
 
 GTimer::~GTimer ( void )

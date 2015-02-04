@@ -334,7 +334,7 @@ void GComponentTrans::moveTo ( const GMatrix& target, DWORD millSeconds )
 
 void GComponentTrans::updateAutoTranslate()
 {
-    getVector3Ease ( mMatLocal.mTranslate
+    dGetVector3Ease ( mMatLocal.mTranslate
                      , &mAutoMoveInfo->mAutoInitTranslate
                      , &mAutoMoveInfo->mAutoTargetTranslate
                      , mAutoMoveInfo->getElpaseTime()

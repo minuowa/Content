@@ -129,13 +129,14 @@ for ( auto c : mChildren )
 }
 
 GNode::GNode()
-    : mNodeState ( 1, true )
+    : mNodeState ()
     , mLocalID ( 0 )
 {
+	mNodeState.setAll(true);
+
     mLocalID = mObjectIDManager.addObj ( this );
 
     mParent = nullptr;
-    mNodeState.setBit ( eObjState_Render  );
     m_fBoundRadius = 0.01f;
 
     m_ForceType = ftUpWithMap;
@@ -271,40 +272,6 @@ for ( auto child: mChildren )
     }
 }
 
-
-
-IntersectInfo * GNode::UpdateForForceOnMap()
-{
-    //if ( m_bForceOnMap )
-    //{
-    //    if ( mForceMap != NULL )
-    //    {
-    //        GGameMap *pMap = ( GGameMap* ) mForceMap;
-
-    //        D3DXVECTOR4 vDir ( 0, -1, 0, 0 ), vPos ( getTrans()->mMatLocal.mTranslate.x, getTrans()->mMatLocal.mTranslate.y + 5000.0f, getTrans()->mMatLocal.mTranslate.z, 1 );
-
-    //        //向下的射线与地图碰撞，肯定能撞到
-
-    //        bool bHit = pMap->checkIntersect ( vPos, vDir, true );
-
-    //        if ( bHit )
-    //        {
-
-    //            setDir ( pMap->m_InsectInfo.vNormal );
-    //            D3DXVECTOR3 v = pMap->m_InsectInfo.vHitPos;
-    //            v.y += m_fForceHeight;
-    //            getTrans()->setTranslate ( v ) ;
-
-    //            return & ( pMap->m_InsectInfo );
-    //        }
-
-    //    }
-
-    //}
-
-    return NULL;
-}
-
 void GNode::setDir ( D3DXVECTOR3 vNormal )
 {
     if ( m_ForceType == ftUpAlways )
@@ -316,46 +283,6 @@ void GNode::setDir ( D3DXVECTOR3 vNormal )
     {
         getTrans()->SetDirWithUpon ( vNormal );
     }
-}
-
-IntersectInfo * GNode::UpdateForForceOnObj ( void *pObj )
-{
-    if ( pObj == NULL )
-    {
-        return NULL;
-    }
-
-    GStillEntity *lpObj = ( GStillEntity * ) pObj;
-
-    D3DXVECTOR4 vDir ( 0, -1, 0, 0 ), vPos ( getTrans()->getTranslate().x, getTrans()->getTranslate().y + 20.0f, getTrans()->getTranslate().z, 1 );
-
-    //向下的射线与地图碰撞，肯定能撞到
-
-    bool bHit = lpObj->checkIntersect ( vPos, vDir, true );
-
-    if ( bHit )
-    {
-        //D3DXVec3Normalize(&lpObj->m_InsectInfo.vNormal,&lpObj->m_InsectInfo.vNormal);
-
-        //float fAngle=D3DXVec3Dot(&lpObj->m_InsectInfo.vNormal,&D3DXVECTOR3(0,1,0));
-
-        //if (fAngle>0.1)
-        //{
-        setDir ( lpObj->m_InsectInfo.vNormal );
-
-        //getTrans()->mMatLocal.mTranslate = lpObj->m_InsectInfo.vHitPos;
-
-        //getTrans()->mMatLocal.mTranslate.y = lpObj->m_InsectInfo.vHitPos.y + m_fForceHeight;
-        //}
-        //else
-        //{
-        //	mXPos.mvPos=mXPos.mvLastPos;
-        //}
-
-        return & ( lpObj->m_InsectInfo );
-    }
-
-    return NULL;
 }
 
 GNode* GNode::addChild ( GNode* c )
@@ -930,6 +857,9 @@ for ( auto child: mChildren )
 
 void GNode::deleteChild ( GNode* node )
 {
+    if ( node == nullptr )
+        return;
+
     removeChild ( node );
 
     GNodeDeleteArgs args;
@@ -953,6 +883,16 @@ void GNode::setCanGetInput ( bool can )
 CXDynaArray<GNode*>& GNode::getChildren()
 {
     return mChildren;
+}
+
+void GNode::setState ( eObjState state, bool b )
+{
+    mNodeState.setBit ( state, b );
+}
+
+bool GNode::isState ( eObjState state ) const
+{
+    return mNodeState[state];
 }
 
 CXIDObjectManager<GNode> GNode::mObjectIDManager;

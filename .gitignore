@@ -6,3 +6,5 @@ Debug
 *.pch
 *.cpp~HEAD
 *.ncb
+*.tlog
+*.sbr

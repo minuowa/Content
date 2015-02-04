@@ -109,10 +109,10 @@ void GWater::update()
 
 void GWater::setParam ( const MeshPara& val )
 {
-	mCellCount = val.LnCellCount;
-	mMaxHeight = val.mfMaxHeight;
-	mCellWidth = val.mfCellWidth;
-	mTextureFile = val.mstrFileName;
+	mCellCount = val.mCellCount;
+	mMaxHeight = val.mMaxHeight;
+	mCellWidth = val.mCellWidth;
+	mTextureFile = val.mFileName;
 }
 
 void GWater::clear()
@@ -171,7 +171,8 @@ void GWater::recreateGraphInfo()
 		D3DXMESH_32BIT | D3DXMESH_MANAGED, FVFSea, D9DEVICE->GetDvc(),
 		&mesh
 		);
-	DebugMsgBox ( hr, "创建海面Mesh失败！" );
+
+	dDebugMsgBox ( hr, "创建海面Mesh失败！" );
 
 	DWORD dwIndex = 0;
 
