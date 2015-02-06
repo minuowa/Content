@@ -373,56 +373,9 @@ void GComponentTrans::setRotation ( D3DXMATRIX& mat )
 
 void GComponentTrans::set()
 {
-    D9DEVICE->GetDvc()->SetTransform ( D3DTS_WORLD, ( const D3DXMATRIX* ) &mMatWorld );
+    D9Device->GetDvc()->SetTransform ( D3DTS_WORLD, ( const D3DXMATRIX* ) &mMatWorld );
 }
 
-//void GComponentTrans::updateWorld()
-//{
-//D3DXMATRIX& matWorld = * ( D3DXMATRIX* ) ( &mWorld ); // ¿ΩÁæÿ’Û
-
-//D3DXMATRIX matScale;	    //Àı∑≈æÿ’Û
-
-//D3DXMATRIX matTranslation;	//∆Ω“∆æÿ’Û
-
-//D3DXMATRIX matRotation;  //–˝◊™æÿ’Û
-
-//D3DXMatrixIdentity ( &out );
-
-//if ( !bForTrans )
-//{
-//    //º∆À„Àı∑≈æÿ’Û
-//    D3DXMatrixScaling ( &matScale, mZoom.x, mZoom.y, mZoom.z );
-//    matWorld *= matScale;
-
-//    //º∆À„–˝◊™æÿ’Û
-//    D3DXMatrixRotationYawPitchRoll ( &matRotation, mBodyRote.y, mBodyRote.x, mBodyRote.z );
-//    matWorld *= matRotation;
-
-//}
-
-//D3DXVec3Normalize ( &mWorld.mRight, &mWorld.mRight );
-//D3DXVec3Normalize ( &mWorld.mDir, &mWorld.mDir );
-//D3DXVec3Normalize ( &mWorld.mUpon, &mWorld.mUpon );
-
-//matWorld *= D3DXMATRIX (
-//           mWorld.mRight.x, mWorld.mRight.y, mWorld.mRight.z, 0,
-//           mWorld.mUpon.x, mWorld.mUpon.y, mWorld.mUpon.z, 0,
-//           mWorld.mDir.x, mWorld.mDir.y, mWorld.mDir.z, 0,
-//           0.0f, 0.0f, 0.0f, 1.0f
-//       );
-
-////º∆À„∆Ω“∆æÿ’Û
-//if ( bForTrans )
-//{
-//    D3DXMatrixTranslation ( &matTranslation, mWorld.mTranslate.x, mWorld.mTranslate.y, mWorld.mTranslate.z );
-//}
-//else
-//{
-//    D3DXMatrixTranslation ( &matTranslation, mWorld.mTranslate.x + mBodyPass.x * mZoom.x, mWorld.mTranslate.y + mBodyPass.y * mZoom.y, mWorld.mTranslate.z + mBodyPass.z * mZoom.z );
-//}
-
-//out *= matTranslation;
-//}
 
 void GComponentTrans::updateWorld ( const GMatrix& parentWorldMat )
 {

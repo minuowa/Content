@@ -57,7 +57,6 @@ public:
 	void setView();
 	void setProj();
 	void update ( float fPass );
-	void destroy ( CGameStaticObj *pObj );
 	bool saveScene ( CChar* xmlFile );
 	bool loadScene ( const char* xmlFile );
 	void addStaticObj ( GNode* node );

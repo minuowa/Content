@@ -62,18 +62,11 @@ bool GUINode::recreate()
 
 bool GUINode::render()
 {
-    if ( !__super::render() )
+    if ( !mNodeState[eObjState_Render] )
         return false;
-    mIB.set();
-    mVB.set();
     if ( mTextureProp )
-    {
-        D9DEVICE->GetDvc()->SetTexture ( 0,  mTextureProp->getTexture() );
-        D9DEVICE->renderFirstGraph ( mTextureProp != nullptr );
-    }
-    D9DEVICE->renderFirstGraph ( mTextureProp != nullptr );
-    mGraph.draw();
-    return true;
+        mTextureProp->set ( 0 );
+    return __super::render();
 }
 
 void GUINode::setRect ( long x, long y, long w, long h )

@@ -100,14 +100,14 @@ void GGame::render( )
     eGameScene gs = mSceneMgr->mSceneMachine.GetNowScene();
 
     mSceneMgr->setView();
-    switch ( D9DEVICE->TestDevice() )
+    switch ( D9Device->TestDevice() )
     {
     case D3D_OK:
     case D3DERR_DEVICELOST:
         break;
     case D3DERR_DEVICENOTRESET:
     {
-        D9DEVICE->OnDeviceLost();
+        D9Device->OnDeviceLost();
     }
     break;
     default:
@@ -116,7 +116,7 @@ void GGame::render( )
     }
     break;
     }
-    if ( D9DEVICE->BeginRender() )
+    if ( D9Device->BeginRender() )
     {
         switch ( gs )
         {
@@ -140,7 +140,7 @@ void GGame::render( )
             break;
         }
 
-        D9DEVICE->EndRender();
+        D9Device->EndRender();
     }
 
 }

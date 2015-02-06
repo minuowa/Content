@@ -6,6 +6,7 @@ GTimer::GTimer ( void )
     : mAccuTime ( 0 )
     , mFrameTime ( ~0 )
     , mLastTime ( 0 )
+    , mFPSFrameCount ( 0 )
 {
     TextMgr->addText ( &mFPSString );
 }

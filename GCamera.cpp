@@ -26,25 +26,25 @@ GCamera::GCamera ( void )
 
     mView = NORMALMATRIX;
 
-    D9DEVICE->mOnResetDevice += this;
+    D9Device->mOnResetDevice += this;
 }
 
 GCamera::~GCamera ( void )
 {
     dSafeDelete ( mFrustum );
     dSafeDelete ( mCuller );
-    D9DEVICE->mOnResetDevice -= this;
+    D9Device->mOnResetDevice -= this;
 }
 
 void GCamera::setProj()
 {
-    mAspect = ( ( float ) ( D9DEVICE->mWidth ) ) / ( ( float ) ( D9DEVICE->mHeight ) );
+    mAspect = ( ( float ) ( D9Device->mWidth ) ) / ( ( float ) ( D9Device->mHeight ) );
 
     D3DXMatrixPerspectiveFovLH ( &mProj, mFieldOfView, mAspect, mNear, mFar );
 
-    if ( D9DEVICE != NULL )
+    if ( D9Device != NULL )
     {
-        D9DEVICE->GetDvc()->SetTransform ( D3DTS_PROJECTION, &mProj );
+        D9Device->GetDvc()->SetTransform ( D3DTS_PROJECTION, &mProj );
     }
     if ( mFrustum == nullptr )
     {
@@ -71,9 +71,9 @@ void GCamera::setView()
 
     D3DXMatrixLookAtLH ( &mView, &getTrans()->getWorldTranslate(), &vLookAtPos, &getTrans()->getWorldUpon() );
 
-    if ( D9DEVICE != NULL )
+    if ( D9Device != NULL )
     {
-        D9DEVICE->GetDvc()->SetTransform ( D3DTS_VIEW, &mView );
+        D9Device->GetDvc()->SetTransform ( D3DTS_VIEW, &mView );
     }
 }
 
@@ -87,7 +87,7 @@ void GCamera::getInput ( DWORD frameTimeMs )
 
     POINT pt = INPUTSYSTEM.getMousePoint();
 
-    if ( pt.x < 0 || pt.x > D9DEVICE->mWidth || pt.y < 0 || pt.y > D9DEVICE->mHeight )
+    if ( pt.x < 0 || pt.x > D9Device->mWidth || pt.y < 0 || pt.y > D9Device->mHeight )
     {
         return;			//鼠标在客户区外面就不执行GetInput
     }
@@ -184,7 +184,7 @@ void GCamera::update()
 
 void GCamera::onCallBack ( const CXDelegate& delgate, CXEventArgs* )
 {
-    if ( delgate == D9DEVICE->mOnResetDevice )
+    if ( delgate == D9Device->mOnResetDevice )
     {
         setProj();
     }

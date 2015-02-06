@@ -13,7 +13,7 @@ bool GTexture::createFromFile ( const char* name )
     mFileName = name;
     dSafeRelease ( mD3DTexture );
     D3DXCreateTextureFromFileExA (
-        D9DEVICE->GetDvc(),
+        D9Device->GetDvc(),
         name,
         D3DX_FROM_FILE,
         D3DX_FROM_FILE,
@@ -41,6 +41,21 @@ GTexture::~GTexture()
 void GTexture::destory()
 {
     delete this;
+}
+
+void GTexture::set ( int stage )
+{
+    bool useTexture = mD3DTexture != nullptr;
+
+    D9Device->GetDvc()->SetTexture ( stage,  mD3DTexture );
+
+    D9Device->GetDvc()->SetTextureStageState ( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
+    D9Device->GetDvc()->SetTextureStageState ( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
+    D9Device->GetDvc()->SetTextureStageState ( 0, D3DTSS_COLOROP, useTexture ? D3DTOP_MODULATE : D3DTOP_SELECTARG2 );
+
+    D9Device->GetDvc()->SetTextureStageState ( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
+    D9Device->GetDvc()->SetTextureStageState ( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
+    D9Device->GetDvc()->SetTextureStageState ( 0, D3DTSS_ALPHAOP, useTexture ? D3DTOP_MODULATE : D3DTOP_SELECTARG2 );
 }
 
 

@@ -10,6 +10,7 @@ public:
 
 	inline IDirect3DTexture9* getTexture();
 
+	void set(int stage);
 	void destory();
 public:
 	GString			mFileName;

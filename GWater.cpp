@@ -32,7 +32,7 @@ bool GWater::recreate()
 
 	recreateMetrialInfo();
 
-	dSetMeshNormal ( mMeshBufferNode->getMesh(), D9DEVICE->GetDvc() );
+	dSetMeshNormal ( mMeshBufferNode->getMesh(), D9Device->GetDvc() );
 
 	recreateInsectMesh();
 
@@ -168,7 +168,7 @@ void GWater::recreateGraphInfo()
 	hr = D3DXCreateMeshFVF (
 		mCellCount * mCellCount * 2,
 		( mCellCount + 1 ) * ( mCellCount + 1 ),
-		D3DXMESH_32BIT | D3DXMESH_MANAGED, FVFSea, D9DEVICE->GetDvc(),
+		D3DXMESH_32BIT | D3DXMESH_MANAGED, FVFSea, D9Device->GetDvc(),
 		&mesh
 		);
 
@@ -264,8 +264,8 @@ void GWater::setPointCount ( unsigned int cnt )
 
 bool GWater::render()
 {
-	D9DEVICE->openAllLight ( true, false );
-	D9DEVICE->openAlphaBlend(true);
+	D9Device->openAllLight ( true, false );
+	D9Device->openAlphaBlend(true);
 	return __super::render();
 }
 

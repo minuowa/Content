@@ -92,7 +92,7 @@ GMeshBufferNode* GMeshManager::CreateFormFile ( const char* fileName )
 
 	hr = D3DXLoadMeshFromXA ( fileName,
 		D3DXMESH_MANAGED | D3DXMESH_32BIT,
-		D9DEVICE->GetDvc(), &pAdj, &pMat, NULL, &LnAttrNum, &rootMesh );
+		D9Device->GetDvc(), &pAdj, &pMat, NULL, &LnAttrNum, &rootMesh );
 
 	CXASSERT_RESULT_FALSE ( hr );
 

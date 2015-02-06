@@ -62,10 +62,10 @@ bool GRectNode::render()
 {
     if ( !mNodeState[eObjState_Render] )
         return false;
-    D9DEVICE->GetDvc()->SetRenderState ( D3DRS_POINTSIZE, 15 );
     mIB.set();
     mVB.set();
-    mGraph.draw();
+    if ( mIB.isValid() && mVB.isValid() )
+        mGraph.draw();
     return true;
 }
 

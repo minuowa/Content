@@ -10,15 +10,15 @@ GUIManager::GUIManager ( void )
     mRootNode = new GUINode;
     mRootNode->setState ( eUINodeState_CanHover, false );
     resetNode();
-    D9DEVICE->mOnLostDevice += this;
-    D9DEVICE->mOnResetDevice += this;
+    D9Device->mOnLostDevice += this;
+    D9Device->mOnResetDevice += this;
 }
 
 
 GUIManager::~GUIManager ( void )
 {
-    D9DEVICE->mOnLostDevice -= this;
-    D9DEVICE->mOnResetDevice -= this;
+    D9Device->mOnLostDevice -= this;
+    D9Device->mOnResetDevice -= this;
     dSafeDelete ( mRootNode );
 }
 
@@ -28,16 +28,16 @@ void GUIManager::beginRender()
 
 void GUIManager::draw()
 {
-    D9DEVICE->beginRenderUI();
+    D9Device->beginRenderUI();
     mRootNode->draw();
 }
 
 void GUIManager::onCallBack ( const CXDelegate& d, CXEventArgs* e )
 {
-    if ( d == D9DEVICE->mOnLostDevice )
+    if ( d == D9Device->mOnLostDevice )
     {
     }
-    else if ( d == D9DEVICE->mOnResetDevice )
+    else if ( d == D9Device->mOnResetDevice )
     {
         resetNode();
     }
@@ -46,7 +46,7 @@ void GUIManager::onCallBack ( const CXDelegate& d, CXEventArgs* e )
 void GUIManager::resetNode()
 {
     mRootNode->setColor ( 0 );
-    mRootNode->setRect ( 0, 0, D9DEVICE->GetScreenWidth(), D9DEVICE->GetScreenHeight() );
+    mRootNode->setRect ( 0, 0, D9Device->GetScreenWidth(), D9Device->GetScreenHeight() );
 }
 
 void GUIManager::processInput()

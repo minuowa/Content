@@ -1,23 +1,21 @@
-#pragma once
-
-
-class GFrameWork:public CXCallBack
+#ifndef GFrameWork_h__
+#define GFrameWork_h__
+class GFrameWork: public CXCallBack
 {
 public:
-	GFrameWork(void);
-	virtual ~GFrameWork(void);
+    GFrameWork ( void );
+    virtual ~GFrameWork ( void );
 public:
-	virtual bool init(HWND mainWnd);//初始化游戏  
-	void active(bool active);
-	bool isActive() const;
-	HWND getMainWin() const { return mMainWin; }
-	void resize(int w,int h);
+    virtual bool init ( HWND mainWnd ); //初始化游戏
+    void active ( bool active );
+    bool isActive() const;
+    HWND getMainWin() const;
+    void resize ( int w, int h );
 public:
-	HWND mMainWin;//主窗口句柄
-	HINSTANCE mInst;//Game进程 
-	bool mIsActive;
+    HWND mMainWin;
+    HINSTANCE mInst;
+    bool mIsActive;
 
-	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+    static LRESULT CALLBACK WndProc ( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam );
 };
-
-//窗口函数声明
+#endif // GFrameWork_h__

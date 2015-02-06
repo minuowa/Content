@@ -12,6 +12,18 @@ struct HitInfo;
 class GHeightMap;
 class GTerrainBrush;
 class GEffect;
+enum eTerrainState
+{
+	eTerrainState_Editable,
+	eTerrainState_EditFaceable,
+	eTerrainState_EditFacing,
+	eTerrainState_EditHeightable,
+	eTerrainState_EditHeighting,
+	eTerrrinState_UsingAlphasplatMap,
+	eTerrainState_Repairable,
+	eTerrainState_DisplayRepairArea,
+	eTerrainState_DisplayRepairAreaOnly,
+};
 class GTerrain: public GRenderEntity
 {
     DeclareEditorType ( GTerrain );
@@ -89,16 +101,13 @@ protected:
     float mLODFactor;
 
     bool mLODMode;
-    bool ReapirLevelTwo;
 
     GBitmap* mAlphaSplatMap ;
-    bool mUsingAlphasplatMap ;
-    bool BeSaveAlphaSplat ;
     bool mUsingHeightMap  ;
 
-    GString File_AlphaSplat ;
+    GString mFileAlphaSplat ;
     GString mFileEffect ;
-    GString File_BrushConfig ;
+    GString mFileBrushConfig ;
     GString mFileHeightMap;
 
     GString mTerrainCountString;
@@ -108,15 +117,11 @@ protected:
     GEffect* mTerrainEffect ;
     CXMap<GString, HANDLE> Paras ;
     CXMap<GString, GTexture*> Texts;
-    HANDLE EH_Diffuse ;
 
     float DisFactor;
     double Power;
 
-
-    bool Editable ;
-    bool EditHeight ;
-    bool EditFace  ;
+	CXBitArray32 mTerrainState;
     float FogStart;
     float FogEnd;
     float FogDensity;

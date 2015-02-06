@@ -91,7 +91,7 @@ bool GFrameWork::isActive() const
 
 void GFrameWork::resize ( int w, int h )
 {
-	D9DEVICE->OnResize ( w, h );
+	D9Device->OnResize ( w, h );
 }
 
 LRESULT CALLBACK GFrameWork::WndProc ( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
@@ -141,5 +141,10 @@ LRESULT CALLBACK GFrameWork::WndProc ( HWND hWnd, UINT message, WPARAM wParam, L
 	}
 
 	return 0;
+}
+
+HWND GFrameWork::getMainWin() const
+{
+	return mMainWin;
 }
 

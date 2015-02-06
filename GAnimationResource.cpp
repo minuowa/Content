@@ -121,8 +121,8 @@ void GAnimationResource::updateBones()
 bool GAnimationResource::createFromFile ( const char* name )
 {
     CXASSERT ( name );
-    GAllocateHierarchy Alloc ( D9DEVICE->GetDvc(), name );
-    HRESULT hr  = D3DXLoadMeshHierarchyFromXA ( name, D3DXMESH_MANAGED, D9DEVICE->GetDvc(), &Alloc, NULL,
+    GAllocateHierarchy Alloc ( D9Device->GetDvc(), name );
+    HRESULT hr  = D3DXLoadMeshHierarchyFromXA ( name, D3DXMESH_MANAGED, D9Device->GetDvc(), &Alloc, NULL,
                   &mFrameRoot, &mAnimationController );
     CXASSERT_RESULT_FALSE ( hr );
     updateBones();

@@ -31,15 +31,12 @@ GTerrain::GTerrain ( )
     mHeightMap = nullptr;
     mRootNode = nullptr;
     mLODMode = false;
-    ReapirLevelTwo = true;
     mAlphaSplatMap = nullptr;
-    mUsingAlphasplatMap = true;
-    BeSaveAlphaSplat = false;
-    File_AlphaSplat = "..\\Res\\Terrain\\TerrainAlphaSplat.png";
+
+    mFileAlphaSplat = "..\\Res\\Terrain\\TerrainAlphaSplat.png";
     mFileEffect = "..\\Res\\Terrain\\TerrainEffect.fx";
-    File_BrushConfig = "..\\Res\\Terrain\\Brushs\\Brushs.xml";
+    mFileBrushConfig = "..\\Res\\Terrain\\Brushs\\Brushs.xml";
     mTerrainEffect = nullptr;
-    EH_Diffuse = nullptr;
     mOriginalIndexBuffer = nullptr;
     mDynamicIndexBuffer = nullptr;
     mIndexBuffer = nullptr;
@@ -82,12 +79,12 @@ GTerrain::GTerrain ( )
 
 void GTerrain::LoadAlphaMap()
 {
-    if ( !dIsFileExist ( File_AlphaSplat.c_str() ) )
+    if ( !dIsFileExist ( mFileAlphaSplat.c_str() ) )
     {
-        mUsingAlphasplatMap = false;
+        mTerrainState.setBit ( eTerrrinState_UsingAlphasplatMap, false );
         return;
     }
-    mAlphaSplatMap = new GBitmap ( File_AlphaSplat );
+    mAlphaSplatMap = new GBitmap ( mFileAlphaSplat );
 
     if ( mAlphaSplatMap->Width != getLineCount() )
     {
@@ -116,7 +113,7 @@ bool GTerrain::loadBrushs()
 {
     dSafeDelete ( mTerrainBrush );
     mTerrainBrush = new GTerrainBrush;
-    mTerrainBrush->setXMLFile ( File_BrushConfig.c_str() );
+    mTerrainBrush->setXMLFile ( mFileBrushConfig.c_str() );
     return mTerrainBrush->recreate();
 }
 
@@ -139,7 +136,7 @@ bool GTerrain::render()
 
     //必须的，否则默认使用顶点颜色做光照
     //D9DEVICE->openAllLight ( true );
-    D9DEVICE->openAlphaBlend ( false );
+    D9Device->openAlphaBlend ( false );
     mTerrainEffect->setParams();
     mTerrainEffect->draw();
 
@@ -148,7 +145,7 @@ bool GTerrain::render()
 
 void GTerrain::createVertexBuffer()
 {
-    D9DEVICE->GetDvc()->CreateVertexBuffer (
+    D9Device->GetDvc()->CreateVertexBuffer (
         ( mLineCount ) * ( mLineCount ) * sizeof ( EXVertex )
         , 0, EXVertex::Format
         , D3DPOOL_MANAGED/*D3DPOOL_MANAGED*/
@@ -188,7 +185,7 @@ void GTerrain::createVertexBuffer()
                 pos.Wights = D3DXVECTOR4 ( gRandom.randF ( fh * 0.5, fh * 0.75 ), gRandom.randF ( fh * 0.75, fh * 1 ), gRandom.randF ( fh * 0.25, fh * 0.5 ), gRandom.randF ( 0, fh * 0.25 ) );
                 //pos.Wights = D3DXVECTOR4 ( 1, 1, 1, 1 );
 
-                if ( mUsingAlphasplatMap )
+                if ( mTerrainState[eTerrrinState_UsingAlphasplatMap] )
                 {
                     //CXColor cl = AlphaSplatMap->GetPixel ( j, QNode::LineCount - i - 1 );
                 }
@@ -364,7 +361,7 @@ void GTerrain::smoothProcess()
 
 void GTerrain::AlterHeight ( HitInfo* HI, EXVertex* MyVB )
 {
-    if ( HI == nullptr || MyVB == nullptr || !EditHeight )
+    if ( HI == nullptr || MyVB == nullptr || !mTerrainState[eTerrainState_EditHeightable] )
         return;
 
     float HeightDelta = 0.01f;
@@ -398,7 +395,7 @@ bool GTerrain::CheckIndexInvalid ( u32 Index )
 
 void GTerrain::AlterFace ( HitInfo* HI, EXVertex* MyVB )
 {
-    if ( HI == nullptr || MyVB == nullptr || !EditFace )
+    if ( HI == nullptr || MyVB == nullptr || !!mTerrainState[eTerrainState_EditFaceable] )
         return;
     mAlterFaceIndexListMap.clear();
 
@@ -638,7 +635,7 @@ void GTerrain::SaveAlphaSplat()
 
 GTerrain::~GTerrain()
 {
-	TextMgr->removeText ( &mTerrainCountString );
+    TextMgr->removeText ( &mTerrainCountString );
 
     this->clear();
 }
@@ -758,7 +755,7 @@ bool GTerrain::createNodes()
     mDynamicIndexBuffer->setElementByteCount ( sizeof ( u32 ) );
     mDynamicIndexBuffer->reallocateByElementCount ( mCellCount * mCellCount * 2 * 3 * 2 );
 
-    D9DEVICE->GetDvc()->CreateIndexBuffer ( mCellCount * mCellCount * 2 * 3 * 2 * sizeof ( DWORD ), 0, D3DFMT_INDEX32, D3DPOOL_MANAGED, &mIndexBuffer, 0 );
+    D9Device->GetDvc()->CreateIndexBuffer ( mCellCount * mCellCount * 2 * 3 * 2 * sizeof ( DWORD ), 0, D3DFMT_INDEX32, D3DPOOL_MANAGED, &mIndexBuffer, 0 );
     mRootNode = new GTerrainNode();
     mRootNode->build ( this, mRootLevel );
 
@@ -773,19 +770,19 @@ bool GTerrain::createNodes()
 bool GTerrain::createVertexDeclaretion()
 {
     dSafeRelease ( mVertexDeclartion );
-    D9DEVICE->GetDvc()->CreateVertexDeclaration ( gTerrainVertexDeclartion, &mVertexDeclartion );
+    D9Device->GetDvc()->CreateVertexDeclaration ( gTerrainVertexDeclartion, &mVertexDeclartion );
     return mVertexDeclartion != nullptr;
 }
 
 void GTerrain::renderNodes()
 {
-    D9DEVICE->GetDvc()->SetStreamSource ( 0, mVertexBuffer, 0, sizeof ( EXVertex ) );
-    D9DEVICE->GetDvc()->SetVertexDeclaration ( mVertexDeclartion );
+    D9Device->GetDvc()->SetStreamSource ( 0, mVertexBuffer, 0, sizeof ( EXVertex ) );
+    D9Device->GetDvc()->SetVertexDeclaration ( mVertexDeclartion );
     //D9DEVICE->GetDvc()->SetFVF ( EXVertex::Format );
     //D9DEVICE->GetDvc()->SetTexture ( 0, mTexture->getTexture() );
-    D9DEVICE->GetDvc()->SetIndices ( mIndexBuffer );
-    D9DEVICE->GetDvc()->SetMaterial ( &GMetrialData::mDefaultWhite );
-    D9DEVICE->GetDvc()->DrawIndexedPrimitive ( D3DPT_TRIANGLELIST, 0, 0, mLineCount * mLineCount, 0, mDynamicIndexBuffer->size() / 3 );
+    D9Device->GetDvc()->SetIndices ( mIndexBuffer );
+    D9Device->GetDvc()->SetMaterial ( &GMetrialData::mDefaultWhite );
+    D9Device->GetDvc()->DrawIndexedPrimitive ( D3DPT_TRIANGLELIST, 0, 0, mLineCount * mLineCount, 0, mDynamicIndexBuffer->size() / 3 );
 
 }
 

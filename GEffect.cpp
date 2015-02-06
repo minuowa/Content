@@ -20,7 +20,7 @@ bool GEffect::createFromFile ( const char* name )
     //创建顶点声明对象
 
     hr = D3DXCreateEffectFromFileA (
-             D9DEVICE->GetDvc(),
+             D9Device->GetDvc(),
              name,
              NULL,
              NULL,
@@ -55,18 +55,18 @@ void GEffect::draw()
 GEffectManager::GEffectManager()
 {
     mEffectPool = nullptr;
-    D9DEVICE->mOnLostDevice += this;
-    D9DEVICE->mOnResetDevice += this;
+    D9Device->mOnLostDevice += this;
+    D9Device->mOnResetDevice += this;
     recreate();
 }
 
 void GEffectManager::onCallBack ( const CXDelegate& delgate, CXEventArgs* )
 {
-    if ( delgate == D9DEVICE->mOnLostDevice )
+    if ( delgate == D9Device->mOnLostDevice )
     {
         clear();
     }
-    else if ( delgate == D9DEVICE->mOnResetDevice )
+    else if ( delgate == D9Device->mOnResetDevice )
     {
         recreate();
     }
@@ -74,8 +74,8 @@ void GEffectManager::onCallBack ( const CXDelegate& delgate, CXEventArgs* )
 
 GEffectManager::~GEffectManager()
 {
-    D9DEVICE->mOnLostDevice -= this;
-    D9DEVICE->mOnResetDevice -= this;
+    D9Device->mOnLostDevice -= this;
+    D9Device->mOnResetDevice -= this;
     clear();
 }
 

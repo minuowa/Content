@@ -13,11 +13,11 @@ public:
 protected:
 	GString mMeshFile;
 public:
-	inline const GString& MeshFile() const 
+	inline const GString& meshFile() const 
 	{
 		return mMeshFile; 
 	}
-	inline void MeshFile(const char* val) 
+	inline void meshFile(const char* val) 
 	{ 
 		mMeshFile = val;
 		registerAll();

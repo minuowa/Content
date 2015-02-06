@@ -73,7 +73,7 @@ public:
     CXDelegate mOnResetDevice;
 };
 typedef CXSingleton<GD9Device> GSingletonD9Device;
-#define  D9DEVICE	GSingletonD9Device::getInstance()
+#define  D9Device	GSingletonD9Device::getInstance()
 
 inline int GD9Device::TestDevice()
 {

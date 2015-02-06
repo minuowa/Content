@@ -7,7 +7,7 @@ GGameOption::GGameOption ( void )
 	: RenderBloom ( false )
 {
 	FillMode = FillSolid;
-	D9DEVICE->mOnResetDevice += this;
+	D9Device->mOnResetDevice += this;
 	updateRenderState();
 }
 
@@ -39,13 +39,13 @@ void GGameOption::updateRenderState()
 	switch ( FillMode )
 	{
 	case FillPoint:
-		D9DEVICE->GetDvc()->SetRenderState ( D3DRS_FILLMODE, D3DFILL_POINT );
+		D9Device->GetDvc()->SetRenderState ( D3DRS_FILLMODE, D3DFILL_POINT );
 		break;
 	case FillSolid:
-		D9DEVICE->GetDvc()->SetRenderState ( D3DRS_FILLMODE, D3DFILL_SOLID );
+		D9Device->GetDvc()->SetRenderState ( D3DRS_FILLMODE, D3DFILL_SOLID );
 		break;
 	case FillWire:
-		D9DEVICE->GetDvc()->SetRenderState ( D3DRS_FILLMODE, D3DFILL_WIREFRAME );
+		D9Device->GetDvc()->SetRenderState ( D3DRS_FILLMODE, D3DFILL_WIREFRAME );
 		break;
 	default:
 		break;
@@ -54,7 +54,7 @@ void GGameOption::updateRenderState()
 
 void GGameOption::onCallBack ( const CXDelegate& delegate, CXEventArgs* )
 {
-	if ( delegate == D9DEVICE->mOnResetDevice )
+	if ( delegate == D9Device->mOnResetDevice )
 	{
 		updateRenderState();
 	}

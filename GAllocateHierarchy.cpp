@@ -306,7 +306,7 @@ HRESULT GAllocateHierarchy::GenerateSkinnedMesh ( D3DXMeshContainerEX *pMeshCont
 	D3DCAPS9 d3dCap;
 	ZeroMemory ( &d3dCap, sizeof ( d3dCap ) );
 
-	D9DEVICE->GetDvc()->GetDeviceCaps ( &d3dCap );
+	D9Device->GetDvc()->GetDeviceCaps ( &d3dCap );
 
 	if ( pMeshContainerEx->pSkinInfo == NULL )
 	{
@@ -364,7 +364,7 @@ HRESULT GAllocateHierarchy::GenerateSkinnedMesh ( D3DXMeshContainerEX *pMeshCont
 			(
 			pMeshContainerEx->MeshData.pMesh->GetOptions() | D3DXMESH_SOFTWAREPROCESSING,
 			pMeshContainerEx->MeshData.pMesh->GetFVF(),
-			D9DEVICE->GetDvc(), &pMeshTmp
+			D9Device->GetDvc(), &pMeshTmp
 			);
 
 		if ( FAILED ( hr ) )

@@ -89,17 +89,6 @@ void GSceneManager::update ( float fPass )
     }
 }
 
-void GSceneManager::destroy ( CGameStaticObj *pObj )
-{
-    GString sConfigFile;
-    sConfigFile.Format ( "Data\\StaticObj\\Save\\StaticObj%03d.txt", pObj->m_nObjID );
-
-    if ( dIsFileExist ( sConfigFile.c_str() ) )
-    {
-        DeleteFileA ( sConfigFile );
-    }
-
-}
 
 bool GSceneManager::saveScene ( CChar* xmlFile )
 {

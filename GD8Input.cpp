@@ -113,8 +113,8 @@ POINT GD8Input::getMousePoint()
     float fWidth = ( float ) ( rcNow.right - rcNow.left );
     float fHeight = ( float ) ( rcNow.bottom - rcNow.top );
 
-    pt.x *= ( ( float ) D9DEVICE->mWidth ) / fWidth;
-    pt.y *= ( ( float ) D9DEVICE->mHeight ) / fHeight;
+    pt.x *= ( ( float ) D9Device->mWidth ) / fWidth;
+    pt.y *= ( ( float ) D9Device->mHeight ) / fHeight;
 
     return pt;
 }

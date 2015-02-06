@@ -6,8 +6,8 @@
 
 void GMetrialData::set()
 {
-    D9DEVICE->GetDvc()->SetTexture ( 0, mTexture->getTexture() );
-    D9DEVICE->GetDvc()->SetMaterial ( &mMat );
+    D9Device->GetDvc()->SetTexture ( 0, mTexture->getTexture() );
+    D9Device->GetDvc()->SetMaterial ( &mMat );
 }
 
 void GMetrialData::setTexture ( const char* fileName )
@@ -39,8 +39,8 @@ D3DMATERIAL9 GMetrialData::mDefaultWhite =
 
 void GGraphVertexBuffer::set()
 {
-    D9DEVICE->GetDvc()->SetStreamSource ( 0, mD9VertexBuffer, 0, mElementSize );
-    D9DEVICE->GetDvc()->SetFVF ( mFVF );
+    D9Device->GetDvc()->SetStreamSource ( 0, mD9VertexBuffer, 0, mElementSize );
+    D9Device->GetDvc()->SetFVF ( mFVF );
 }
 
 void GGraphVertexBuffer::release()
@@ -61,7 +61,7 @@ bool GGraphVertexBuffer::recreate ( D3DPOOL poolType )
     CXASSERT_RETURN_FALSE ( mElementCount );
     CXASSERT_RETURN_FALSE ( mFVF );
 
-    D9DEVICE->GetDvc()->CreateVertexBuffer (
+    D9Device->GetDvc()->CreateVertexBuffer (
         allSize()
         , 0
         , mFVF
@@ -101,7 +101,7 @@ GGraphVertexBuffer::GGraphVertexBuffer()
 
 void GGraphIndexBuffer::set()
 {
-    D9DEVICE->GetDvc()->SetIndices ( mD9IndexBuffer );
+    D9Device->GetDvc()->SetIndices ( mD9IndexBuffer );
 }
 
 void GGraphIndexBuffer::release()
@@ -112,7 +112,7 @@ void GGraphIndexBuffer::release()
 bool GGraphIndexBuffer::recreate ( D3DPOOL poolType )
 {
     CXCheck ( mIndexCount );
-    D9DEVICE->GetDvc()->CreateIndexBuffer (
+    D9Device->GetDvc()->CreateIndexBuffer (
         mIndexCount * sizeof ( DWORD )
         , 0
         , D3DFMT_INDEX32
@@ -156,7 +156,7 @@ GGraphPrimitive::GGraphPrimitive()
 void GGraphPrimitive::draw()
 {
     CXCheck ( mVertexCount );
-    D9DEVICE->GetDvc()->DrawIndexedPrimitive ( mType, 0, 0, *mVertexCount, 0, mPrimitiveCount );
+    D9Device->GetDvc()->DrawIndexedPrimitive ( mType, 0, 0, *mVertexCount, 0, mPrimitiveCount );
 }
 
 GGraphPrimitive::~GGraphPrimitive()

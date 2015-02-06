@@ -160,7 +160,7 @@ ID3DXMesh * GStillEntity::recreateInsectMesh()
     {
         mMeshBufferNode->getMesh()->CloneMeshFVF (
             mMeshBufferNode->getMesh()->GetOptions(),
-            D3DFVF_XYZ, D9DEVICE->GetDvc(), &mMeshForInsect
+            D3DFVF_XYZ, D9Device->GetDvc(), &mMeshForInsect
         );
     }
 
@@ -287,8 +287,8 @@ bool GStillEntity::pick ( const POINT& pt )
 
     D3DXMATRIX	matView, matProj;
 
-    D9DEVICE->GetDvc()->GetTransform ( D3DTS_VIEW, &matView );
-    D9DEVICE->GetDvc()->GetTransform ( D3DTS_PROJECTION, &matProj );
+    D9Device->GetDvc()->GetTransform ( D3DTS_VIEW, &matView );
+    D9Device->GetDvc()->GetTransform ( D3DTS_PROJECTION, &matProj );
 
     ////射线的起点为眼睛（在视图空间中为坐标原点（0,0,0））
     D3DXVECTOR4 vOrigin ( 0, 0, 0, 1 );
@@ -297,8 +297,8 @@ bool GStillEntity::pick ( const POINT& pt )
     D3DXVECTOR4 vDir;
 
     //将鼠标位置从2D平面转换到3D的视图空间中
-    vDir.x = ( ( ( 2.0f * pt.x ) / D9DEVICE->mWidth ) - 1 ) / matProj._11;
-    vDir.y = - ( ( ( 2.0f * pt.y ) / D9DEVICE->mHeight ) - 1 ) / matProj._22;
+    vDir.x = ( ( ( 2.0f * pt.x ) / D9Device->mWidth ) - 1 ) / matProj._11;
+    vDir.y = - ( ( ( 2.0f * pt.y ) / D9Device->mHeight ) - 1 ) / matProj._22;
     vDir.z =  1.0f;
     vDir.w =  0.0f;
 
