@@ -22,6 +22,3 @@ inline IDirect3DTexture9* GTexture::getTexture()
 {
 	return mD3DTexture;
 }
-typedef CXSingleton<GResourceManager<GTexture>> GTextureManager;
-
-#define TextureMgr	GTextureManager::getInstance()

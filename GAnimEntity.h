@@ -1,9 +1,9 @@
 #pragma once
 #include "GAmmo.h"
-#include "XString.h"
+#include "XCharString.h"
 #include "GRenderEntity.h"
 #include "GAnimationResource.h"
-class GAnimController;
+class  GAnimController;
 class GAnimEntity: public GRenderEntity
 {
     DeclareEditorType ( GAnimEntity );

@@ -17,7 +17,7 @@ enum eButtonType
 	eButtonType_MiddleButton,
 	eButtonType_Count,
 };
-class GD9Device;
+class  GD9Device;
 class GD8Input
 {
 public:
@@ -52,7 +52,7 @@ public:
 	void FreezeMouse ( bool bFreeze );
 	void Update();
 	void Active ( bool active );
-	bool Init ( const GD9Device& device, HINSTANCE hInst, HWND hWin );
+	bool init ( const GD9Device& device, HINSTANCE hInst, HWND hWin );
 private:
 	void UpdateState();
 
@@ -72,5 +72,3 @@ private:
 	bool mActive;
 	bool mNeedClearMouseMoveDelta;
 };
-typedef CXSingleton<GD8Input> GSingletonD8Input;
-#define	INPUTSYSTEM GSingletonD8Input::getSingleton()

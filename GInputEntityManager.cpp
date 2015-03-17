@@ -23,7 +23,7 @@ void GInputEntityManager::getInput ( u32 frameTimeMS )
 {
 for ( auto i : mInputObjIDList )
     {
-        auto node = GNode::mObjectIDManager.getObj ( i );
+        auto node = GNode::getObjIDManager().getObj ( i );
         if ( node )
             node->getInput ( frameTimeMS );
         else

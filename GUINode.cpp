@@ -2,6 +2,7 @@
 #include "GUINode.h"
 #include "GD9Device.h"
 #include "GText.h"
+#include "Content.h"
 struct GUIVertex
 {
     float mX, mY, mZ, mRHW;
@@ -118,7 +119,7 @@ const CXRect& GUINode::getRect() const
 
 void GUINode::setTexture ( const char* fileName )
 {
-    mTextureProp = TextureMgr->getResource ( fileName );
+    mTextureProp =  Content::TextureMgr.getResource ( fileName );
 }
 
 bool GUINode::containPoint ( long x, long y ) const

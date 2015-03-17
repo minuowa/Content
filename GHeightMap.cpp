@@ -1,6 +1,7 @@
 #include "GGameDemoHeader.h"
 #include "GHeightMap.h"
 #include "GTexture.h"
+#include "Content.h"
 
 
 GHeightMap::GHeightMap ( float Width, float Length, float MinHeight, float MaxHeight, const char* FileName )
@@ -60,7 +61,7 @@ bool GHeightMap::load()
     D3DSURFACE_DESC surfaceDesc;    //高度图纹理表面
 
     D3DLOCKED_RECT rcLock;	//锁定的表面
-    GTexture* texture = TextureMgr->getResource ( mFileName.c_str() );
+    GTexture* texture =  Content::TextureMgr.getResource ( mFileName.c_str() );
     CXASSERT ( nullptr != texture );
     IDirect3DTexture9* d9texture = texture->getTexture();
 

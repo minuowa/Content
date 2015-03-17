@@ -1,6 +1,6 @@
 #include "GGameDemoHeader.h"
 #include "GGame.h"
-#include "XString.h"
+#include "XCharString.h"
 #include <locale.h>
 #include "XEvent.h"
 #include "GGameOption.h"
@@ -11,6 +11,7 @@
 #include "GFilmPlayer.h"
 #include "GUINode.h"
 #include "GUIManager.h"
+#include "Content.h"
 
 /******************************************************************/
 //天空在MeshBuffer中，海面和地图不在
@@ -18,8 +19,7 @@
 /******************************************************************/
 
 GGame::GGame ( void )
-    : mSceneMgr ( NULL )
-    , mpSelectObj ( NULL )
+    : mpSelectObj ( NULL )
     , mpSelectAnim ( NULL )
     , mFinished ( false )
 {
@@ -27,57 +27,55 @@ GGame::GGame ( void )
 
 GGame::~GGame ( void )
 {
-    dSafeDelete ( mSceneMgr );
-    CXSingleton<GResourceManager<GTexture>>::destoryInstance();
-    CXSingleton<GResourceManager<GAnimationResource>>::destoryInstance();
-    CXSingleton<GEffectManager>::destoryInstance();
-    CXSingleton<GMeshManager>::destoryInstance();
-    CXSingleton<GGameOption>::destoryInstance();
-    CXSingleton<GComponentFactory>::destoryInstance();
-    CXSingleton<GInputEntityManager>::destoryInstance();
-
-    CXSingleton<GFilmPlayer>::destoryInstance();
-
-    CXSingleton<GText>::destoryInstance();
-
-    CXSingleton<GD8Input>::destoryInstance();
-    CXSingleton<GD9Device>::destoryInstance();
+    //CXSingleton<GResourceManager<GTexture>>::destoryInstance();
+    //CXSingleton<GResourceManager<GAnimationResource>>::destoryInstance();
+    //CXSingleton<GEffectManager>::destoryInstance();
+    //CXSingleton<GMeshManager>::destoryInstance();
+    //CXSingleton<GGameOption>::destoryInstance();
+    //CXSingleton<GComponentFactory>::destoryInstance();
+    //CXSingleton<GInputEntityManager>::destoryInstance();
+    //CXSingleton<GFilmPlayer>::destoryInstance();
+    //CXSingleton<GText>::destoryInstance();
+    //CXSingleton<GD8Input>::destoryInstance();
+    //CXSingleton<GD9Device>::destoryInstance();
 }
 
 bool GGame::loop()
 {
     if ( mFinished )
         return false;
-    TheTimer->update();
+    Content::Timer.update();
     if ( mIsActive )
     {
-        INPUTSYSTEM.Update();
-        getInput();
+        Content::InputSystem.Update();
+        if ( !getInput() )
+            return false;
     }
     update();
     render();
     return true;
 }
 
-void GGame::getInput()
+bool GGame::getInput()
 {
-    if ( INPUTSYSTEM.IskeyUp ( DIK_ESCAPE ) )
+    if (  Content::InputSystem.IskeyUp ( DIK_ESCAPE ) )
     {
         finish();
-        return;
+        return false;
     }
-    if ( INPUTSYSTEM.IskeyUp ( DIK_TAB ) )
+    if (  Content::InputSystem.IskeyUp ( DIK_TAB ) )
     {
-        FilmPlayer->play ( "film.lua" );
+        Content::FilmPlayer.play ( "film.lua" );
     }
-    InputEntityMgr->getInput ( TheTimer->getFrameTimems() );
+    Content::InputEntityMgr.getInput ( Content::Timer.getFrameTimems() );
+    return true;
 }
 
-void GGame::update( )
+bool GGame::update()
 {
-    eGameScene gs = mSceneMgr->mSceneMachine.GetNowScene();
+    eGameScene gs =  Content::Scene.mSceneMachine.GetNowScene();
 
-    float fPass = TheTimer->getFrameTimeSec();
+    float fPass = Content::Timer.getFrameTimeSec();
 
     switch ( gs )
     {
@@ -85,29 +83,30 @@ void GGame::update( )
         break;
     case gsGame:
     {
-        FilmPlayer->process();
-        mSceneMgr->update ( fPass );
-		UIMgr->processInput();
+        Content::FilmPlayer.process();
+        Content::Scene.update ( fPass );
+        Content::UIMgr.processInput();
     }
     break;
     }
+    return true;
 }
 
 void GGame::render( )
 {
-    float fPass = TheTimer->getFrameTimeSec();
+    float fPass = Content::Timer.getFrameTimeSec();
 
-    eGameScene gs = mSceneMgr->mSceneMachine.GetNowScene();
+    eGameScene gs =  Content::Scene.mSceneMachine.GetNowScene();
 
-    mSceneMgr->setView();
-    switch ( D9Device->TestDevice() )
+    Content::Scene.setView();
+    switch (  Content::Device.TestDevice() )
     {
     case D3D_OK:
     case D3DERR_DEVICELOST:
         break;
     case D3DERR_DEVICENOTRESET:
     {
-        D9Device->OnDeviceLost();
+        Content::Device.OnDeviceLost();
     }
     break;
     default:
@@ -116,14 +115,14 @@ void GGame::render( )
     }
     break;
     }
-    if ( D9Device->BeginRender() )
+    if (  Content::Device.BeginRender() )
     {
         switch ( gs )
         {
 
         case gsLoading:
 
-            //mpUIMgr->RenderLoading( fPass );
+            //mpContent::UIMgr.RenderLoading( fPass );
 
             break;
 
@@ -135,12 +134,12 @@ void GGame::render( )
 
         case gslogin:
 
-            //mpUIMgr->RenderLogin(fPass);
+            //mpContent::UIMgr.RenderLogin(fPass);
 
             break;
         }
 
-        D9Device->EndRender();
+        Content::Device.EndRender();
     }
 
 }
@@ -155,21 +154,22 @@ bool GGame::init ( HWND mainWnd )
     //初始化鼠标
     //CXASSERT_RETURN_FALSE ( gCursor.Init() );
     //gCursor.SetNowCursor ( curNormal );
-
+    Content::initStatic();
     //初始化框架
     CXASSERT_RETURN_FALSE ( GFrameWork::init ( mainWnd ) );
     //初始化D3D设备
-    CXASSERT_RETURN_FALSE ( GSingletonD9Device::getInstance()->Init ( mMainWin ) );
-    CXASSERT_RETURN_FALSE ( GSingletonD8Input::getSingleton().Init ( GSingletonD9Device::getSingleton(), mInst, mMainWin ) );
+    CXASSERT_RETURN_FALSE ( Content::Device.init ( mMainWin ) );
+
+    CXASSERT_RETURN_FALSE ( Content::InputSystem.init ( Content::Device, mInst, mMainWin ) );
+
+    CXASSERT_RETURN_FALSE ( Content::GameOption.init() );
 
     //初始化场景管理器
-    mSceneMgr = new GSceneManager;
+    CXASSERT_RETURN_FALSE (  Content::Scene.init() );
 
-	CXASSERT_RETURN_FALSE ( mSceneMgr->init() );
+    CXASSERT_RETURN_FALSE (  Content::UIMgr.init() );
 
-    //MeshMgr.Init();
-
-	CXASSERT_RETURN_FALSE ( TextMgr->init() );
+    CXASSERT_RETURN_FALSE ( Content::Text.init() );
 
     //加载渲染对象大概3000ms
 
@@ -186,7 +186,7 @@ bool GGame::init ( HWND mainWnd )
 
     loadObj ( this );
 
-    mSceneMgr->mSceneMachine.ChangeToScene ( gsGame );
+    Content::Scene.mSceneMachine.ChangeToScene ( gsGame );
 
 
     return true;
@@ -194,7 +194,7 @@ bool GGame::init ( HWND mainWnd )
 
 void GGame::shutDown()
 {
-	CXSingleton<GGame>::destoryInstance();
+    //CXSingleton<GGame>::destoryInstance();
 }
 
 
@@ -212,22 +212,22 @@ DWORD WINAPI loadObj ( LPVOID pParam )
     }
 
     //设置投影矩阵
-    //TheSceneMgr->loadScene("gameSceneEditor.xml");
-    TheSceneMgr->setProj();
-	if (1)
-	{
-		//GUINode* uinode=new GUINode;
-		//CXASSERT_RETURN_FALSE(uinode->recreate());
-		//TheSceneMgr->addStaticObj ( uinode );
-		//getUIRootNode()->addChild(uinode);
-	}
+    // Content::Scene.loadScene("gameSceneEditor.xml");
+    Content::Scene.setProj();
+    if ( 1 )
+    {
+        //GUINode* uinode=new GUINode;
+        //CXASSERT_RETURN_FALSE(uinode->recreate());
+        // Content::Scene.addStaticObj ( uinode );
+        //getUIRootNode()->addChild(uinode);
+    }
     //if ( 1 )
     //{
     //    //创建世界坐标系
     //    //GWorldCorrd* corrd = new GWorldCorrd();
     //    //corrd->setNodeName ( "World Corrd" );
     //    //CXASSERT_RETURN_FALSE ( corrd->recreate() );
-    //    //TheSceneMgr->addStaticObj ( corrd );
+    //    // Content::Scene.addStaticObj ( corrd );
     //}
 
 
@@ -237,7 +237,7 @@ DWORD WINAPI loadObj ( LPVOID pParam )
     //    GAnimEntity *pAnimMesh = new GAnimEntity;
     //    pAnimMesh->setMediaFile ( "..\\Data\\res\\Anim\\AnimMesh0002\\A0002.X" );
     //    CXASSERT_RETURN_FALSE ( pAnimMesh->recreate() );
-    //    TheSceneMgr->addDynaObj ( pAnimMesh );
+    //     Content::Scene.addDynaObj ( pAnimMesh );
     //}
     //if ( 0 )
     //{
@@ -250,7 +250,7 @@ DWORD WINAPI loadObj ( LPVOID pParam )
     //    //sea->addQuakePoint ( 50, 0, 10.0f, 2.8f );
     //    sea->recreate();
     //    //sea->setWorldTranslate ( D3DXVECTOR3 ( 0, 1, 0 ) );
-    //    TheSceneMgr->addDynaObj ( sea );
+    //     Content::Scene.addDynaObj ( sea );
     //}
     ////gLuaScript.init();
     //if ( 1 )
@@ -288,13 +288,13 @@ DWORD WINAPI loadObj ( LPVOID pParam )
 
     //    //GTerrain* xmap=new GTerrain();
     //    //xmap->recreate();
-    //    //TheSceneMgr->addDynaObj ( xmap );
+    //    // Content::Scene.addDynaObj ( xmap );
     //}
-    ////TheSceneMgr->mEye.InitTrack( &gAnimMesh[0] );
+    //// Content::Scene.mEye.InitTrack( &gAnimMesh[0] );
 
     ////gEvent.WaitForUse(-1);
 
-    TheSceneMgr->mSceneMachine.ChangeToScene ( gsGame );
+    Content::Scene.mSceneMachine.ChangeToScene ( gsGame );
 
     return TRUE_INT;
 }
@@ -304,9 +304,9 @@ DWORD WINAPI loadObj ( LPVOID pParam )
 
 void GGame::gameRender ( float fPass )
 {
-    mSceneMgr->mSceneRootNode->draw();
-	UIMgr->draw();
-    TextMgr->drawText();
+    Content::Scene.mSceneRootNode->draw();
+    Content::UIMgr.draw();
+    Content::Text.drawText();
 }
 
 void GGame::renderEye ( float fPass )
@@ -324,11 +324,11 @@ void GGame::renderEye ( float fPass )
 
     ////sprintf(strEye,"眼睛位置--X：%.2f,Y:%.2f,Z:%.2f",mpSceneMgr->mText.mEye.mXPos.mvPos.x,mpSceneMgr->mText.mEye.mXPos.mvPos.y,mpSceneMgr->mText.mEye.mXPos.mvPos.z);
 
-    //sprintf( strEye, "摄像机速度：%.2f", mSceneMgr->mEye.mXPos.mfSpeedMove );
+    //sprintf( strEye, "摄像机速度：%.2f",  Content::Scene.mEye.mXPos.mfSpeedMove );
 
-    //mpUIMgr->mText.SetCurrentFontSize( fs12 );
+    //mpContent::UIMgr.mText.SetCurrentFontSize( fs12 );
 
-    //mpUIMgr->mText.DrawTextInRect( strEye, &rcEye, 0xffff0000, otUI, tpLeft );
+    //mpContent::UIMgr.mText.DrawTextInRect( strEye, &rcEye, 0xffff0000, otUI, tpLeft );
 
 
 
@@ -338,11 +338,11 @@ void GGame::renderEye ( float fPass )
     //{
     //    sprintf( strEye, "铁牛位置--X：%.2f,Y:%.2f,Z:%.2f，速度：%.2f", mpSelectAnim->mXPos.mvPos.x, mpSelectAnim->mXPos.mvPos.y, mpSelectAnim->mXPos.mvPos.z, mpSelectAnim->mXPos.mfSpeedMove );
 
-    //    mpUIMgr->mText.SetCurrentFontSize( fs12 );
+    //    mpContent::UIMgr.mText.SetCurrentFontSize( fs12 );
 
     //    rcEye.top += 50;
     //    rcEye.bottom += 50;
-    //    mpUIMgr->mText.DrawTextInRect( strEye, &rcEye, 0xffff0000, otUI, tpLeft );
+    //    mpContent::UIMgr.mText.DrawTextInRect( strEye, &rcEye, 0xffff0000, otUI, tpLeft );
     //}
 
 
@@ -350,28 +350,28 @@ void GGame::renderEye ( float fPass )
     //{
     //    ZeroMemory( strEye, sizeof( strEye ) );
     //    sprintf( strEye, "当前对象ID：%d", ( ( CGameStaticObj* )( mpSelectObj ) )->m_nObjID );
-    //    mpUIMgr->mText.SetCurrentFontSize( fs12 );
+    //    mpContent::UIMgr.mText.SetCurrentFontSize( fs12 );
 
     //    rcEye.top += 50;
     //    rcEye.bottom += 50;
-    //    mpUIMgr->mText.DrawTextInRect( strEye, &rcEye, 0xffff0000, otUI, tpLeft );
+    //    mpContent::UIMgr.mText.DrawTextInRect( strEye, &rcEye, 0xffff0000, otUI, tpLeft );
 
     //    ZeroMemory( strEye, sizeof( strEye ) );
     //    sprintf( strEye, "当前模型ID：%d", ( ( CGameStaticObj* )( mpSelectObj ) )->LnMeshID );
-    //    mpUIMgr->mText.SetCurrentFontSize( fs12 );
+    //    mpContent::UIMgr.mText.SetCurrentFontSize( fs12 );
 
     //    rcEye.top += 50;
     //    rcEye.bottom += 50;
-    //    mpUIMgr->mText.DrawTextInRect( strEye, &rcEye, 0xffff0000, otUI, tpLeft );
+    //    mpContent::UIMgr.mText.DrawTextInRect( strEye, &rcEye, 0xffff0000, otUI, tpLeft );
     //}
 
     //ZeroMemory( strEye, sizeof( strEye ) );
     //sprintf( strEye, "当前渲染对象数目：%d", GMeshBuffer::getSingleton().mRenderObjNum + 1 );
-    //mpUIMgr->mText.SetCurrentFontSize( fs12 );
+    //mpContent::UIMgr.mText.SetCurrentFontSize( fs12 );
 
     //rcEye.top += 50;
     //rcEye.bottom += 50;
-    //mpUIMgr->mText.DrawTextInRect( strEye, &rcEye, 0xffff0000, otUI, tpLeft );
+    //mpContent::UIMgr.mText.DrawTextInRect( strEye, &rcEye, 0xffff0000, otUI, tpLeft );
 
 }
 

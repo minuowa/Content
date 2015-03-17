@@ -14,4 +14,6 @@
 #include "GFilmPlayer.h"
 #include "GUINode.h"
 #include "GUIManager.h"
+#include "GRectNode.h"
+#include "Content.h"
 #endif // Game_h__

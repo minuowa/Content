@@ -28,7 +28,7 @@ public:
     int GetScreenWidth() const;
     int GetScreenHeight() const;
 
-    bool Init ( HWND hWnd ); //初始化3D设备
+    bool init ( HWND hWnd ); //初始化3D设备
 
     bool BeginRender();	    //开始绘制
 
@@ -72,8 +72,6 @@ public:
     CXDelegate mOnLostDevice;
     CXDelegate mOnResetDevice;
 };
-typedef CXSingleton<GD9Device> GSingletonD9Device;
-#define  D9Device	GSingletonD9Device::getInstance()
 
 inline int GD9Device::TestDevice()
 {

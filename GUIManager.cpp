@@ -3,22 +3,19 @@
 #include "GUINode.h"
 #include "GD9Device.h"
 #include "GD8Input.h"
+#include "Content.h"
 
 GUIManager::GUIManager ( void )
     : mHoverNode ( nullptr )
 {
-    mRootNode = new GUINode;
-    mRootNode->setState ( eUINodeState_CanHover, false );
-    resetNode();
-    D9Device->mOnLostDevice += this;
-    D9Device->mOnResetDevice += this;
+
 }
 
 
 GUIManager::~GUIManager ( void )
 {
-    D9Device->mOnLostDevice -= this;
-    D9Device->mOnResetDevice -= this;
+    Content::Device.mOnLostDevice -= this;
+    Content::Device.mOnResetDevice -= this;
     dSafeDelete ( mRootNode );
 }
 
@@ -28,16 +25,16 @@ void GUIManager::beginRender()
 
 void GUIManager::draw()
 {
-    D9Device->beginRenderUI();
+    Content::Device.beginRenderUI();
     mRootNode->draw();
 }
 
 void GUIManager::onCallBack ( const CXDelegate& d, CXEventArgs* e )
 {
-    if ( d == D9Device->mOnLostDevice )
+    if ( d ==  Content::Device.mOnLostDevice )
     {
     }
-    else if ( d == D9Device->mOnResetDevice )
+    else if ( d ==  Content::Device.mOnResetDevice )
     {
         resetNode();
     }
@@ -46,12 +43,12 @@ void GUIManager::onCallBack ( const CXDelegate& d, CXEventArgs* e )
 void GUIManager::resetNode()
 {
     mRootNode->setColor ( 0 );
-    mRootNode->setRect ( 0, 0, D9Device->GetScreenWidth(), D9Device->GetScreenHeight() );
+    mRootNode->setRect ( 0, 0,  Content::Device.GetScreenWidth(),  Content::Device.GetScreenHeight() );
 }
 
 void GUIManager::processInput()
 {
-    POINT pt = INPUTSYSTEM.getMousePoint();
+    POINT pt =  Content::InputSystem.getMousePoint();
     GUINode* newHover = mRootNode->getHoverNode ( pt.x, pt.y );
 
     if ( mHoverNode )
@@ -68,5 +65,20 @@ void GUIManager::processInput()
     if ( newHover )
         newHover->setState ( eUINodeState_IsHover, true );
 
-	mHoverNode = newHover;
+    mHoverNode = newHover;
+}
+
+bool GUIManager::init()
+{
+	mRootNode = new GUINode;
+	mRootNode->setState ( eUINodeState_CanHover, false );
+	resetNode();
+	Content::Device.mOnLostDevice += this;
+	Content::Device.mOnResetDevice += this;
+	return true;
+}
+
+GUINode* getUIRootNode()
+{
+	return Content::UIMgr.getRootNode();
 }

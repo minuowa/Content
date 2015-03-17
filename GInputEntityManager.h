@@ -13,5 +13,3 @@ private:
 	CXDynaArray<u32> mInputObjIDList;
 	CXDynaArray<u32> mFreeIDList;
 };
-
-#define InputEntityMgr CXSingleton<GInputEntityManager>::getInstance()

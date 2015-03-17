@@ -10,6 +10,7 @@
 #include "GText.h"
 #include "GTerrainBrush.h"
 #include "GEffect.h"
+#include "Content.h"
 
 
 GTerrain::GTerrain ( )
@@ -45,7 +46,7 @@ GTerrain::GTerrain ( )
     mUsingHeightMap = true;
     mTerrainBrush = nullptr;
     mVertexDeclartion = nullptr;
-    TextMgr->addText ( &mTerrainCountString );
+    Content::Text.addText ( &mTerrainCountString );
 
     //GxComponentFog TerrainFog = new GxComponentFog();
     //   SetComponent ( TerrainFog );
@@ -59,7 +60,7 @@ GTerrain::GTerrain ( )
     //UpdateEx += new GameUpdateEventHandler ( updateEx );
 
 
-    mTexture = TextureMgr->getResource ( "..\\Res\\Box\\001.bmp" );
+    mTexture =  Content::TextureMgr.getResource ( "..\\Res\\Box\\001.bmp" );
     dMakeColor ( mMtrl.Diffuse, 255, 255, 255, 255 );
 
 
@@ -97,7 +98,7 @@ void GTerrain::updateEx()
     if ( mLODMode )
     {
         mRootNode->reset();
-        GCamera* camera = TheSceneMgr->getCurCamera();
+        GCamera* camera =  Content::Scene.getCurCamera();
         camera->updateCullerToObjectCoord ( this );
         mRootNode->cull ( camera, this );
         mRootNode->checkShouldRepair ( this );
@@ -119,7 +120,7 @@ bool GTerrain::loadBrushs()
 
 bool GTerrain::loadEffect()
 {
-    mTerrainEffect = EffectMgr->getResource ( mFileEffect.c_str() );
+    mTerrainEffect =  Content::EffectMgr.getResource ( mFileEffect.c_str() );
     CXASSERT_RESULT_FALSE ( mTerrainEffect );
     mTerrainEffect->mDelegateRender += this;
     mTerrainEffect->mDelegateSetPara += this;
@@ -135,8 +136,8 @@ bool GTerrain::render()
         return false;
 
     //必须的，否则默认使用顶点颜色做光照
-    //D9DEVICE->openAllLight ( true );
-    D9Device->openAlphaBlend ( false );
+    // Content::Device.openAllLight ( true );
+     Content::Device.openAlphaBlend ( false );
     mTerrainEffect->setParams();
     mTerrainEffect->draw();
 
@@ -145,7 +146,7 @@ bool GTerrain::render()
 
 void GTerrain::createVertexBuffer()
 {
-    D9Device->GetDvc()->CreateVertexBuffer (
+     Content::Device.GetDvc()->CreateVertexBuffer (
         ( mLineCount ) * ( mLineCount ) * sizeof ( EXVertex )
         , 0, EXVertex::Format
         , D3DPOOL_MANAGED/*D3DPOOL_MANAGED*/
@@ -635,7 +636,7 @@ void GTerrain::SaveAlphaSplat()
 
 GTerrain::~GTerrain()
 {
-    TextMgr->removeText ( &mTerrainCountString );
+    Content::Text.removeText ( &mTerrainCountString );
 
     this->clear();
 }
@@ -755,7 +756,7 @@ bool GTerrain::createNodes()
     mDynamicIndexBuffer->setElementByteCount ( sizeof ( u32 ) );
     mDynamicIndexBuffer->reallocateByElementCount ( mCellCount * mCellCount * 2 * 3 * 2 );
 
-    D9Device->GetDvc()->CreateIndexBuffer ( mCellCount * mCellCount * 2 * 3 * 2 * sizeof ( DWORD ), 0, D3DFMT_INDEX32, D3DPOOL_MANAGED, &mIndexBuffer, 0 );
+     Content::Device.GetDvc()->CreateIndexBuffer ( mCellCount * mCellCount * 2 * 3 * 2 * sizeof ( DWORD ), 0, D3DFMT_INDEX32, D3DPOOL_MANAGED, &mIndexBuffer, 0 );
     mRootNode = new GTerrainNode();
     mRootNode->build ( this, mRootLevel );
 
@@ -770,19 +771,19 @@ bool GTerrain::createNodes()
 bool GTerrain::createVertexDeclaretion()
 {
     dSafeRelease ( mVertexDeclartion );
-    D9Device->GetDvc()->CreateVertexDeclaration ( gTerrainVertexDeclartion, &mVertexDeclartion );
+     Content::Device.GetDvc()->CreateVertexDeclaration ( gTerrainVertexDeclartion, &mVertexDeclartion );
     return mVertexDeclartion != nullptr;
 }
 
 void GTerrain::renderNodes()
 {
-    D9Device->GetDvc()->SetStreamSource ( 0, mVertexBuffer, 0, sizeof ( EXVertex ) );
-    D9Device->GetDvc()->SetVertexDeclaration ( mVertexDeclartion );
-    //D9DEVICE->GetDvc()->SetFVF ( EXVertex::Format );
-    //D9DEVICE->GetDvc()->SetTexture ( 0, mTexture->getTexture() );
-    D9Device->GetDvc()->SetIndices ( mIndexBuffer );
-    D9Device->GetDvc()->SetMaterial ( &GMetrialData::mDefaultWhite );
-    D9Device->GetDvc()->DrawIndexedPrimitive ( D3DPT_TRIANGLELIST, 0, 0, mLineCount * mLineCount, 0, mDynamicIndexBuffer->size() / 3 );
+     Content::Device.GetDvc()->SetStreamSource ( 0, mVertexBuffer, 0, sizeof ( EXVertex ) );
+     Content::Device.GetDvc()->SetVertexDeclaration ( mVertexDeclartion );
+    // Content::Device.GetDvc()->SetFVF ( EXVertex::Format );
+    // Content::Device.GetDvc()->SetTexture ( 0, mTexture->getTexture() );
+     Content::Device.GetDvc()->SetIndices ( mIndexBuffer );
+     Content::Device.GetDvc()->SetMaterial ( &GMetrialData::mDefaultWhite );
+     Content::Device.GetDvc()->DrawIndexedPrimitive ( D3DPT_TRIANGLELIST, 0, 0, mLineCount * mLineCount, 0, mDynamicIndexBuffer->size() / 3 );
 
 }
 
@@ -809,7 +810,7 @@ void GTerrain::setEffects()
 {
     assert ( mTerrainEffect );
     D3DXMATRIX mat;
-    GCamera* camera = TheSceneMgr->getCurCamera();
+    GCamera* camera =  Content::Scene.getCurCamera();
     mat = ( *camera->getView() ) * ( * camera->getProjection() );
     mTerrainEffect->getD3DEffect()->SetMatrix ( "matWorldViewProj", &mat );
     mTerrainEffect->getD3DEffect()->SetTechnique ( "TShader" );

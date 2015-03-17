@@ -13,6 +13,8 @@ public:
 	GGameOption(void);
 	~GGameOption(void);
 
+	bool init();
+
 	virtual void registerAllProperty();
 
 	virtual void onPropertyChangeEnd( void* cur );
@@ -21,13 +23,11 @@ public:
 
 	virtual void onCallBack ( const CXDelegate& , CXEventArgs*  )override;
 
+	void destroy();
+
 protected:
 	eFillMode FillMode;
 	bool RenderBloom;
 };
-
-typedef CXSingleton<GGameOption> GGameOptionSingleton;
-
-#define GameOption GGameOptionSingleton::getInstance() 
 
 #endif // GGameOption_h__

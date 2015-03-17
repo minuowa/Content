@@ -1,6 +1,6 @@
 #pragma once
-class GAnimEntity;
-class GStillEntity;
+class  GAnimEntity;
+class  GStillEntity;
 class GFilmFrame
 {
     DeclareFilmObj ( GFilmFrame );

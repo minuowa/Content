@@ -9,6 +9,7 @@
 #include "GPlatform.h"
 
 
+
 //定义常量
 
 #define NORMALMATRIX D3DXMATRIX(1.0f,0.0f,0.0f,0.0f, 0.0f,1.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,0.0f,1.0f)//单位矩阵

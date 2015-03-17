@@ -43,5 +43,3 @@ private:
 	ID3DXEffectPool* mEffectPool;
 	CXMap<GString,GEffect*> mPointerMap;
 };
-
-#define EffectMgr	CXSingleton<GEffectManager>::getInstance()

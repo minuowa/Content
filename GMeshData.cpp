@@ -2,17 +2,18 @@
 #include "GMeshData.h"
 #include "GD9Device.h"
 #include "GTexture.h"
+#include "Content.h"
 
 
 void GMetrialData::set()
 {
-    D9Device->GetDvc()->SetTexture ( 0, mTexture->getTexture() );
-    D9Device->GetDvc()->SetMaterial ( &mMat );
+     Content::Device.GetDvc()->SetTexture ( 0, mTexture->getTexture() );
+     Content::Device.GetDvc()->SetMaterial ( &mMat );
 }
 
 void GMetrialData::setTexture ( const char* fileName )
 {
-    mTexture = TextureMgr->getResource ( fileName );
+    mTexture =  Content::TextureMgr.getResource ( fileName );
     CXASSERT ( mTexture );
 }
 
@@ -39,8 +40,8 @@ D3DMATERIAL9 GMetrialData::mDefaultWhite =
 
 void GGraphVertexBuffer::set()
 {
-    D9Device->GetDvc()->SetStreamSource ( 0, mD9VertexBuffer, 0, mElementSize );
-    D9Device->GetDvc()->SetFVF ( mFVF );
+     Content::Device.GetDvc()->SetStreamSource ( 0, mD9VertexBuffer, 0, mElementSize );
+     Content::Device.GetDvc()->SetFVF ( mFVF );
 }
 
 void GGraphVertexBuffer::release()
@@ -61,7 +62,7 @@ bool GGraphVertexBuffer::recreate ( D3DPOOL poolType )
     CXASSERT_RETURN_FALSE ( mElementCount );
     CXASSERT_RETURN_FALSE ( mFVF );
 
-    D9Device->GetDvc()->CreateVertexBuffer (
+     Content::Device.GetDvc()->CreateVertexBuffer (
         allSize()
         , 0
         , mFVF
@@ -101,7 +102,7 @@ GGraphVertexBuffer::GGraphVertexBuffer()
 
 void GGraphIndexBuffer::set()
 {
-    D9Device->GetDvc()->SetIndices ( mD9IndexBuffer );
+     Content::Device.GetDvc()->SetIndices ( mD9IndexBuffer );
 }
 
 void GGraphIndexBuffer::release()
@@ -112,7 +113,7 @@ void GGraphIndexBuffer::release()
 bool GGraphIndexBuffer::recreate ( D3DPOOL poolType )
 {
     CXCheck ( mIndexCount );
-    D9Device->GetDvc()->CreateIndexBuffer (
+     Content::Device.GetDvc()->CreateIndexBuffer (
         mIndexCount * sizeof ( DWORD )
         , 0
         , D3DFMT_INDEX32
@@ -156,7 +157,7 @@ GGraphPrimitive::GGraphPrimitive()
 void GGraphPrimitive::draw()
 {
     CXCheck ( mVertexCount );
-    D9Device->GetDvc()->DrawIndexedPrimitive ( mType, 0, 0, *mVertexCount, 0, mPrimitiveCount );
+     Content::Device.GetDvc()->DrawIndexedPrimitive ( mType, 0, 0, *mVertexCount, 0, mPrimitiveCount );
 }
 
 GGraphPrimitive::~GGraphPrimitive()

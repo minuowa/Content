@@ -34,18 +34,15 @@ public:
 
 	void finish();
 
-	GSceneManager* getSceneMgr( ) const;
 private:
 
-	void getInput();
+	bool getInput();
 
-	void update();
+	bool update();
 
 	void render( );
 public:
 	CXMultiThread mMTLoadObj;
-
-	GSceneManager *mSceneMgr;
 
 	GStillEntity *mpSelectObj;
 
@@ -61,18 +58,6 @@ private:
 	bool	mFinished;
 };
 
-typedef CXSingleton<GGame> GGameSingleton;
-#define TheGame GGameSingleton::getInstance()
-#define TheSceneMgr TheGame->getSceneMgr()
-
-inline GSceneManager* GGame::getSceneMgr() const
-{
-	return mSceneMgr;
-}
-DeclareFilmToolGlobal inline GSceneManager* getSceneMgr()
-{
-	return TheGame->getSceneMgr();
-}
 DeclareFilmToolGlobal inline void logInfo ( const char* s )
 {
 	OutputDebugStringA ( "\n" );

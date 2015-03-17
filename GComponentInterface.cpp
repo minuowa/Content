@@ -4,6 +4,7 @@
 #include "GFactory.h"
 #include "GComponentFactory.h"
 #include "GNode.h"
+#include "Content.h"
 
 
 GComponentInterface::GComponentInterface ( void )
@@ -66,8 +67,8 @@ GComponentInterface* GComponentOwner::attachComponent ( eComponentType type )
 	if ( !getComponent ( type ) )
 	{
 		GComponentFactory::ComponentCreator* creator =
-			CXSingleton<GComponentFactory>::getSingleton().getCreator ( type );
-		CXASSERT_RESULT_FALSE ( creator );
+			Content::ComponentFactory.getCreator ( type );
+		CXASSERT_RETURN_FALSE ( creator );
 		mCompoents[type] = creator->mCreator();
 	}
 	return mCompoents[type];
@@ -81,7 +82,7 @@ GComponentInterface* GComponentOwner::attachComponent ( const char* name )
 		return component;
 	}
 	GComponentFactory::ComponentCreator* creator =
-		CXSingleton<GComponentFactory>::getSingleton().getCreator ( name );
+		Content::ComponentFactory.getCreator ( name );
 	CXASSERT_RESULT_FALSE ( creator );
 	CXASSERT_RESULT_FALSE ( !mCompoents[creator->mType] );
 	mCompoents[creator->mType] = creator->mCreator();

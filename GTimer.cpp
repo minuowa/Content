@@ -1,6 +1,7 @@
 #include "GGameDemoHeader.h"
 #include "GTimer.h"
 #include "GText.h"
+#include "Content.h"
 //--------------------------------------------------------------------------------------------------
 GTimer::GTimer ( void )
     : mAccuTime ( 0 )
@@ -8,12 +9,12 @@ GTimer::GTimer ( void )
     , mLastTime ( 0 )
     , mFPSFrameCount ( 0 )
 {
-    TextMgr->addText ( &mFPSString );
+    Content::Text.addText ( &mFPSString );
 }
 
 GTimer::~GTimer ( void )
 {
-    TextMgr->removeText ( &mFPSString );
+    Content::Text.removeText ( &mFPSString );
 }
 
 

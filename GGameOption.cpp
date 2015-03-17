@@ -2,60 +2,70 @@
 #include "GGameOption.h"
 #include "GEnumTypesStrings.h"
 #include "GD9Device.h"
+#include "Content.h"
 
 GGameOption::GGameOption ( void )
-	: RenderBloom ( false )
+    : RenderBloom ( false )
 {
-	FillMode = FillSolid;
-	D9Device->mOnResetDevice += this;
-	updateRenderState();
+    FillMode = FillSolid;
+    Content::Device.mOnResetDevice += this;
 }
 
 
 GGameOption::~GGameOption ( void )
 {
-	//D9DEVICE->mOnResetDevice -= this;
 }
 
 void GGameOption::registerAllProperty()
 {
-	//__super::registerAllProperty();
-	__RegisterPropertyEnum ( FillMode );
-	__RegisterProperty ( RenderBloom );
+    //__super::registerAllProperty();
+    __RegisterPropertyEnum ( FillMode );
+    __RegisterProperty ( RenderBloom );
 }
 
 void GGameOption::onPropertyChangeEnd ( void* cur )
 {
-	__super::onPropertyChangeEnd ( cur );
+    __super::onPropertyChangeEnd ( cur );
 
-	if ( &FillMode == cur )
-	{
-		updateRenderState();
-	}
+    if ( &FillMode == cur )
+    {
+        updateRenderState();
+    }
 }
 
 void GGameOption::updateRenderState()
 {
-	switch ( FillMode )
-	{
-	case FillPoint:
-		D9Device->GetDvc()->SetRenderState ( D3DRS_FILLMODE, D3DFILL_POINT );
-		break;
-	case FillSolid:
-		D9Device->GetDvc()->SetRenderState ( D3DRS_FILLMODE, D3DFILL_SOLID );
-		break;
-	case FillWire:
-		D9Device->GetDvc()->SetRenderState ( D3DRS_FILLMODE, D3DFILL_WIREFRAME );
-		break;
-	default:
-		break;
-	}
+    switch ( FillMode )
+    {
+    case FillPoint:
+        Content::Device.GetDvc()->SetRenderState ( D3DRS_FILLMODE, D3DFILL_POINT );
+        break;
+    case FillSolid:
+        Content::Device.GetDvc()->SetRenderState ( D3DRS_FILLMODE, D3DFILL_SOLID );
+        break;
+    case FillWire:
+        Content::Device.GetDvc()->SetRenderState ( D3DRS_FILLMODE, D3DFILL_WIREFRAME );
+        break;
+    default:
+        break;
+    }
 }
 
 void GGameOption::onCallBack ( const CXDelegate& delegate, CXEventArgs* )
 {
-	if ( delegate == D9Device->mOnResetDevice )
-	{
-		updateRenderState();
-	}
+    if ( delegate ==  Content::Device.mOnResetDevice )
+    {
+        updateRenderState();
+    }
+}
+
+void GGameOption::destroy()
+{
+	Content::Device.mOnResetDevice -= this;
+}
+
+bool GGameOption::init()
+{
+	updateRenderState();
+	return true;
 }

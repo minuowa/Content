@@ -36,5 +36,3 @@ private:
 
 	GString mFPSString;
 };
-typedef CXSingleton<GTimer> GTimerSingleton;
-#define TheTimer GTimerSingleton::getInstance()

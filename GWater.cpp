@@ -3,6 +3,7 @@
 #include "GMeshBuffer.h"
 #include "GD9Device.h"
 #include "GTimer.h"
+#include "Content.h"
 
 GWater::GWater ( void )
 {
@@ -32,7 +33,7 @@ bool GWater::recreate()
 
 	recreateMetrialInfo();
 
-	dSetMeshNormal ( mMeshBufferNode->getMesh(), D9Device->GetDvc() );
+	dSetMeshNormal ( mMeshBufferNode->getMesh(),  Content::Device.GetDvc() );
 
 	recreateInsectMesh();
 
@@ -57,7 +58,7 @@ void GWater::update()
 	static DWORD dwMainTime = 0;
 	static DWORD dwPicIndex = 0;
 
-	dwMainTime += TheTimer->getFrameTimems();
+	dwMainTime += Content::Timer.getFrameTimems();
 
 	if ( dwMainTime > dwPicIndex * FaceSwitchTime )
 	{
@@ -168,7 +169,7 @@ void GWater::recreateGraphInfo()
 	hr = D3DXCreateMeshFVF (
 		mCellCount * mCellCount * 2,
 		( mCellCount + 1 ) * ( mCellCount + 1 ),
-		D3DXMESH_32BIT | D3DXMESH_MANAGED, FVFSea, D9Device->GetDvc(),
+		D3DXMESH_32BIT | D3DXMESH_MANAGED, FVFSea,  Content::Device.GetDvc(),
 		&mesh
 		);
 
@@ -264,8 +265,8 @@ void GWater::setPointCount ( unsigned int cnt )
 
 bool GWater::render()
 {
-	D9Device->openAllLight ( true, false );
-	D9Device->openAlphaBlend(true);
+	 Content::Device.openAllLight ( true, false );
+	 Content::Device.openAlphaBlend(true);
 	return __super::render();
 }
 

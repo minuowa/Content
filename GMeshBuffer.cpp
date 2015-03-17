@@ -5,6 +5,7 @@
 #include "GStillEntity.h"
 #include "GSceneMgr.h"
 #include "GD9Device.h"
+#include "Content.h"
 //////////////////////////////////////////////////////////////////////////
 GMeshManager::GMeshManager ( void )
 {
@@ -37,11 +38,11 @@ bool GMeshManager::Init()
 //
 //    void *pSelectObj = NULL;
 //
-//    POINT pt = INPUTSYSTEM.GetMousePoint();
+//    POINT pt =  Content::InputSystem.GetMousePoint();
 //
 //    bool bHit = false;
 //
-//    if ( INPUTSYSTEM.GetButtonAction( btLB ) == DI_BUTTONUP )
+//    if (  Content::InputSystem.GetButtonAction( btLB ) == DI_BUTTONUP )
 //    {
 //        for ( CMeshBufferNodeArr::iterator i = mMeshList.begin(); i != mMeshList.end(); ++i )
 //        {
@@ -92,7 +93,7 @@ GMeshBufferNode* GMeshManager::CreateFormFile ( const char* fileName )
 
 	hr = D3DXLoadMeshFromXA ( fileName,
 		D3DXMESH_MANAGED | D3DXMESH_32BIT,
-		D9Device->GetDvc(), &pAdj, &pMat, NULL, &LnAttrNum, &rootMesh );
+		 Content::Device.GetDvc(), &pAdj, &pMat, NULL, &LnAttrNum, &rootMesh );
 
 	CXASSERT_RESULT_FALSE ( hr );
 

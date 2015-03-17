@@ -3,6 +3,7 @@
 #include "GTimer.h"
 #include "GFrustum.h"
 #include "GTerrainCommon.h"
+#include "Content.h"
 
 GCamera::GCamera ( void )
 {
@@ -26,26 +27,23 @@ GCamera::GCamera ( void )
 
     mView = NORMALMATRIX;
 
-    D9Device->mOnResetDevice += this;
+    Content::Device.mOnResetDevice += this;
 }
 
 GCamera::~GCamera ( void )
 {
     dSafeDelete ( mFrustum );
     dSafeDelete ( mCuller );
-    D9Device->mOnResetDevice -= this;
+    Content::Device.mOnResetDevice -= this;
 }
 
 void GCamera::setProj()
 {
-    mAspect = ( ( float ) ( D9Device->mWidth ) ) / ( ( float ) ( D9Device->mHeight ) );
+    mAspect = ( ( float ) (  Content::Device.mWidth ) ) / ( ( float ) (  Content::Device.mHeight ) );
 
     D3DXMatrixPerspectiveFovLH ( &mProj, mFieldOfView, mAspect, mNear, mFar );
 
-    if ( D9Device != NULL )
-    {
-        D9Device->GetDvc()->SetTransform ( D3DTS_PROJECTION, &mProj );
-    }
+    Content::Device.GetDvc()->SetTransform ( D3DTS_PROJECTION, &mProj );
     if ( mFrustum == nullptr )
     {
         mFrustum = new GFrustum();
@@ -71,29 +69,26 @@ void GCamera::setView()
 
     D3DXMatrixLookAtLH ( &mView, &getTrans()->getWorldTranslate(), &vLookAtPos, &getTrans()->getWorldUpon() );
 
-    if ( D9Device != NULL )
-    {
-        D9Device->GetDvc()->SetTransform ( D3DTS_VIEW, &mView );
-    }
+    Content::Device.GetDvc()->SetTransform ( D3DTS_VIEW, &mView );
 }
 
 void GCamera::getInput ( DWORD frameTimeMs )
 {
-    if ( INPUTSYSTEM.IsPressKey ( DIK_ADD ) )
+    if (  Content::InputSystem.IsPressKey ( DIK_ADD ) )
         getTrans()->mSpeedMove += 0.03f * frameTimeMs;
 
-    if ( INPUTSYSTEM.IsPressKey ( DIK_SUBTRACT ) )
+    if (  Content::InputSystem.IsPressKey ( DIK_SUBTRACT ) )
         getTrans()->mSpeedMove -= 0.03f * frameTimeMs;
 
-    POINT pt = INPUTSYSTEM.getMousePoint();
+    POINT pt =  Content::InputSystem.getMousePoint();
 
-    if ( pt.x < 0 || pt.x > D9Device->mWidth || pt.y < 0 || pt.y > D9Device->mHeight )
+    if ( pt.x < 0 || pt.x >  Content::Device.mWidth || pt.y < 0 || pt.y >  Content::Device.mHeight )
     {
         return;			//鼠标在客户区外面就不执行GetInput
     }
-    D3DXVECTOR3 vMove = INPUTSYSTEM.GetMouseMoveEX();
+    D3DXVECTOR3 vMove =  Content::InputSystem.GetMouseMoveEX();
 
-    if ( INPUTSYSTEM.IsPressKey ( DIK_A ) || INPUTSYSTEM.IsPressKey ( DIK_D ) || INPUTSYSTEM.IsPressKey ( DIK_S ) || INPUTSYSTEM.IsPressKey ( DIK_W ) )
+    if (  Content::InputSystem.IsPressKey ( DIK_A ) ||  Content::InputSystem.IsPressKey ( DIK_D ) ||  Content::InputSystem.IsPressKey ( DIK_S ) ||  Content::InputSystem.IsPressKey ( DIK_W ) )
     {
         mbTraceMan = true;
     }
@@ -117,7 +112,7 @@ void GCamera::getInput ( DWORD frameTimeMs )
 
     getTrans()->MoveStep ( vMove.z / 120 * 5.0f );
 
-    if ( INPUTSYSTEM.isPressingButton ( eButtonType_RightButton ) )
+    if (  Content::InputSystem.isPressingButton ( eButtonType_RightButton ) )
     {
         getTrans()->trunWithUpon ( -vMove.x / 800.0f );
 
@@ -179,18 +174,18 @@ bool GCamera::InitTrack ( GNode *pWorldObj )
 void GCamera::update()
 {
     __super::update();
-	getTrans()->update();
+    getTrans()->update();
 }
 
 void GCamera::onCallBack ( const CXDelegate& delgate, CXEventArgs* )
 {
-    if ( delgate == D9Device->mOnResetDevice )
+    if ( delgate ==  Content::Device.mOnResetDevice )
     {
         setProj();
     }
 }
 
-void GCamera::moveTo( const GMatrix& matrix,u32 timeMS )
+void GCamera::moveTo ( const GMatrix& matrix, u32 timeMS )
 {
     getTrans()->moveTo ( matrix, timeMS );
 }

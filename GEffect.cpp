@@ -2,6 +2,7 @@
 #include "GEffect.h"
 #include <string>
 #include "GD9Device.h"
+#include "Content.h"
 
 void GEffect::setParams()
 {
@@ -20,12 +21,12 @@ bool GEffect::createFromFile ( const char* name )
     //创建顶点声明对象
 
     hr = D3DXCreateEffectFromFileA (
-             D9Device->GetDvc(),
+             Content::Device.GetDvc(),
              name,
              NULL,
              NULL,
              D3DXSHADER_DEBUG/*|D3DXSHADER_USE_LEGACY_D3DX9_31_DLL|D3DXFX_NOT_CLONEABLE*/,
-             EffectMgr->getPool(),
+             Content::EffectMgr.getPool(),
              &mD3DEffect,
              &pErrBuffer
          );
@@ -55,18 +56,18 @@ void GEffect::draw()
 GEffectManager::GEffectManager()
 {
     mEffectPool = nullptr;
-    D9Device->mOnLostDevice += this;
-    D9Device->mOnResetDevice += this;
+    Content::Device.mOnLostDevice += this;
+    Content::Device.mOnResetDevice += this;
     recreate();
 }
 
 void GEffectManager::onCallBack ( const CXDelegate& delgate, CXEventArgs* )
 {
-    if ( delgate == D9Device->mOnLostDevice )
+    if ( delgate ==  Content::Device.mOnLostDevice )
     {
         clear();
     }
-    else if ( delgate == D9Device->mOnResetDevice )
+    else if ( delgate ==  Content::Device.mOnResetDevice )
     {
         recreate();
     }
@@ -74,8 +75,8 @@ void GEffectManager::onCallBack ( const CXDelegate& delgate, CXEventArgs* )
 
 GEffectManager::~GEffectManager()
 {
-    D9Device->mOnLostDevice -= this;
-    D9Device->mOnResetDevice -= this;
+    Content::Device.mOnLostDevice -= this;
+    Content::Device.mOnResetDevice -= this;
     clear();
 }
 
@@ -98,7 +99,7 @@ for ( auto & p: mResourceMap )
     {
         GEffect* effect = p.second;
         CXASSERT_RETURN_FALSE ( effect->recreate() );
-		effect->mDelegateOnReset.trigger();
+        effect->mDelegateOnReset.trigger();
     }
     return true;
 }

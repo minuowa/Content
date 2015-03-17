@@ -55,4 +55,3 @@ public:
 	GMeshBufferNode*	CreateFormFile( const char* fileName );
 	GMeshBufferNodeMap	mMeshMap;
 };
-#define MeshMgr CXSingleton<GMeshManager>::getSingleton()

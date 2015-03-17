@@ -1,6 +1,7 @@
 #include "GGameDemoHeader.h"
 #include "GTerrainBrush.h"
 #include "GTexture.h"
+#include "Content.h"
 
 struct GBrushString
 {
@@ -59,7 +60,7 @@ bool GTerrainBrush::recreate()
         xml_get_attr ( "File", file );
         file.insert ( 0, 1, CXFileName::PathSpliter );
         file.insert ( 0, filename.GetRelativePath() );
-        mTexture[GBrushString::getType ( stype.c_str() )] = TextureMgr->getResource ( file );
+        mTexture[GBrushString::getType ( stype.c_str() )] =  Content::TextureMgr.getResource ( file );
     }
 
     return true;
@@ -71,7 +72,7 @@ for ( auto t: mTexture )
     {
         if ( t != nullptr )
         {
-            TextureMgr->destoryResource ( t->mFileName );
+             Content::TextureMgr.destoryResource ( t->mFileName );
         }
     }
 }

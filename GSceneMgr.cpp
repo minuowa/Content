@@ -7,6 +7,7 @@
 #include "GComponentBox.h"
 #include <fstream>
 #include "GTerrain.h"
+#include "Content.h"
 
 static const char* gRootNodeName = "SceneRootNode";
 static const char* gRootDynamicNodeName = "SceneRootDynamicNode";
@@ -28,9 +29,6 @@ GSceneManager::~GSceneManager ( void )
 
 bool GSceneManager::init()
 {
-    initNodeFactory();
-    initComponentFactory();
-
     mSceneRootNode = new GNode();
     mSceneRootNode->setName ( gRootNodeName );
 
@@ -64,7 +62,7 @@ bool GSceneManager::init()
 
 void* GSceneManager::getInput ( float fPass )
 {
-    InputEntityMgr->getInput ( fPass );
+     Content::InputEntityMgr.getInput ( fPass );
     //mSceneDynamicRootNode->getInput ( fPass );
     return 0;
 }
@@ -127,55 +125,6 @@ GNode* GSceneManager::getObj ( const char* name )
     return nullptr;
 }
 
-#define __RegisterGameObjCreator(className) \
-	mGameObjFactory.registerCreator(#className,className::CreateNode)
-
-void GSceneManager::initNodeFactory()
-{
-    __RegisterGameObjCreator ( GNode );
-    __RegisterGameObjCreator ( GAnimEntity );
-    __RegisterGameObjCreator ( GStillEntity );
-    __RegisterGameObjCreator ( GRenderEntity );
-    __RegisterGameObjCreator ( GWater );
-    __RegisterGameObjCreator ( GWorldCorrd );
-    __RegisterGameObjCreator ( GTerrain );
-    __RegisterGameObjCreator ( GCamera );
-
-#if TheEditor
-    typedef GFactory<GNode>::ObjCreatorMap GNodeCreatorMap;
-    const GNodeCreatorMap& nodeCreatorMap = mGameObjFactory.getCreators();
-    GNodeCreatorMap::const_iterator walk = nodeCreatorMap.begin();
-    GNodeCreatorMap::const_iterator end = nodeCreatorMap.end();
-    for ( ; walk != end; ++walk )
-    {
-        mGameObjectTypeArray.push_back ( walk->first.c_str() );
-    }
-#endif
-}
-
-
-void GSceneManager::initComponentFactory()
-{
-    __RegisterComponentCreator ( GComponentTrans );
-    __RegisterComponentCreator ( GComponentMesh );
-    __RegisterComponentCreator ( GComponentBox );
-
-    typedef GComponentFactory::ComponentCreatorMap ComponentCreatorMap;
-    const ComponentCreatorMap& nodeCreatorMap =
-        CXSingleton<GComponentFactory>::getSingleton().getCreators();
-    ComponentCreatorMap::const_iterator walk = nodeCreatorMap.begin();
-    ComponentCreatorMap::const_iterator end = nodeCreatorMap.end();
-    for ( ; walk != end; ++walk )
-    {
-        mObjectComponentTypeArray.push_back ( walk->first.c_str() );
-    }
-}
-
-const CharStringArr& GSceneManager::getGameObjectTypes()
-{
-    return mGameObjectTypeArray;
-}
-
 void GSceneManager::setOperatorObj ( int objID )
 {
     mOperatoredObj = objID;
@@ -190,10 +139,6 @@ GNode* GSceneManager::getSceneRoot() const
     return mSceneRootNode;
 }
 
-const CharStringArr& GSceneManager::getObjectComponentTypes()
-{
-    return mObjectComponentTypeArray;
-}
 
 void GSceneManager::addObj ( GNode* node, GNode* parent/*=nullptr*/ )
 {
@@ -217,7 +162,7 @@ void GSceneManager::addObj ( const char* parentName, const char* typeName )
 
 GNode* GSceneManager::createObjByTypeName ( const char* typeName )
 {
-    return mGameObjFactory.create ( typeName );
+    return Content::GameObjFactory.create ( typeName );
 }
 GNode* getNodeByName ( CXDynaArray<GNode*>& list, const char* name )
 {

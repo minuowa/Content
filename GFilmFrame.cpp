@@ -1,6 +1,7 @@
 #include "GGameDemoHeader.h"
 #include "GFilmFrame.h"
 #include "GFilmPlayer.h"
+#include "Content.h"
 
 
 GFilmFrame::GFilmFrame ( void )
@@ -12,7 +13,7 @@ GFilmFrame::GFilmFrame ( void )
         int id = mIDGenerator.alloc();
         mName.Format ( "FilmFrame%d", id );
     }
-    while ( nullptr != FilmPlayer->getFrame ( mName.c_str() ) );
+    while ( nullptr !=  Content::FilmPlayer.getFrame ( mName.c_str() ) );
 
 }
 

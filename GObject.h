@@ -1,5 +1,5 @@
 #pragma once
-#include "XString.h"
+#include "XCharString.h"
 #include "XMap.h"
 #include "XMultimap.h"
 #include "XProp.h"

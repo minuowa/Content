@@ -3,6 +3,7 @@
 #include "GAnimationResource.h"
 #include "GD9Device.h"
 #include "GTexture.h"
+#include "Content.h"
 
 HRESULT AllocateName ( LPCTSTR Name, LPTSTR *pNewName )
 {
@@ -204,7 +205,7 @@ STDMETHODIMP GAllocateHierarchy::CreateMeshContainer
 			if ( pMeshContainerTmp->pMaterials[i].pTextureFilename != NULL )
 			{
 				GString fileName = path + CXFileName::PathSpliter + pMeshContainerTmp->pMaterials[i].pTextureFilename;
-				GTexture* gtext = TextureMgr->getResource ( fileName.c_str() );
+				GTexture* gtext =  Content::TextureMgr.getResource ( fileName.c_str() );
 				if ( gtext )
 					pMeshContainerTmp->ppTexture[i] = gtext->getTexture();
 			}
@@ -306,7 +307,7 @@ HRESULT GAllocateHierarchy::GenerateSkinnedMesh ( D3DXMeshContainerEX *pMeshCont
 	D3DCAPS9 d3dCap;
 	ZeroMemory ( &d3dCap, sizeof ( d3dCap ) );
 
-	D9Device->GetDvc()->GetDeviceCaps ( &d3dCap );
+	 Content::Device.GetDvc()->GetDeviceCaps ( &d3dCap );
 
 	if ( pMeshContainerEx->pSkinInfo == NULL )
 	{
@@ -364,7 +365,7 @@ HRESULT GAllocateHierarchy::GenerateSkinnedMesh ( D3DXMeshContainerEX *pMeshCont
 			(
 			pMeshContainerEx->MeshData.pMesh->GetOptions() | D3DXMESH_SOFTWAREPROCESSING,
 			pMeshContainerEx->MeshData.pMesh->GetFVF(),
-			D9Device->GetDvc(), &pMeshTmp
+			 Content::Device.GetDvc(), &pMeshTmp
 			);
 
 		if ( FAILED ( hr ) )

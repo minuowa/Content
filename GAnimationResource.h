@@ -71,7 +71,6 @@ public:
 	GBoneLinkerMap mBoneInfos;
 	ID3DXAnimationController* mAnimationController;			//¶¯»­¿ØÖÆÆ÷
 };
-typedef CXSingleton<GResourceManager<GAnimationResource>> GAnimationManager;
 
 
 

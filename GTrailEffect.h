@@ -1,5 +1,5 @@
 #pragma once
-#include "XString.h"
+#include "XCharString.h"
 #include "GAnimationResource.h"
 class FiGraph
 {

@@ -15,7 +15,7 @@ GD9Device::~GD9Device ( void )
     dSafeRelease ( mD3D9 );
 }
 
-bool GD9Device::Init ( HWND hWnd )
+bool GD9Device::init ( HWND hWnd )
 {
     mHwnd = hWnd;
     //后台缓冲区和客户区大小一致，避免图形失真
@@ -63,7 +63,7 @@ bool GD9Device::BeginRender()
         return false;
     }
 
-    //D9DEVICE->Clear(2,&d3dRc[0],D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER,0x99999999,1.0f,0);
+    //mD9Device->Clear(2,&d3dRc[0],D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER,0x99999999,1.0f,0);
 
     if ( FAILED ( mD9Device->BeginScene() ) )
     {
@@ -217,8 +217,8 @@ void GD9Device::openAlphaBlend ( bool bOpen )
         mD9Device->SetTextureStageState ( 0, D3DTSS_ALPHAOP, D3DTOP_MODULATE );
 
         ////颜色混合，半透明
-        //D9DEVICE->SetRenderState(D3DRS_SRCBLEND,D3DBLEND_SRCCOLOR);
-        //D9DEVICE->SetRenderState(D3DRS_DESTBLEND,D3DBLEND_INVSRCCOLOR);
+        //mD9Device->SetRenderState(D3DRS_SRCBLEND,D3DBLEND_SRCCOLOR);
+        //mD9Device->SetRenderState(D3DRS_DESTBLEND,D3DBLEND_INVSRCCOLOR);
     }
 }
 
@@ -242,12 +242,12 @@ void GD9Device::ResetRenderState()
     //缩小、放大过滤模式下采用线性纹理过滤采样
     mD9Device->SetSamplerState ( 0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR );
     mD9Device->SetSamplerState ( 0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR );
-    //D9DEVICE->SetSamplerState(0,D3DSAMP_MIPFILTER,D3DTEXF_LINEAR);
+    //mD9Device->SetSamplerState(0,D3DSAMP_MIPFILTER,D3DTEXF_LINEAR);
 
     //填充模式
-    //D9DEVICE->SetRenderState(D3DRS_FILLMODE,D3DFILL_POINT);//点填充
-    //mD9Device->SetRenderState ( D3DRS_FILLMODE, D3DFILL_SOLID ); //多边形填充
-    //mD9Device->SetRenderState(D3DRS_FILLMODE,D3DFILL_WIREFRAME);//线框填充
+    //mD9Device->SetRenderState(D3DRS_FILLMODE,D3DFILL_POINT);//点填充
+    //Content::Device.SetRenderState ( D3DRS_FILLMODE, D3DFILL_SOLID ); //多边形填充
+    //Content::Device.SetRenderState(D3DRS_FILLMODE,D3DFILL_WIREFRAME);//线框填充
 
     //关闭Alpha混合
     mD9Device->SetRenderState ( D3DRS_ALPHABLENDENABLE, false );
@@ -264,8 +264,8 @@ void GD9Device::ResetRenderState()
     //设置纹理坐标寻址方式为循环寻址
     mD9Device->SetSamplerState ( 0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP );
     mD9Device->SetSamplerState ( 0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP );
-    //D9DEVICE->SetTextureStageState(0,D3DTSS_TEXTURETRANSFORMFLAGS,D3DTTFF_COUNT2);//激活纹理坐标变换
-    //D9DEVICE->SetTextureStageState(0,D3DTSS_TEXCOORDINDEX,D3DTSS_TCI_PASSTHRU);//使用顶点中纹理坐标
+    //mD9Device->SetTextureStageState(0,D3DTSS_TEXTURETRANSFORMFLAGS,D3DTTFF_COUNT2);//激活纹理坐标变换
+    //mD9Device->SetTextureStageState(0,D3DTSS_TEXCOORDINDEX,D3DTSS_TCI_PASSTHRU);//使用顶点中纹理坐标
 
     D3DMATERIAL9 matr;
     ZeroMemory ( &matr, sizeof ( D3DMATERIAL9 ) );
@@ -276,7 +276,7 @@ void GD9Device::ResetRenderState()
     mD9Device->SetTransform ( D3DTS_TEXTURE0, &mat );
 
     //用顶点颜色作为材质
-    //D9DEVICE->SetRenderState(D3DRS_AMBIENTMATERIALSOURCE,D3DMCS_COLOR1);
+    //mD9Device->SetRenderState(D3DRS_AMBIENTMATERIALSOURCE,D3DMCS_COLOR1);
 }
 
 
@@ -349,13 +349,15 @@ void GD9Device::OnDeviceLost()
 
 void GD9Device::OnResize ( int w, int h )
 {
-    if ( w & h )
+    if ( mD9Device != nullptr )
     {
-        mOnLostDevice.trigger();
-        ResetDevice ( w, h );
-        mOnResetDevice.trigger();
+        if ( w & h )
+        {
+            mOnLostDevice.trigger();
+            ResetDevice ( w, h );
+            mOnResetDevice.trigger();
+        }
     }
-
 }
 
 bool GD9Device::ResetDevice ( int w, int h )
@@ -475,13 +477,13 @@ bool GD9Device::beginRenderUI()
     // setup colour calculations
     mD9Device->SetTextureStageState ( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
     mD9Device->SetTextureStageState ( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
-    //mD9Device->SetTextureStageState ( 0, D3DTSS_COLOROP, D3DTOP_MODULATE );
+    //Content::Device.SetTextureStageState ( 0, D3DTSS_COLOROP, D3DTOP_MODULATE );
     mD9Device->SetTextureStageState ( 0, D3DTSS_COLOROP, D3DTOP_SELECTARG2 );
 
     // setup alpha calculations
     mD9Device->SetTextureStageState ( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
     mD9Device->SetTextureStageState ( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
-    //mD9Device->SetTextureStageState ( 0, D3DTSS_ALPHAOP, D3DTOP_MODULATE );
+    //Content::Device.SetTextureStageState ( 0, D3DTSS_ALPHAOP, D3DTOP_MODULATE );
     mD9Device->SetTextureStageState ( 0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG2 );
 
     // setup filtering
@@ -499,9 +501,9 @@ bool GD9Device::beginRenderUI()
 
 void GD9Device::renderFirstGraph ( bool useTexture )
 {
-    //mD9Device->SetRenderState ( D3DRS_FILLMODE, D3DFILL_WIREFRAME );
-    //mD9Device->SetSamplerState ( 0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP );
-    //mD9Device->SetSamplerState ( 0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP );
+    //Content::Device.SetRenderState ( D3DRS_FILLMODE, D3DFILL_WIREFRAME );
+    //Content::Device.SetSamplerState ( 0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP );
+    //Content::Device.SetSamplerState ( 0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP );
 
     mD9Device->SetRenderState ( D3DRS_ALPHABLENDENABLE, FALSE );
 

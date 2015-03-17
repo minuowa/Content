@@ -12,7 +12,7 @@ enum eComponentType
 	eComponentType_Particles,
 	eComponentType_Count,
 };
-class GNode;
+class  GNode;
 class GComponentInterface :
 	public GObject
 {

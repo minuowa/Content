@@ -5,6 +5,7 @@
 
 #include "GGame.h"
 #include "GD8Input.h"
+#include "Content.h"
 
 GFrameWork::GFrameWork ( void )
 	: mIsActive ( true )
@@ -81,7 +82,7 @@ void GFrameWork::active ( bool active )
 {
 	mIsActive = active;
 
-	GSingletonD8Input::getSingleton().Active ( active );
+	Content::InputSystem.Active ( active );
 }
 
 bool GFrameWork::isActive() const
@@ -91,7 +92,7 @@ bool GFrameWork::isActive() const
 
 void GFrameWork::resize ( int w, int h )
 {
-	D9Device->OnResize ( w, h );
+	 Content::Device.OnResize ( w, h );
 }
 
 LRESULT CALLBACK GFrameWork::WndProc ( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
@@ -103,11 +104,11 @@ LRESULT CALLBACK GFrameWork::WndProc ( HWND hWnd, UINT message, WPARAM wParam, L
 		break;
 	case WM_KILLFOCUS:
 	case WA_INACTIVE:
-		TheGame->active ( false );
+		 Content::Game.active ( false );
 		break;
 	case WM_SETFOCUS:
 	case WM_ACTIVATE:
-		TheGame->active ( true );
+		 Content::Game.active ( true );
 		break;
 	case WM_DESTROY:
 		PostQuitMessage ( 0 );
@@ -115,7 +116,7 @@ LRESULT CALLBACK GFrameWork::WndProc ( HWND hWnd, UINT message, WPARAM wParam, L
 
 	case WM_SIZE:
 		{
-			TheGame->resize ( LOWORD ( lParam ), HIWORD ( lParam ) );
+			 Content::Game.resize ( LOWORD ( lParam ), HIWORD ( lParam ) );
 		}
 		break;
 	case WM_IME_COMPOSITION:

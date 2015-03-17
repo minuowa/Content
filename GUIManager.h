@@ -19,6 +19,8 @@ public:
 
     CXDelegate mDelegateHoverNodeChanged;
 
+	bool init();
+
     void beginRender();
     void draw();
     void endRender();
@@ -40,11 +42,4 @@ inline GUINode* GUIManager::getRootNode()
     return mRootNode;
 }
 
-
-typedef CXSingleton<GUIManager> GSingletonUIManager;
-#define  UIMgr	GSingletonUIManager::getInstance()
-
-inline GUINode* getUIRootNode()
-{
-    return UIMgr->getRootNode();
-}
+GUINode* getUIRootNode();

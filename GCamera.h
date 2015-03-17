@@ -10,9 +10,9 @@
 #define LEN_TRACE_MAN 300	//眼睛与被跟踪物的水平距离
 
 #define HEIGHT_TRACE_MAN 300	//眼睛与被跟踪物的垂直距离
-class GFrustum;
+class  GFrustum;
 struct GCubeBound;
-class GCamera :
+class  GCamera :
     public GNode
 {
     DeclareEditorType ( GCamera )

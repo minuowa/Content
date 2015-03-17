@@ -13,7 +13,6 @@
 int luaRegistAll()
 {
 	gLuaScript.regGlobalFun ( "getFilmPlayer", getFilmPlayer );
-	gLuaScript.regGlobalFun ( "getSceneMgr", getSceneMgr );
 	gLuaScript.regGlobalFun ( "logInfo", logInfo );
 
 	gLuaScript.regClass<GObject>( "GObject" );

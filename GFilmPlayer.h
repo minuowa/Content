@@ -52,9 +52,4 @@ protected:
     GFilmFrame* mCurFrame;
     bool mEnd;
 };
-#define FilmPlayer CXSingleton<GFilmPlayer>::getInstance()
-
-DeclareFilmToolGlobal inline GFilmPlayer* getFilmPlayer()
-{
-    return FilmPlayer;
-}
+DeclareFilmToolGlobal GFilmPlayer* getFilmPlayer();

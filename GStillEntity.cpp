@@ -5,6 +5,7 @@
 
 #include "GSceneMgr.h"
 #include "GGame.h"
+#include "Content.h"
 
 GStillEntity::GStillEntity ( void )
     : mMeshBufferNode ( 0 )
@@ -26,10 +27,10 @@ bool GStillEntity::render()
     if ( mMeshBufferNode )
         return mMeshBufferNode->draw();
     return true;
-    //D9DEVICE->OpenAllLightEx(m_bLightOn,mfDiffuseIntensity,ZEROFLOAT,m_bUseMatrialColor);
+    // Content::Device.OpenAllLightEx(m_bLightOn,mfDiffuseIntensity,ZEROFLOAT,m_bUseMatrialColor);
 
     //DWORD dwAmbient = 0;
-    //D9DEVICE->GetDvc()->GetRenderState( D3DRS_AMBIENT, &dwAmbient );
+    // Content::Device.GetDvc()->GetRenderState( D3DRS_AMBIENT, &dwAmbient );
     ////绘制不透明部分
 
     //gEffect.mD3DEffect->SetBool( gEffect.m_hOpenLight, ( BOOL )mLighting );
@@ -42,7 +43,7 @@ bool GStillEntity::render()
     //gEffect.mD3DEffect->SetTechnique( gEffect.m_Tech );
 
 
-    //D3DXMATRIX matWorldViewProj = _matWorld * TheSceneMgr->mEye.matView * TheSceneMgr->mEye.matProj;
+    //D3DXMATRIX matWorldViewProj = _matWorld *  Content::Scene.mEye.matView *  Content::Scene.mEye.matProj;
 
     //gEffect.mD3DEffect->SetMatrix( gEffect.m_hWorldViewProj, &matWorldViewProj );
 
@@ -66,15 +67,15 @@ bool GStillEntity::render()
     //        {
     //            //Alpha测试:
 
-    //            D9DEVICE->GetDvc()->SetRenderState( D3DRS_ALPHATESTENABLE, true );
+    //             Content::Device.GetDvc()->SetRenderState( D3DRS_ALPHATESTENABLE, true );
 
-    //            D9DEVICE->GetDvc()->SetRenderState( D3DRS_ALPHAREF, 0x00000000 );
+    //             Content::Device.GetDvc()->SetRenderState( D3DRS_ALPHAREF, 0x00000000 );
 
-    //            D9DEVICE->GetDvc()->SetRenderState( D3DRS_ALPHAFUNC, D3DCMP_GREATER );
+    //             Content::Device.GetDvc()->SetRenderState( D3DRS_ALPHAFUNC, D3DCMP_GREATER );
 
     //            if ( mChangeWhenHit )
     //            {
-    //                D9DEVICE->GetDvc()->SetTexture( 0, NULL );
+    //                 Content::Device.GetDvc()->SetTexture( 0, NULL );
     //            }
     //            else
     //            {
@@ -96,13 +97,13 @@ bool GStillEntity::render()
     //}
 
     ////绘制透明部分
-    //D9DEVICE->OpenAlphaBlend( true );
+    // Content::Device.OpenAlphaBlend( true );
 
     //for ( DWORD i = 0; i < mMeshBufferNode->LnAttrNum; i++ )
     //{
     //    if ( mMeshBufferNode->mpMat[i].Diffuse.a < 1.0f )
     //    {
-    //        //D9DEVICE->GetDvc()->SetMaterial(&mpMeshBufferNode->mpMat[i]);
+    //        // Content::Device.GetDvc()->SetMaterial(&mpMeshBufferNode->mpMat[i]);
 
     //        D3DMATERIAL9 *pTmp = &mMeshBufferNode->mpMat[i];
 
@@ -116,11 +117,11 @@ bool GStillEntity::render()
     //        {
     //            if ( mChangeWhenHit )
     //            {
-    //                D9DEVICE->GetDvc()->SetTexture( 0, NULL );
+    //                 Content::Device.GetDvc()->SetTexture( 0, NULL );
     //            }
     //            else
     //            {
-    //                //D9DEVICE->GetDvc()->SetTexture(0,ppFace[i]);
+    //                // Content::Device.GetDvc()->SetTexture(0,ppFace[i]);
     //                gEffect.mD3DEffect->SetTexture( gEffect.m_hTexture, ppFace[i] );
     //            }
     //        }
@@ -142,11 +143,11 @@ bool GStillEntity::render()
 
     //gEffect.mD3DEffect->End();
 
-    //D9DEVICE->GetDvc()->SetRenderState( D3DRS_ALPHATESTENABLE, false );
+    // Content::Device.GetDvc()->SetRenderState( D3DRS_ALPHATESTENABLE, false );
 
-    //D9DEVICE->OpenAlphaBlend( false );
+    // Content::Device.OpenAlphaBlend( false );
 
-    //D9DEVICE->OpenAllLight( false );
+    // Content::Device.OpenAllLight( false );
 }
 
 
@@ -160,7 +161,7 @@ ID3DXMesh * GStillEntity::recreateInsectMesh()
     {
         mMeshBufferNode->getMesh()->CloneMeshFVF (
             mMeshBufferNode->getMesh()->GetOptions(),
-            D3DFVF_XYZ, D9Device->GetDvc(), &mMeshForInsect
+            D3DFVF_XYZ,  Content::Device.GetDvc(), &mMeshForInsect
         );
     }
 
@@ -287,8 +288,8 @@ bool GStillEntity::pick ( const POINT& pt )
 
     D3DXMATRIX	matView, matProj;
 
-    D9Device->GetDvc()->GetTransform ( D3DTS_VIEW, &matView );
-    D9Device->GetDvc()->GetTransform ( D3DTS_PROJECTION, &matProj );
+    Content::Device.GetDvc()->GetTransform ( D3DTS_VIEW, &matView );
+    Content::Device.GetDvc()->GetTransform ( D3DTS_PROJECTION, &matProj );
 
     ////射线的起点为眼睛（在视图空间中为坐标原点（0,0,0））
     D3DXVECTOR4 vOrigin ( 0, 0, 0, 1 );
@@ -297,8 +298,8 @@ bool GStillEntity::pick ( const POINT& pt )
     D3DXVECTOR4 vDir;
 
     //将鼠标位置从2D平面转换到3D的视图空间中
-    vDir.x = ( ( ( 2.0f * pt.x ) / D9Device->mWidth ) - 1 ) / matProj._11;
-    vDir.y = - ( ( ( 2.0f * pt.y ) / D9Device->mHeight ) - 1 ) / matProj._22;
+    vDir.x = ( ( ( 2.0f * pt.x ) /  Content::Device.mWidth ) - 1 ) / matProj._11;
+    vDir.y = - ( ( ( 2.0f * pt.y ) /  Content::Device.mHeight ) - 1 ) / matProj._22;
     vDir.z =  1.0f;
     vDir.w =  0.0f;
 

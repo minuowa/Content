@@ -4,6 +4,7 @@
 #include "GBound.h"
 #include "GTimer.h"
 #include "GGame.h"
+#include "Content.h"
 
 void GNode::getInput ( DWORD frameTimeMs )
 {
@@ -15,11 +16,11 @@ void GNode::getInput ( DWORD frameTimeMs )
         1、跳跃之后只能转动方向，不可MoveStep
 
         *************************************************************/
-        //bool bMoveFront = INPUTSYSTEM.IsPressKey ( DIK_W );				//向前移动
-        //bool bMoveBack = INPUTSYSTEM.IsPressKey ( DIK_S );				//向后移动
-        //bool bTrunLeft = INPUTSYSTEM.IsPressKey ( DIK_A );				//左转
-        //bool bTrunRight = INPUTSYSTEM.IsPressKey ( DIK_D );				//右转
-        //bool bJump = INPUTSYSTEM.IsPressKey ( DIK_SPACE );				//跳跃
+        //bool bMoveFront =  Content::InputSystem.IsPressKey ( DIK_W );				//向前移动
+        //bool bMoveBack =  Content::InputSystem.IsPressKey ( DIK_S );				//向后移动
+        //bool bTrunLeft =  Content::InputSystem.IsPressKey ( DIK_A );				//左转
+        //bool bTrunRight =  Content::InputSystem.IsPressKey ( DIK_D );				//右转
+        //bool bJump =  Content::InputSystem.IsPressKey ( DIK_SPACE );				//跳跃
         ///*************************************************************/
 
 
@@ -75,21 +76,21 @@ void GNode::getInput ( DWORD frameTimeMs )
         //    getTrans()->Jump();
         //}
 
-        //if ( INPUTSYSTEM.IsPressKey ( DIK_1 ) )
+        //if (  Content::InputSystem.IsPressKey ( DIK_1 ) )
         //{
         //    SetState ( oasBeAttack, false );
         //}
 
-        //if ( INPUTSYSTEM.getKeyAction ( DIK_2 ) == DI_BUTTONUP )
+        //if (  Content::InputSystem.getKeyAction ( DIK_2 ) == DI_BUTTONUP )
         //{
         //    SetState ( oasAttack, false );
         //}
-        //else if ( INPUTSYSTEM.getKeyAction ( DIK_3 ) == DI_BUTTONUP )
+        //else if (  Content::InputSystem.getKeyAction ( DIK_3 ) == DI_BUTTONUP )
         //{
         //    SetState ( oasRunAttack, false );
         //}
 
-        //if ( ! ( bMoveFront || bMoveBack || bTrunRight || bTrunLeft || bJump || INPUTSYSTEM.IsPressKey ( DIK_1 ) ) )
+        //if ( ! ( bMoveFront || bMoveBack || bTrunRight || bTrunLeft || bJump ||  Content::InputSystem.IsPressKey ( DIK_1 ) ) )
         //{
 
         //    SetState ( oasStandBy, false );
@@ -134,7 +135,7 @@ GNode::GNode()
 {
 	mNodeState.setAll(true);
 
-    mLocalID = mObjectIDManager.addObj ( this );
+    mLocalID = getObjIDManager().addObj ( this );
 
     mParent = nullptr;
     m_fBoundRadius = 0.01f;
@@ -166,7 +167,7 @@ GNode::GNode()
 
 GNode::~GNode()
 {
-    mObjectIDManager.removeObj ( mLocalID );
+    getObjIDManager().removeObj ( mLocalID );
     dSafeDeleteVector ( mChildren );
 }
 
@@ -874,9 +875,9 @@ void GNode::setCanGetInput ( bool can )
 {
     mNodeState.setBit ( eObjState_GetInput, can );
     if ( can )
-        InputEntityMgr->addInputObj ( this );
+         Content::InputEntityMgr.addInputObj ( this );
     else
-        InputEntityMgr->remove ( this->getLocalID() );
+         Content::InputEntityMgr.remove ( this->getLocalID() );
 }
 
 
@@ -895,8 +896,11 @@ bool GNode::isState ( eObjState state ) const
     return mNodeState[state];
 }
 
-CXIDObjectManager<GNode> GNode::mObjectIDManager;
-
+CXIDObjectManager<GNode>& GNode::getObjIDManager()
+{
+	static CXIDObjectManager<GNode> objectIDManager;
+	return objectIDManager;
+}
 
 CXDelegate GNode::mDelegateDeleteObj;
 

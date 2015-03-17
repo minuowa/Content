@@ -144,7 +144,7 @@ public:
 
     float m_fBoundRadius;
 public:
-    static CXIDObjectManager<GNode> mObjectIDManager;
+	static CXIDObjectManager<GNode>& getObjIDManager();
     /** @brief 物体在所有的创建的物体中的绝对ID  **/
     u32 mLocalID;
 public:

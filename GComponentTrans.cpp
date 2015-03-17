@@ -3,6 +3,7 @@
 #include "GTimer.h"
 #include "GD9Device.h"
 #include "GNode.h"
+#include "Content.h"
 
 static const float DEAULT_SPEED_TRUN = 2.0f;
 static const float DEFAULT_SPEED_MOVE = 1.0f;
@@ -270,7 +271,7 @@ void GComponentTrans::update(  )
     }
     if ( mAutoMoveInfo )
     {
-        if ( TheTimer->getAccuTime() > mAutoMoveInfo->mAutoInitTime + mAutoMoveInfo->mAutoLifeTime )
+        if ( Content::Timer.getAccuTime() > mAutoMoveInfo->mAutoInitTime + mAutoMoveInfo->mAutoLifeTime )
         {
             dSafeDelete ( mAutoMoveInfo );
             mAutoMove = false;
@@ -319,7 +320,7 @@ void GComponentTrans::moveTo ( const GMatrix& target, DWORD millSeconds )
 {
     dSafeDelete ( mAutoMoveInfo );
     mAutoMoveInfo = new GAutoMoveInfo;
-    mAutoMoveInfo->mAutoInitTime = TheTimer->getAccuTime();
+    mAutoMoveInfo->mAutoInitTime = Content::Timer.getAccuTime();
     mAutoMoveInfo->mAutoLifeTime = millSeconds;
 
     D3DXQuaternionRotationMatrix ( &mAutoMoveInfo->mAutoTargetRotation, ( const D3DXMATRIX* ) &target );
@@ -373,7 +374,7 @@ void GComponentTrans::setRotation ( D3DXMATRIX& mat )
 
 void GComponentTrans::set()
 {
-    D9Device->GetDvc()->SetTransform ( D3DTS_WORLD, ( const D3DXMATRIX* ) &mMatWorld );
+     Content::Device.GetDvc()->SetTransform ( D3DTS_WORLD, ( const D3DXMATRIX* ) &mMatWorld );
 }
 
 
@@ -534,5 +535,5 @@ GAutoMoveInfo::GAutoMoveInfo()
 
 DWORD GAutoMoveInfo::getElpaseTime()
 {
-    return TheTimer->getAccuTime() - mAutoInitTime.getMillSecond();
+    return Content::Timer.getAccuTime() - mAutoInitTime.getMillSecond();
 }

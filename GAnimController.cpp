@@ -1,6 +1,7 @@
 #include "GGameDemoHeader.h"
 #include "GAnimController.h"
 #include "GTimer.h"
+#include "Content.h"
 
 
 GAnimController::GAnimController ( void )
@@ -39,7 +40,7 @@ void GAnimController::setBaseController ( ID3DXAnimationController* controller )
 
 void GAnimController::update()
 {
-    mD3DController->AdvanceTime ( TheTimer->getFrameTimeSec(), NULL );
+    mD3DController->AdvanceTime ( Content::Timer.getFrameTimeSec(), NULL );
 
     if ( mCurSet != NULL )
     {

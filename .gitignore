@@ -8,3 +8,4 @@ Debug
 *.ncb
 *.tlog
 *.sbr
+/*.user

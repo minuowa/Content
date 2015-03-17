@@ -68,8 +68,6 @@ public:
 	void selectObjByName ( const char* name );
 	DeclareFilmTool GNode* getObj ( const char* name );
 
-	const CharStringArr& getGameObjectTypes();
-	const CharStringArr& getObjectComponentTypes();
 	void setOperatorObj ( int objID );
 	GNode* getSceneRoot() const;
 	GNode* createObjByTypeName ( const char* typeName );
@@ -80,8 +78,7 @@ public:
 	DeclareFilmTool void moveCameraToObj(const char* name,u32 timeMS);
 public:
 	bool setInnerNode(GNode* rootNode);
-	void initNodeFactory();
-	void initComponentFactory();
+
 	virtual void onCallBack ( const CXDelegate& , CXEventArgs*  )override;
 public:
 	CXDelegate mDelegateReloadScene;
@@ -94,10 +91,6 @@ public:
 	GNode* mSceneStaticRootNode;
 	GNode* mSceneDynamicRootNode;
 
-	GFactory<GNode> mGameObjFactory;
-
 	CXIndex mOperatoredObj;
 
-	CharStringArr mGameObjectTypeArray;
-	CharStringArr mObjectComponentTypeArray;
 };

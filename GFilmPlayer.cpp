@@ -2,6 +2,7 @@
 #include "GFilmPlayer.h"
 #include "GFilmFrame.h"
 #include "GTimer.h"
+#include "Content.h"
 
 
 GFilmPlayer::GFilmPlayer ( void )
@@ -84,7 +85,7 @@ void GFilmPlayer::process()
 {
     if ( mCurFrame == nullptr )
         return;
-    DWORD frametime = TheTimer->getFrameTimems();
+    DWORD frametime = Content::Timer.getFrameTimems();
     if ( !mCurFrame->advanceTime ( frametime ) )
     {
         mCurFrame = getFrame ( mCurFrame->getNext() );
@@ -195,3 +196,8 @@ for ( auto & p: mNameMap )
     }
 }
 
+
+GFilmPlayer* getFilmPlayer()
+{
+	return &Content::FilmPlayer;
+}
