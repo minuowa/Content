@@ -13,20 +13,25 @@ public:
 
 	void setRect ( const CXRect& rect );
 	void setRect ( long x, long y, long w, long h );
-	void setColor ( u32 color );
+	void setRelRect(const CXRect& rect);
+	void setWH(long w,long h);
+	void setXY(long x,long y);
+	virtual void setColor ( u32 color );
 	u32 getColor() const;
 	void updateRect();
 	bool containPoint ( long x, long y )const;
 	const CXRect& getRect() const;
-
+	void offset(long x,long y);
 protected:
 	virtual bool render();
 	virtual bool doGraph();
+	void updateAbRect();
 
 	GGraphVertexBuffer mVB;
 	GGraphIndexBuffer mIB;
 	GGraphPrimitive mGraph;
 	CXColor mVertexColor;
+	CXRect mRelRect;
 	CXRect mRect;
 };
 

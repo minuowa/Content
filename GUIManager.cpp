@@ -7,6 +7,7 @@
 
 GUIManager::GUIManager ( void )
     : mHoverNode ( nullptr )
+    , mCaptureNode ( nullptr )
 {
 
 }
@@ -16,6 +17,9 @@ GUIManager::~GUIManager ( void )
 {
     Content::Device.mOnLostDevice -= this;
     Content::Device.mOnResetDevice -= this;
+    Content::InputSystem.mDelegateMouseMove -= this;
+    Content::InputSystem.mDelegateMouseUp -= this;
+
     dSafeDelete ( mRootNode );
 }
 
@@ -38,6 +42,17 @@ void GUIManager::onCallBack ( const CXDelegate& d, CXEventArgs* e )
     {
         resetNode();
     }
+    else if ( d == Content::InputSystem.mDelegateMouseMove )
+    {
+        updateHoverNode();
+    }
+    else if ( d == Content::InputSystem.mDelegateMouseUp )
+    {
+        if ( Content::InputSystem.isButtonUp ( eButtonType_LeftButton ) )
+        {
+            updateClickedNode();
+        }
+    }
 }
 
 void GUIManager::resetNode()
@@ -48,14 +63,31 @@ void GUIManager::resetNode()
 
 void GUIManager::processInput()
 {
-    POINT pt =  Content::InputSystem.getMousePoint();
-    GUINode* newHover = mRootNode->getHoverNode ( pt.x, pt.y );
+    updateHoverNode();
+}
 
-    if ( mHoverNode )
-        mHoverNode->setState ( eUINodeState_IsHover, false );
+bool GUIManager::init()
+{
+    mRootNode = new GUINode;
+	mRootNode->setState ( eUINodeState_CanHover, false );
+	mRootNode->setState ( eUINodeState_CanCapture, false );
+    resetNode();
+    Content::Device.mOnLostDevice += this;
+    Content::Device.mOnResetDevice += this;
+    Content::InputSystem.mDelegateMouseMove += this;
+    Content::InputSystem.mDelegateMouseUp += this;
+    return true;
+}
+
+void GUIManager::updateHoverNode()
+{
+    POINT pt =  Content::InputSystem.getMousePoint();
+    GUINode* newHover = mRootNode->getNode ( pt.x, pt.y, eUINodeState_CanHover );
 
     if ( newHover != mHoverNode )
     {
+        if ( mHoverNode )
+            mHoverNode->setState ( eUINodeState_IsHover, false );
         GUIHoverNodeChangedEvent arg;
         arg.mOldNode = mHoverNode;
         arg.mNewNode = newHover;
@@ -68,17 +100,30 @@ void GUIManager::processInput()
     mHoverNode = newHover;
 }
 
-bool GUIManager::init()
+void GUIManager::updateClickedNode()
 {
-	mRootNode = new GUINode;
-	mRootNode->setState ( eUINodeState_CanHover, false );
-	resetNode();
-	Content::Device.mOnLostDevice += this;
-	Content::Device.mOnResetDevice += this;
-	return true;
+    POINT pt =  Content::InputSystem.getMousePoint();
+    GUINode* node = mRootNode->getNode ( pt.x, pt.y, eUINodeState_CanCapture );
+    if ( node )
+    {
+        if ( mCaptureNode )
+            mCaptureNode->onLostCapture();
+        mCaptureNode = node;
+        mDelegateNodeClicked.trigger();
+    }
+}
+
+GUINode* GUIManager::getCapture() const
+{
+    return mCaptureNode;
+}
+
+GUINode* GUIManager::getNode ( const char* name ) const
+{
+    return ( GUINode* ) mRootNode->getNodeByName ( name );
 }
 
 GUINode* getUIRootNode()
 {
-	return Content::UIMgr.getRootNode();
+    return Content::UIMgr.getRootNode();
 }

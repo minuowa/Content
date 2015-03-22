@@ -442,7 +442,7 @@ void GNode::makeXMLNode ( CXRapidxmlNode& node )
 
 bool GNode::render()
 {
-    return true;
+	return mNodeState[eObjState_Render];
 }
 
 GNode* GNode::getNodeByName ( const char* name )

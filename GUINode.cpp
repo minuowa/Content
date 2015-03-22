@@ -70,22 +70,6 @@ bool GUINode::render()
     return __super::render();
 }
 
-void GUINode::setRect ( long x, long y, long w, long h )
-{
-    mRect.mX = x;
-    mRect.mY = y;
-    mRect.mW = w;
-    mRect.mH = h;
-
-    doGraph();
-}
-
-void GUINode::setRect ( const CXRect& rect )
-{
-    mRect = rect;
-    doGraph();
-}
-
 
 bool GUINode::doGraph()
 {
@@ -127,17 +111,17 @@ bool GUINode::containPoint ( long x, long y ) const
     return mRect.contain ( x, y );
 }
 
-GUINode* GUINode::getHoverNode ( long x, long y )
+GUINode* GUINode::getNode ( long x, long y, eObjState state )
 {
     GUINode* n = nullptr;
 for ( auto child: mChildren )
     {
         GUINode* pc = ( GUINode* ) child;
-        n = pc->getHoverNode ( x, y );
+        n = pc->getNode ( x, y, state );
         if ( n != nullptr )
             return n;
     }
-    if ( mNodeState[eUINodeState_CanHover] && containPoint ( x, y ) )
+    if ( mNodeState[eUINodeState_AcpectEvent] && mNodeState[state] && containPoint ( x, y ) )
     {
         return this;
     }
@@ -148,3 +132,16 @@ u32 GUINode::getColor() const
 {
     return mVertexColor.Color;
 }
+
+const CXRect& GUINode::getRelRect() const
+{
+    return mRelRect;
+}
+
+void GUINode::onLostCapture()
+{
+
+}
+
+
+

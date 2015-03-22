@@ -14,7 +14,6 @@ GText::GText( )
     dMemoryZeroArray ( mFonts );
     mCurrentFont = nullptr;
     mFontSprite = nullptr;
-    mDefaultFont = nullptr;
 }
 bool GText::init()
 {
@@ -110,7 +109,7 @@ void GText::setCurrentFontSize ( eFontSize fs )
         break;
 
     default:
-        mCurrentFont = mDefaultFont;
+        mCurrentFont = mFonts[0];
         break;
 
     }
@@ -125,7 +124,7 @@ int GText::DrawTextDefault ( char* sText, D3DVECTOR pos )
 
     RECT r = {pos.x, pos.y, pos.x + 300, pos.y + 200};
 
-    mDefaultFont->DrawTextA (
+    mCurrentFont->DrawTextA (
         mFontSprite,
         sText,
         strlen ( sText ),
@@ -143,11 +142,6 @@ int GText::DrawTextDefault ( char* sText, D3DVECTOR pos )
 
 int GText::DrawTextInRect ( char* sText, RECT *r, DWORD Color, OBJTYPE ot, TextPos tp )
 {
-    if ( !mCurrentFont )
-    {
-        mCurrentFont = mDefaultFont;
-    };
-
     D3DXMATRIXA16 World;
 
     RECT rCal = {0, 0, 0, 0};
@@ -218,11 +212,6 @@ int GText::DrawTextInRect ( char* sText, RECT *r, DWORD Color, OBJTYPE ot, TextP
 
 int GText::DrawTextByPosColOt ( char* sText, D3DVECTOR Pos, DWORD Color, OBJTYPE ot , bool Center )
 {
-
-    if ( !mCurrentFont )
-    {
-        mCurrentFont = mDefaultFont;
-    };
 
     D3DXMATRIXA16 World;
 
@@ -399,12 +388,11 @@ void GText::onCallBack ( const CXDelegate& delgate, CXEventArgs* )
 void GText::clear()
 {
 for ( auto f: mFonts )
-    {
         dSafeRelease ( f );
-    }
+
+    dMemoryZeroArray ( mFonts );
     dSafeRelease ( mFontSprite );
     mCurrentFont = nullptr;
-    mDefaultFont = nullptr;
 }
 
 bool GText::recreate()
@@ -434,8 +422,7 @@ bool GText::recreate()
                         );
     }
 
-    mDefaultFont = mFonts[2]; //默认18号字体
-    mCurrentFont = mDefaultFont;
+    mCurrentFont = mFonts[2];//默认10号字体
     CXASSERT_RESULT_FALSE ( D3DXCreateSprite (  Content::Device.GetDvc(), &mFontSprite ) ) ;
     return true;
 }

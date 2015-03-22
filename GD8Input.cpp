@@ -78,6 +78,8 @@ void GD8Input::Update()
     }
 
     UpdateState();
+
+    checkEvent();
 }
 
 bool GD8Input::IsPressKey ( byte key )
@@ -102,7 +104,7 @@ D3DVECTOR GD8Input::GetMouseMoveEX()
     return vPos;
 }
 
-POINT GD8Input::getMousePoint()
+POINT GD8Input::getMousePoint() const
 {
     POINT pt;
     GetCursorPos ( &pt );
@@ -155,22 +157,6 @@ bool GD8Input::IskeyUp ( byte key )
 {
     return getKeyAction ( key ) == DI_BUTTONUP;
 }
-
-bool GD8Input::IsLeftButtonUp() const
-{
-    return GetButtonAction ( eButtonType_LeftButton ) == DI_BUTTONUP;
-}
-
-bool GD8Input::IsMiddleButtonUp() const
-{
-    return GetButtonAction ( eButtonType_MiddleButton ) == DI_BUTTONUP;
-}
-
-bool GD8Input::IsRightButtonUp() const
-{
-    return GetButtonAction ( eButtonType_RightButton ) == DI_BUTTONUP;
-}
-
 void GD8Input::Active ( bool active )
 {
     mActive = active;
@@ -257,4 +243,55 @@ void GD8Input::UpdateState()
         }
         mKBoardStateOld[i] = ( mKeyData[i] & 0x80 );
     }
+}
+
+void GD8Input::checkEvent()
+{
+    if ( !isMouseInDevice() )
+        return;
+	POINT v = GetMouseMove();
+	if ( v.x != 0 || v.y != 0 )
+	{
+		mDelegateMouseMove.trigger();
+
+		for ( int i = 0; i < eButtonType_Count; ++i )
+		{
+			if ( isPressingButton ( ( eButtonType ) i ) )
+			{
+				mDelegateMouseDownAndMoved.trigger();
+			}
+		}
+	}
+    for ( int i = 0; i < eButtonType_Count; ++i )
+    {
+        if ( isButtonDown ( eButtonType ( i ) ) )
+        {
+            mDelegateMouseDown.trigger();
+        }
+        else if ( isButtonUp ( eButtonType ( i ) ) )
+        {
+            mDelegateMouseUp.trigger();
+        }
+    }
+}
+
+bool GD8Input::isButtonDown ( eButtonType bt ) const
+{
+    return mMouseButtonState[bt] == DI_BUTTONDOWN; //发生按下动作
+}
+
+bool GD8Input::isMouseInDevice() const
+{
+    POINT pt =  getMousePoint();
+    //鼠标在客户区外面就不执行GetInput
+    if ( pt.x < 0 || pt.x >  Content::Device.mWidth || pt.y < 0 || pt.y >  Content::Device.mHeight )
+    {
+        return false;
+    }
+    return true;
+}
+
+bool GD8Input::isButtonUp ( eButtonType bt ) const
+{
+    return mMouseButtonState[bt] == DI_BUTTONUP; //发生按下动作
 }

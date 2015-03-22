@@ -16,4 +16,5 @@
 #include "GUIManager.h"
 #include "GRectNode.h"
 #include "Content.h"
+#include "GTapeNode.h"
 #endif // Game_h__

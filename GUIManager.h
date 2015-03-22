@@ -17,7 +17,8 @@ public:
     GUIManager ( void );
     ~GUIManager ( void );
 
-    CXDelegate mDelegateHoverNodeChanged;
+	CXDelegate mDelegateHoverNodeChanged;
+	CXDelegate mDelegateNodeClicked;
 
 	bool init();
 
@@ -28,13 +29,18 @@ public:
     virtual void onCallBack ( const CXDelegate& d, CXEventArgs* e );
 
     void processInput();
-
+	GUINode* getNode(const char* name) const;
+	GUINode* getCapture() const;
     inline GUINode* getRootNode();
 protected:
     void resetNode();
+	void updateHoverNode();
+	void updateClickedNode();
 
     GUINode* mRootNode;
     GUINode* mHoverNode;
+	//获得点击的node
+	GUINode* mCaptureNode;
 };
 
 inline GUINode* GUIManager::getRootNode()

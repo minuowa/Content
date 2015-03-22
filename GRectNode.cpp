@@ -20,8 +20,8 @@ GRectNode::GRectNode ( void )
 
     mGraph.setVB ( mVB );
 
-    mGraph.mType = D3DPT_LINELIST;
-    mGraph.mPrimitiveCount = 4;
+    mGraph.mType = D3DPT_TRIANGLELIST;
+    mGraph.mPrimitiveCount = 2;
 }
 
 
@@ -43,12 +43,12 @@ bool GRectNode::recreate()
 
     if ( !mIB.isValid() )
     {
-        mIB.mIndexCount = 8;
+        mIB.mIndexCount = 6;
         CXASSERT_RETURN_FALSE ( mIB.recreate ( D3DPOOL_MANAGED ) );
     }
-    DWORD aIndex[8] =
+    DWORD aIndex[6] =
     {
-        0, 1, 1, 2, 2, 3, 3, 0
+        0, 1, 2, 0, 2, 3,
     };
 
     CXASSERT_RETURN_FALSE ( mIB.fill ( ( void* ) aIndex ) );
@@ -75,13 +75,16 @@ void GRectNode::setRect ( long x, long y, long w, long h )
     mRect.mY = y;
     mRect.mW = w;
     mRect.mH = h;
-
+    mRelRect.mW = w;
+    mRelRect.mH = h;
     doGraph();
 }
 
 void GRectNode::setRect ( const CXRect& rect )
 {
     mRect = rect;
+    mRelRect.mW = rect.mW;
+    mRelRect.mH = rect.mH;
     doGraph();
 }
 
@@ -124,5 +127,62 @@ bool GRectNode::containPoint ( long x, long y ) const
 u32 GRectNode::getColor() const
 {
     return mVertexColor.Color;
+}
+
+void GRectNode::setWH ( long w, long h )
+{
+    mRect.mW = w;
+    mRect.mH = h;
+    doGraph();
+}
+
+void GRectNode::setXY ( long x, long y )
+{
+    mRect.mX = x;
+    mRect.mY = y;
+    doGraph();
+}
+
+void GRectNode::offset ( long x, long y )
+{
+    if ( mParent != nullptr )
+	{
+		mRelRect.offset ( x, y );
+		updateAbRect();
+	}
+    else
+	{
+		mRect.offset ( x, y );
+		doGraph();
+	}
+}
+
+void GRectNode::setRelRect ( const CXRect& rect )
+{
+    mRelRect = rect;
+    updateAbRect();
+}
+
+void GRectNode::updateAbRect()
+{
+    if ( mParent != nullptr )
+    {
+        GRectNode* np = ( GRectNode* ) mParent;
+        mRect.mX = mRelRect.mX + np->mRect.mX;
+        mRect.mY = mRelRect.mY + np->mRect.mY;
+        mRect.mW = mRelRect.mW;
+        mRect.mH = mRelRect.mH;
+    }
+    else
+    {
+        mRect = mRelRect;
+    }
+    doGraph();
+
+for ( auto child: mChildren )
+    {
+        GRectNode* n = ( GRectNode* ) child;
+        n->updateAbRect();
+    }
 }
 

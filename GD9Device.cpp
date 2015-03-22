@@ -351,7 +351,7 @@ void GD9Device::OnResize ( int w, int h )
 {
     if ( mD9Device != nullptr )
     {
-        if ( w & h )
+        if ( w > 0 && h > 0 )
         {
             mOnLostDevice.trigger();
             ResetDevice ( w, h );

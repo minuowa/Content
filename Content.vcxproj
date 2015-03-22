@@ -164,6 +164,7 @@
     <ClCompile Include="GAmmo.cpp" />
     <ClCompile Include="GAnimEntity.cpp" />
     <ClCompile Include="GBound.cpp" />
+    <ClCompile Include="GTapeNode.cpp" />
     <ClCompile Include="GTerrain.cpp" />
     <ClCompile Include="GTerrainBrush.cpp" />
     <ClCompile Include="GTerrainCommon.cpp" />
@@ -233,6 +234,7 @@
     <ClInclude Include="GPlatform.h" />
     <ClInclude Include="GRectNode.h" />
     <ClInclude Include="GResourceManager.h" />
+    <ClInclude Include="GTapeNode.h" />
     <ClInclude Include="GTerrainBrush.h" />
     <ClInclude Include="GTerrainCommon.h" />
     <ClInclude Include="GTerrainNode.h" />

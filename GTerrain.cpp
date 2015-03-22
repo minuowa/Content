@@ -60,7 +60,7 @@ GTerrain::GTerrain ( )
     //UpdateEx += new GameUpdateEventHandler ( updateEx );
 
 
-    mTexture =  Content::TextureMgr.getResource ( "..\\Res\\Box\\001.bmp" );
+    mTexture =  Content::TextureMgr.getResource ( "..\\Data\\Res\\Map\\MapFace\\MapcellGress.bmp" );
     dMakeColor ( mMtrl.Diffuse, 255, 255, 255, 255 );
 
 

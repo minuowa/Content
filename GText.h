@@ -61,7 +61,6 @@ private:
     ID3DXFont *mFonts[16];
     ID3DXFont *mCurrentFont;
 
-    ID3DXFont *mDefaultFont;
     eFontSize	mFontSize;
     LPD3DXSPRITE mFontSprite;
 };

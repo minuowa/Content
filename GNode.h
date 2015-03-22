@@ -14,10 +14,10 @@ enum eObjState
 	eObjState_CanBeSelect			, //是否可以被选择
 	eObjState_BeSelect				, //是否被选择了
 
-	eUINodeState_CanAcpectEvent,	///是否可接受事件
+	eUINodeState_AcpectEvent,	///是否可接受事件
 	eUINodeState_CanHover,
-	eUINodeState_IsHover,
 	eUINodeState_CanCapture,
+	eUINodeState_IsHover,
 	eUINodeState_IsCapture,
 };
 enum eForceType

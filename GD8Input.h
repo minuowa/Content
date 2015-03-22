@@ -21,6 +21,11 @@ class  GD9Device;
 class GD8Input
 {
 public:
+	CXDelegate mDelegateMouseMove;
+	CXDelegate mDelegateMouseUp;
+	CXDelegate mDelegateMouseDown;
+	CXDelegate mDelegateMouseDownAndMoved;
+public:
 	enum {KEY_COUNT=256,};
 
 	GD8Input ( void );
@@ -37,14 +42,13 @@ public:
 	bool isPressingButton ( eButtonType bt );
 	byte GetButtonAction ( eButtonType bt ) const;
 	byte getKeyAction ( int key );
-	bool IsLeftButtonUp() const;
-	bool IsMiddleButtonUp() const;
-	bool IsRightButtonUp() const;
 
+	bool isButtonDown(eButtonType bt) const;
+	bool isButtonUp(eButtonType bt) const;
 	//////////////////////////////////////////////////////////////////////////
 	/////Œª÷√
 	bool IsWheelMButton();
-	POINT getMousePoint();
+	POINT getMousePoint() const;
 	POINT GetMouseMove();
 	D3DVECTOR GetMouseMoveEX();
 	int getMouseWheel();
@@ -53,8 +57,10 @@ public:
 	void Update();
 	void Active ( bool active );
 	bool init ( const GD9Device& device, HINSTANCE hInst, HWND hWin );
+	bool isMouseInDevice() const;
 private:
 	void UpdateState();
+	void checkEvent();
 
 	HINSTANCE mInstance;
 	HWND mWinID;
