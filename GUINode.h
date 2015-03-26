@@ -4,6 +4,7 @@
 class GUINode :
     public GRectNode
 {
+    DeclareEditorType ( GUINode );
 public:
     GUINode ( void );
     ~GUINode ( void );
@@ -14,17 +15,18 @@ public:
     u32 getColor() const;
     void updateRect();
     bool containPoint ( long x, long y ) const;
-	const CXRect& getRect() const;
-	const CXRect& getRelRect() const;
+    const CXRect& getRect() const;
+    const CXRect& getRelRect() const;
 
     void setTexture ( const char* fileName );
 
-	GUINode* getNode ( long x, long y,eObjState state ) ;
-	void onLostCapture();
+    GUINode* getNode ( long x, long y, eObjState state ) ;
+    void onLostCapture();
 protected:
 
     virtual bool render();
     virtual bool doGraph();
+
 
     GTexture* mTextureProp;
 };

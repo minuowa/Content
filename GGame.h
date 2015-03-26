@@ -16,6 +16,7 @@
 #include "GSceneMgr.h"
 #include "XMultiThread.h"
 
+class GPlugin;
 extern DWORD WINAPI loadObj(LPVOID pParam);
 
 class GGame:public GFrameWork
@@ -23,6 +24,10 @@ class GGame:public GFrameWork
 public:
 	typedef GFrameWork Super;
 public:
+
+	CXDelegate mDelegateOnInitEnd;
+
+
 	GGame(void);
 	~GGame(void);
 
@@ -34,6 +39,11 @@ public:
 
 	void finish();
 
+	bool registerPlugin(GPlugin* plugin);
+
+	GPlugin* getPlugin(const char* name);
+
+	bool unregisterPlugin(const char* name);
 private:
 
 	bool getInput();
@@ -56,6 +66,9 @@ private:
 	void renderEye(float fPass);
 
 	bool	mFinished;
+
+protected:
+	CXDynaArray<GPlugin*> mPlugins;
 };
 
 DeclareFilmToolGlobal inline void logInfo ( const char* s )

@@ -5,6 +5,7 @@
 class GRectNode :
 	public GNode
 {
+	DeclareEditorType(GRectNode)
 public:
 	GRectNode ( void );
 	~GRectNode ( void );
@@ -26,6 +27,8 @@ protected:
 	virtual bool render();
 	virtual bool doGraph();
 	void updateAbRect();
+	virtual void registerAllProperty();
+	virtual void onPropertyChangeEnd ( void* cur );
 
 	GGraphVertexBuffer mVB;
 	GGraphIndexBuffer mIB;

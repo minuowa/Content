@@ -185,4 +185,23 @@ for ( auto child: mChildren )
         n->updateAbRect();
     }
 }
+void GRectNode::onPropertyChangeEnd( void* cur )
+{
+	if (cur==&mRelRect.mX
+		||cur==&mRelRect.mY
+		||cur==&mRelRect.mW
+		||cur==&mRelRect.mH
+		)
+	{
+		updateAbRect();
+	}
+}
+void GRectNode::registerAllProperty()
+{
+	__super::registerAllProperty();
+	__RegisterProperty ( mRelRect.mX );
+	__RegisterProperty ( mRelRect.mY );
+	__RegisterProperty ( mRelRect.mW );
+	__RegisterProperty ( mRelRect.mH );
+}
 

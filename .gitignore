@@ -9,3 +9,5 @@ Debug
 *.tlog
 *.sbr
 /*.user
+*.log
+*.ipch

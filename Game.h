@@ -17,4 +17,5 @@
 #include "GRectNode.h"
 #include "Content.h"
 #include "GTapeNode.h"
+#include "GPlugin.h"
 #endif // Game_h__

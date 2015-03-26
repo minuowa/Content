@@ -3,6 +3,7 @@
 #include "GD9Device.h"
 #include "GText.h"
 #include "Content.h"
+#include "GObject.h"
 struct GUIVertex
 {
     float mX, mY, mZ, mRHW;
@@ -142,6 +143,9 @@ void GUINode::onLostCapture()
 {
 
 }
+
+
+
 
 
 

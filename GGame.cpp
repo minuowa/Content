@@ -12,6 +12,8 @@
 #include "GUINode.h"
 #include "GUIManager.h"
 #include "Content.h"
+#include "GMaskNode.h"
+#include "GPlugin.h"
 
 /******************************************************************/
 //天空在MeshBuffer中，海面和地图不在
@@ -198,108 +200,17 @@ void GGame::shutDown()
 }
 
 
-
-#define LuaModel(name)
 DWORD WINAPI loadObj ( LPVOID pParam )
 {
     CoInitialize ( NULL );
 
-    GGame *pGame = ( GGame* ) pParam;
-
-    if ( pGame == NULL )
-    {
-        return ERR_INT;
-    }
-
     //设置投影矩阵
-    // Content::Scene.loadScene("gameSceneEditor.xml");
     Content::Scene.setProj();
-    if ( 1 )
-    {
-        //GUINode* uinode=new GUINode;
-        //CXASSERT_RETURN_FALSE(uinode->recreate());
-        // Content::Scene.addStaticObj ( uinode );
-        //getUIRootNode()->addChild(uinode);
-    }
-    //if ( 1 )
-    //{
-    //    //创建世界坐标系
-    //    //GWorldCorrd* corrd = new GWorldCorrd();
-    //    //corrd->setNodeName ( "World Corrd" );
-    //    //CXASSERT_RETURN_FALSE ( corrd->recreate() );
-    //    // Content::Scene.addStaticObj ( corrd );
-    //}
-
-
-
-    //if ( 1 )
-    //{
-    //    GAnimEntity *pAnimMesh = new GAnimEntity;
-    //    pAnimMesh->setMediaFile ( "..\\Data\\res\\Anim\\AnimMesh0002\\A0002.X" );
-    //    CXASSERT_RETURN_FALSE ( pAnimMesh->recreate() );
-    //     Content::Scene.addDynaObj ( pAnimMesh );
-    //}
-    //if ( 0 )
-    //{
-    //    MeshPara seaPara (  80.0f, 0, 64, "..\\Data\\res\\water\\BlueShort\\A21C_000.jpg", NULL );
-
-    //    GWater* sea = new GWater;
-    //    sea->setParam ( seaPara );
-    //    sea->mCanSelect = false;
-    //    //sea->addQuakePoint ( -50, 0, 10.0f, 2.8f );
-    //    //sea->addQuakePoint ( 50, 0, 10.0f, 2.8f );
-    //    sea->recreate();
-    //    //sea->setWorldTranslate ( D3DXVECTOR3 ( 0, 1, 0 ) );
-    //     Content::Scene.addDynaObj ( sea );
-    //}
-    ////gLuaScript.init();
-    //if ( 1 )
-    //{
-
-    //    //luacpp::reg_cclass<GNode>::_reg(gLuaScript.getState(),"GNode");
-
-    //    //luacpp::reg_cclass<GTerrain,GNode>::_reg(gLuaScript.getState(),"GTerrain")
-    //    //luacpp::reg_cclass<GTerrain>::_reg(gLuaScript.getState(),"GTerrain")
-    //    //	.constructor<void>()
-    //    //	.function("recreate",&GTerrain::recreate);
-
-    //    //luacpp::reg_cclass<GSceneManager>::_reg(gLuaScript.getState(),"GSceneManager")
-    //    //	.function("addDynaObj",&GSceneManager::addDynaObj);
-    //    //LuaModel(GTerrain)
-    //    //{
-    //    //	gLuaScript.regClass<GNode> ( "GNode" );
-    //    //	gLuaScript.regClass<GTerrain, GNode> ( "GTerrain" );
-    //    //	gLuaScript.regClassFunction<GTerrain> ( "recreate", &GTerrain::recreate );
-    //    //	gLuaScript.regClassCreator<GTerrain>();
-    //    //}
-
-    //    //      gLuaScript.regClass<GSceneManager> ( "GSceneManager" );
-    //    //      gLuaScript.regClassFunction<GSceneManager> ( "addDynaObj", &GSceneManager::addDynaObj );
-
-    //    //      gLuaScript.regGlobalFun ( "getSceneMgr", getSceneMgr );
-    //    //      gLuaScript.regGlobalFun ( "logInfo", logInfo );
-
-    //    CXASSERT ( gLuaScript.doFile ( "main.lua" ) );
-    //    //int n=luacpp::call<int>(gLuaScript.getState(),"addNum",3);
-    //    //luacpp::call<void>(gLuaScript.getState(),"addInfo");
-    //    int n = 0;
-    //    gLuaScript.call ( n, "addNum", 3 );
-    //    gLuaScript.call ( "addInfo" );
-
-    //    //GTerrain* xmap=new GTerrain();
-    //    //xmap->recreate();
-    //    // Content::Scene.addDynaObj ( xmap );
-    //}
-    //// Content::Scene.mEye.InitTrack( &gAnimMesh[0] );
-
-    ////gEvent.WaitForUse(-1);
-
+	Content::Game.mDelegateOnInitEnd.trigger();
     Content::Scene.mSceneMachine.ChangeToScene ( gsGame );
 
     return TRUE_INT;
 }
-
-
 
 
 void GGame::gameRender ( float fPass )
@@ -378,6 +289,35 @@ void GGame::renderEye ( float fPass )
 void GGame::finish()
 {
     mFinished = true;
+}
+
+GPlugin* GGame::getPlugin ( const char* name )
+{
+for ( auto & plugin: mPlugins )
+    {
+        if ( dStrEqual ( name, plugin->getPluginName() ) )
+        {
+            return plugin;
+        }
+    }
+    return nullptr;
+}
+
+bool GGame::registerPlugin ( GPlugin* plugin )
+{
+    CXASSERT_RETURN_FALSE ( plugin );
+    CXASSERT_RETURN_FALSE ( !getPlugin ( plugin->getPluginName() ) );
+    mPlugins.push_back ( plugin );
+    return true;
+}
+
+bool GGame::unregisterPlugin ( const char* name )
+{
+    GPlugin* plugin = getPlugin ( name );
+    CXASSERT_RETURN_FALSE ( plugin != nullptr );
+    mPlugins.destroyPointer( plugin );
+    return true;
+
 }
 
 

@@ -3,6 +3,7 @@
 #include "GTerrain.h"
 #include "GComponentMesh.h"
 #include "GComponentBox.h"
+#include "GUINode.h"
 
 GInitilizer Content::Initilizer;
 
@@ -60,6 +61,7 @@ void Content::initNodeFactory()
 	__RegisterGameObjCreator ( GWorldCorrd );
 	__RegisterGameObjCreator ( GTerrain );
 	__RegisterGameObjCreator ( GCamera );
+	__RegisterGameObjCreator ( GUINode );
 }
 
 #define __RegisterComponentCreator(className) \

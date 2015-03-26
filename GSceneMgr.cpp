@@ -62,7 +62,7 @@ bool GSceneManager::init()
 
 void* GSceneManager::getInput ( float fPass )
 {
-     Content::InputEntityMgr.getInput ( fPass );
+    Content::InputEntityMgr.getInput ( fPass );
     //mSceneDynamicRootNode->getInput ( fPass );
     return 0;
 }
@@ -157,6 +157,7 @@ void GSceneManager::addObj ( const char* parentName, const char* typeName )
 {
     GNode* parent = getObj ( parentName );
     GNode* child = createObjByTypeName ( typeName );
+    CXASSERT_RETURN ( child->recreate() );
     addObj ( child , parent );
 }
 
