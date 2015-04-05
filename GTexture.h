@@ -12,8 +12,13 @@ public:
 
 	void set(int stage);
 	void destory();
+	int width() const;
+	int height() const;
 public:
-	GString			mFileName;
+	GString	mFileName;
+protected:
+	u32 mWidth;
+	u32 mHeight;
 protected:
 	IDirect3DTexture9*	mD3DTexture;
 };

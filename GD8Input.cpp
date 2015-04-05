@@ -14,12 +14,12 @@ GD8Input::GD8Input ( void )
     mMouse = NULL;
     mDI = NULL;
 
-    Reset();
+    reset();
 }
 
 GD8Input::~GD8Input ( void )
 {
-
+    dSafeDeleteVector ( mInputArray );
 }
 
 
@@ -60,36 +60,34 @@ bool GD8Input::init ( const GD9Device& device, HINSTANCE hInst, HWND hWin )
     return true;
 }
 
-void GD8Input::Update()
+void GD8Input::update()
 {
-    //自身先清零，然后获取当前状态
-
     if ( !mActive )
         return;
 
     //-------------------------------------------------------------------------
-    // 此处多做一次UpdateState()是为了清除鼠标中数据的增量
+    // 此处多做一次updateState()是为了清除鼠标中数据的增量
     //-------------------------------------------------------------------------
 
     if ( mNeedClearMouseMoveDelta )
     {
-        UpdateState();
+        updateState();
         mNeedClearMouseMoveDelta = false;
     }
 
-    UpdateState();
+    updateState();
 
     checkEvent();
 }
 
-bool GD8Input::IsPressKey ( byte key )
+bool GD8Input::isKeyPressing ( byte key )
 {
-    return mKeyData[key] == 0x80;
+    return mKBoardAction[key] == eInputAction_Pressing;
 }
 
 
 
-POINT GD8Input::GetMouseMove()
+POINT GD8Input::getMouseMove()
 {
     POINT Pt;
     Pt.x = mMouseData.lX;
@@ -97,7 +95,7 @@ POINT GD8Input::GetMouseMove()
     return Pt;
 }
 
-D3DVECTOR GD8Input::GetMouseMoveEX()
+D3DVECTOR GD8Input::getMouseMoveEX()
 {
     D3DVECTOR vPos;
     dVector ( vPos, mMouseData.lX, mMouseData.lY , mMouseData.lZ );
@@ -127,54 +125,41 @@ int GD8Input::getMouseWheel()
     return mMouseData.lZ;
 }
 
-byte GD8Input::GetButtonAction ( eButtonType bt ) const
+
+bool GD8Input::isButtonPressing ( eButtonType bt )
 {
-    return mMouseButtonState[bt];
+    return mMouseAction[bt] == eInputAction_Pressing;
 }
 
-bool GD8Input::isPressingButton ( eButtonType bt )
+
+bool GD8Input::iskeyUp ( byte key )
 {
-    if ( bt == eButtonType_LeftButton )
-    {
-        return mMouseData.rgbButtons[eButtonType_LeftButton];
-    }
-    else if ( bt == eButtonType_MiddleButton )
-    {
-        return mMouseData.rgbButtons[eButtonType_MiddleButton];
-    }
-    else
-    {
-        return mMouseData.rgbButtons[eButtonType_RightButton];
-    }
+    return mKBoardAction[key] == eInputAction_Up;
 }
 
-byte GD8Input::getKeyAction ( int key )
+bool GD8Input::isKeyDown ( byte key )
 {
-    return mKBoardState[key];
+    return mKBoardAction[key] == eInputAction_Down;
 }
 
-bool GD8Input::IskeyUp ( byte key )
-{
-    return getKeyAction ( key ) == DI_BUTTONUP;
-}
-void GD8Input::Active ( bool active )
+void GD8Input::active ( bool active )
 {
     mActive = active;
     mNeedClearMouseMoveDelta = true;
 }
 
-void GD8Input::Reset()
+void GD8Input::reset()
 {
-    ZeroMemory ( &mMouseData, sizeof ( mMouseData ) );
-    ZeroMemory ( mMouseButtonStateOld, sizeof ( mMouseButtonStateOld ) );
+    dMemoryZero ( &mMouseData, sizeof ( mMouseData ) );
+    dMemoryZero ( mMouseActionOld, sizeof ( mMouseActionOld ) );
 
-    ZeroMemory ( mKeyData, sizeof ( mKeyData ) );
-    ZeroMemory ( mKBoardStateOld, sizeof ( mKBoardStateOld ) );
+    dMemoryZero ( mKeyData, sizeof ( mKeyData ) );
+    dMemoryZero ( mKBoardActionOld, sizeof ( mKBoardActionOld ) );
     mCurMousePositon.x = 0;
     mCurMousePositon.y = 0;
 }
 
-void GD8Input::UpdateState()
+void GD8Input::updateState()
 {
     if ( mKboard->GetDeviceState ( KEY_COUNT, mKeyData ) == DIERR_INPUTLOST )
     {
@@ -188,60 +173,16 @@ void GD8Input::UpdateState()
         mMouse->GetDeviceState ( ( sizeof ( mMouseData ) ), &mMouseData );
     }
 
-    //////确定鼠标动作
     for ( int i = 0; i < eButtonType_Count; i++ )
     {
-        if ( !mMouseButtonStateOld[i] )
-        {
-            if ( mMouseData.rgbButtons[i] == 0x80 )
-            {
-                mMouseButtonState[i] = DI_BUTTONDOWN; //发生按下动作
-            }
-            else
-            {
-                mMouseButtonState[i] = DI_BUTTONNULL;
-            }
-        }
-        else
-        {
-            if ( mMouseData.rgbButtons[i] == 0x80 )
-            {
-                mMouseButtonState[i] = DI_BUTTONNULL;
-            }
-            else
-            {
-                mMouseButtonState[i] = DI_BUTTONUP; //发生跳起动作
-            }
-        }
-        mMouseButtonStateOld[i] = ( mMouseData.rgbButtons[i] == 0x80 );
+        mMouseAction[i] = eInputState ( mMouseData.rgbButtons[i] ) - mMouseActionOld[i];
+        mMouseActionOld[i] = mMouseAction[i];
     }
 
-    //////确定键盘动作
     for ( int i = 0; i < KEY_COUNT; i++ )
     {
-        if ( !mKBoardStateOld[i] )
-        {
-            if ( mKeyData[i] == 0x80 )
-            {
-                mKBoardState[i] = DI_BUTTONDOWN; //发生按下动作
-            }
-            else
-            {
-                mKBoardState[i] = DI_BUTTONNULL;
-            }
-        }
-        else
-        {
-            if ( mKeyData[i] == 0x80 )
-            {
-                mKBoardState[i] = DI_BUTTONNULL;
-            }
-            else
-            {
-                mKBoardState[i] = DI_BUTTONUP; //发生跳起动作
-            }
-        }
-        mKBoardStateOld[i] = ( mKeyData[i] & 0x80 );
+        mKBoardAction[i] = mKeyData[i] - mKBoardActionOld[i];
+        mKBoardActionOld[i] = mKBoardAction[i];
     }
 }
 
@@ -249,19 +190,23 @@ void GD8Input::checkEvent()
 {
     if ( !isMouseInDevice() )
         return;
-	POINT v = GetMouseMove();
-	if ( v.x != 0 || v.y != 0 )
-	{
-		mDelegateMouseMove.trigger();
+    D3DVECTOR v = getMouseMoveEX();
+    if ( v.x != 0 || v.y != 0 )
+    {
+        mDelegateMouseMove.trigger();
 
-		for ( int i = 0; i < eButtonType_Count; ++i )
-		{
-			if ( isPressingButton ( ( eButtonType ) i ) )
-			{
-				mDelegateMouseDownAndMoved.trigger();
-			}
-		}
-	}
+        for ( int i = 0; i < eButtonType_Count; ++i )
+        {
+            if ( isButtonPressing ( ( eButtonType ) i ) )
+            {
+                mDelegateMouseDownAndMoved.trigger();
+            }
+        }
+    }
+    if ( v.z != 0 )
+    {
+        mDelegateMouseZoom.trigger();
+    }
     for ( int i = 0; i < eButtonType_Count; ++i )
     {
         if ( isButtonDown ( eButtonType ( i ) ) )
@@ -273,11 +218,26 @@ void GD8Input::checkEvent()
             mDelegateMouseUp.trigger();
         }
     }
+for ( auto i: mInputArray )
+    {
+        if ( i->mCtrl > 0 )
+        {
+            if ( !isCtrlOk ( i->mCtrl ) )
+                continue;
+        }
+        if ( i->mKey > 0 && i->mKeyAct != eInputAction_None )
+        {
+            if ( i->mKeyAct != mKBoardAction[i->mKey] )
+                continue;
+        }
+        i->mCallBack();
+        break;
+    }
 }
 
 bool GD8Input::isButtonDown ( eButtonType bt ) const
 {
-    return mMouseButtonState[bt] == DI_BUTTONDOWN; //发生按下动作
+    return mMouseAction[bt] == eInputAction_Down; //发生按下动作
 }
 
 bool GD8Input::isMouseInDevice() const
@@ -293,5 +253,149 @@ bool GD8Input::isMouseInDevice() const
 
 bool GD8Input::isButtonUp ( eButtonType bt ) const
 {
-    return mMouseButtonState[bt] == DI_BUTTONUP; //发生按下动作
+    return mMouseAction[bt] == eInputAction_Up; //发生按下动作
 }
+bool SortFunc ( GKeyItem* left, GKeyItem* right )
+{
+    return left->mCtrl > right->mCtrl;
+}
+
+eInputAction operator- ( eInputState state, eInputAction act )
+{
+    eInputAction action = eInputAction_None;
+    switch ( state )
+    {
+    case eInputStateNone:
+    {
+        if ( act == eInputAction_Down || act == eInputAction_Pressing )
+            action = eInputAction_Up ;
+    }
+    break;
+    case eInputStateBe:
+    {
+        action = eInputAction_Pressing;
+        if ( act == eInputAction_None )
+            action = eInputAction_Down;
+    }
+    break;
+    }
+    return action;
+}
+
+void GD8Input::addInputKey ( byte key, eInputAction keyact, int ctrl, KeyCallBack callback )
+{
+    CXASSERT_RETURN ( key > 0 || ctrl > 0 );
+#ifdef _DEBUG
+for ( auto i: mInputArray )
+    {
+        if ( i->mCtrl == ctrl && i->mKey == key )
+        {
+            CXASSERT_RETURN ( 0 && "Exist key!" );
+        }
+    }
+#endif
+    GKeyItem* item = new GKeyItem;
+    item->mKey = key;
+    item->mKeyAct = keyact;
+    item->mCtrl = ctrl;
+    item->mCallBack = callback;
+    mInputArray.push_back ( item );
+    ::sort ( mInputArray.begin(), mInputArray.end(), SortFunc );
+}
+
+bool GD8Input::isCtrlOk ( int ctrlkeys )
+{
+    static const byte CTRLKEYMAP[] =
+    {
+        DIK_LCONTROL,
+        DIK_RCONTROL,
+        DIK_LSHIFT,
+        DIK_RSHIFT,
+        DIK_LALT,
+        DIK_RALT,
+    };
+    enum eButtonState
+    {
+        eButtonState_Pressing,
+        eButtonState_Down,
+        eButtonState_Up,
+        eButtonState_Count,
+    };
+    eButtonState buttonState = eButtonState_Count;
+    bool downkey = false;
+    for ( int key = eCtrlKey_LCtrl, offset = 0; key < eCtrlKey_Count; key = 1 << ( ++offset ) )
+    {
+        switch ( key )
+        {
+        case eCtrlKey_LCtrl:
+        case eCtrlKey_RCtrl:
+        case eCtrlKey_LShift:
+        case eCtrlKey_RShift:
+        case eCtrlKey_LAtl:
+        case eCtrlKey_RAtl:
+        {
+            if (  ctrlkeys & key )
+            {
+                if ( !isKeyPressing ( CTRLKEYMAP[offset] ) )
+                    return false;
+                else
+                {
+                    downkey = true;
+                }
+            }
+        }
+        break;
+        case eCtrlKey_ButtonDown:
+        case eCtrlKey_ButtonPressing:
+        case eCtrlKey_ButtonUp:
+        {
+            if (  ctrlkeys & key )
+            {
+                CXASSERT ( buttonState == eButtonState_Count );
+                buttonState = ( eButtonState ) ( offset - 6 );
+            }
+        }
+        break;
+        case eCtrlKey_LButton:
+        case eCtrlKey_RButton:
+        case eCtrlKey_MButton:
+        {
+            if ( buttonState == eButtonState_Count )
+                break;
+            if (  ctrlkeys & key )
+            {
+                if ( buttonState == eButtonState_Down )
+                {
+                    if ( !isButtonDown ( eButtonType ( offset - 9 ) ) )
+                    {
+                        int n = 0;
+                        ++n;
+                        return false;
+                    }
+
+                }
+                else if ( buttonState == eButtonState_Pressing )
+                {
+                    if ( !isButtonPressing (  eButtonType ( offset - 9 ) ) )
+                        return false;
+                }
+                else if ( buttonState == eButtonState_Up )
+                {
+                    if ( !isButtonUp (  eButtonType ( offset - 9 ) ) )
+                        return false;
+                }
+            }
+        }
+        break;
+        case eCtrlKey_Count:
+        {
+            CXASSERT_RETURN_FALSE ( 0 );
+        }
+        break;
+        default:
+            break;
+        }
+    }
+    return true;
+}
+

@@ -2,79 +2,123 @@
 
 #include "GD9Device.h"
 #include "XSingleton.h"
-
-#define DI_BUTTONNULL 0
-#define DI_BUTTONTRUE 1
-#define DI_BUTTONUP 3
-#define DI_BUTTONDOWN 5
-#define DI_BUTTONCLICK 11
-#define DI_BUTTONDBCLICK 27
+enum eInputState:
+unsigned char
+{
+    eInputStateNone,
+    eInputStateBe = 0X80,
+};
+enum eInputAction
+{
+    eInputAction_None,
+    eInputAction_Pressing = BIT ( 0 ),
+    eInputAction_Up = BIT ( 1 ),
+    eInputAction_Down = BIT ( 2 ) | eInputAction_Pressing,
+};
+eInputAction operator- ( eInputState state, eInputAction );
 
 enum eButtonType
 {
-	eButtonType_LeftButton, 
-	eButtonType_RightButton,
-	eButtonType_MiddleButton,
-	eButtonType_Count,
+    eButtonType_LeftButton,
+    eButtonType_RightButton,
+    eButtonType_MiddleButton,
+    eButtonType_Count,
+};
+enum eCtrlKey
+{
+    eCtrlKey_LCtrl = BIT ( 0 ),
+    eCtrlKey_RCtrl = BIT ( 1 ),
+    eCtrlKey_LShift = BIT ( 2 ),
+    eCtrlKey_RShift = BIT ( 3 ),
+    eCtrlKey_LAtl = BIT ( 4 ),
+    eCtrlKey_RAtl = BIT ( 5 ),
+    eCtrlKey_ButtonPressing = BIT ( 6 ),
+    eCtrlKey_ButtonDown = BIT ( 7 ),
+    eCtrlKey_ButtonUp = BIT ( 8 ),
+    eCtrlKey_LButton = BIT ( 9 ),
+    eCtrlKey_RButton = BIT ( 10 ),
+    eCtrlKey_MButton = BIT ( 11 ),
+    eCtrlKey_Count,
+};
+typedef void ( *KeyCallBack ) ();
+struct GKeyItem
+{
+    byte mKey;
+	eInputAction mKeyAct;
+    int mCtrl;
+    KeyCallBack mCallBack;
 };
 class  GD9Device;
 class GD8Input
 {
 public:
-	CXDelegate mDelegateMouseMove;
-	CXDelegate mDelegateMouseUp;
-	CXDelegate mDelegateMouseDown;
-	CXDelegate mDelegateMouseDownAndMoved;
+    CXDelegate mDelegateMouseZoom;
+    CXDelegate mDelegateMouseMove;
+    CXDelegate mDelegateMouseUp;
+    CXDelegate mDelegateMouseDown;
+    CXDelegate mDelegateMouseDownAndMoved;
 public:
-	enum {KEY_COUNT=256,};
+    enum {KEY_COUNT = 256,};
 
-	GD8Input ( void );
-	~GD8Input ( void );
-	void Reset();
-	/////×´Ì¬
-	//bool IsKeyDown(byte key);
-	bool IskeyUp ( byte key );
-	bool IsPressKey ( byte key );
-	//bool IsPressing(byte key);
+    GD8Input ( void );
+    ~GD8Input ( void );
+    void reset();
+
+	bool isKeyPressing ( byte key );
+	bool isKeyDown ( byte key );
+    bool iskeyUp ( byte key );
+
+    bool isButtonPressing ( eButtonType bt );
+    bool isButtonDown ( eButtonType bt ) const;
+    bool isButtonUp ( eButtonType bt ) const;
+    //////////////////////////////////////////////////////////////////////////
+    /////Î»ÖÃ
+    bool isWheelMButton();
+    POINT getMousePoint() const;
+    POINT getMouseMove();
+    D3DVECTOR getMouseMoveEX();
+    int getMouseWheel();
+
+    void freezeMouse ( bool bFreeze );
+    void update();
+    void active ( bool active );
+    bool init ( const GD9Device& device, HINSTANCE hInst, HWND hWin );
+    bool isMouseInDevice() const;
 
 
-	////////¶¯×÷
-	bool isPressingButton ( eButtonType bt );
-	byte GetButtonAction ( eButtonType bt ) const;
-	byte getKeyAction ( int key );
-
-	bool isButtonDown(eButtonType bt) const;
-	bool isButtonUp(eButtonType bt) const;
-	//////////////////////////////////////////////////////////////////////////
-	/////Î»ÖÃ
-	bool IsWheelMButton();
-	POINT getMousePoint() const;
-	POINT GetMouseMove();
-	D3DVECTOR GetMouseMoveEX();
-	int getMouseWheel();
-
-	void FreezeMouse ( bool bFreeze );
-	void Update();
-	void Active ( bool active );
-	bool init ( const GD9Device& device, HINSTANCE hInst, HWND hWin );
-	bool isMouseInDevice() const;
+    //************************************
+    // Method:    addInputKey
+    // FullName:  GD8Input::addInputKey
+    // Access:    public
+    // Returns:   void
+    // Qualifier:
+    // Parameter: byte key DIK
+    // Parameter: int ctrl eCtrlKey ×éºÏ
+    // Parameter: KeyCallBack callback
+    //************************************
+    void addInputKey ( byte key, eInputAction keyact, int ctrl, KeyCallBack callback );
 private:
-	void UpdateState();
-	void checkEvent();
+    void updateState();
+    void checkEvent();
+    bool isCtrlOk ( int ctrlkeys );
+    HINSTANCE mInstance;
+    HWND mWinID;
+    LPDIRECTINPUT8 mDI;
+    LPDIRECTINPUTDEVICE8 mKboard;
+    LPDIRECTINPUTDEVICE8 mMouse;
 
-	HINSTANCE mInstance;
-	HWND mWinID;
-	LPDIRECTINPUT8 mDI;
-	LPDIRECTINPUTDEVICE8 mKboard;
-	LPDIRECTINPUTDEVICE8 mMouse;
+    DIMOUSESTATE mMouseData;
+    POINT mCurMousePositon;
 
-	DIMOUSESTATE mMouseData;
-	POINT mCurMousePositon;
-	byte mMouseButtonStateOld[eButtonType_Count];
-	byte mMouseButtonState[eButtonType_Count];//0×ó¼ü£¬1ÓÒ¼ü£¬2ÖÐ¼ü
-	byte mKBoardState[KEY_COUNT];
-	byte mKBoardStateOld[KEY_COUNT];
-	BYTE mKeyData[KEY_COUNT];
-	bool mActive;
-	bool mNeedClearMouseMoveDelta;
+    eInputAction mMouseAction[eButtonType_Count];//0×ó¼ü£¬1ÓÒ¼ü£¬2ÖÐ¼ü
+    eInputAction mMouseActionOld[eButtonType_Count];
+
+    eInputAction mKBoardAction[KEY_COUNT];
+    eInputAction mKBoardActionOld[KEY_COUNT];
+
+    eInputState mKeyData[KEY_COUNT];
+    bool mActive;
+    bool mNeedClearMouseMoveDelta;
+
+    CXDynaArray<GKeyItem*> mInputArray;
 };

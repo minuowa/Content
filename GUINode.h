@@ -17,11 +17,14 @@ public:
     bool containPoint ( long x, long y ) const;
     const CXRect& getRect() const;
     const CXRect& getRelRect() const;
+	const CXRect& getOrignalRect() const;
 
     void setTexture ( const char* fileName );
 
     GUINode* getNode ( long x, long y, eObjState state ) ;
     void onLostCapture();
+	void onGetCapture();
+	GTexture* getTexture() const;
 protected:
 
     virtual bool render();

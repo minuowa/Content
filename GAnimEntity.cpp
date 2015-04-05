@@ -76,7 +76,7 @@ void GAnimEntity::DrawMeshContainer ( D3DXMESHCONTAINER *pMeshContainerBase, D3D
     D3DXFrameEX *pFrameEx = ( D3DXFrameEX* ) pFrameBase;
 
     D3DCAPS9 d3dCap;
-    ZeroMemory ( &d3dCap, sizeof ( d3dCap ) );
+    dMemoryZero ( &d3dCap, sizeof ( d3dCap ) );
      Content::Device.GetDvc()->GetDeviceCaps ( &d3dCap );
 
     if ( pMeshContainerEx->pBoneCombinationBufffer != NULL )
@@ -94,7 +94,7 @@ void GAnimEntity::DrawMeshContainer ( D3DXMESHCONTAINER *pMeshContainerBase, D3D
 
     bool bHit = false;
 
-    if (  Content::InputSystem.isPressingButton ( eButtonType_LeftButton ) )
+    if (  Content::InputSystem.isButtonPressing ( eButtonType_LeftButton ) )
     {
         if ( pMeshContainerEx != NULL && pMeshContainerEx->MeshData.pMesh != NULL && !mNodeState[eObjState_Picked] )
         {

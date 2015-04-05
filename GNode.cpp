@@ -133,7 +133,7 @@ GNode::GNode()
     : mNodeState ()
     , mLocalID ( 0 )
 {
-	mNodeState.setAll(true);
+    mNodeState.setAll ( false );
 
     mLocalID = getObjIDManager().addObj ( this );
 
@@ -161,7 +161,7 @@ GNode::GNode()
     m_bUseMatrialColor = false;
 
     mCulledByCamera = true;
-    ZeroMemory ( &m_InsectInfo, sizeof ( m_InsectInfo ) );			//碰撞信息
+    dMemoryZero ( &m_InsectInfo, sizeof ( m_InsectInfo ) );			//碰撞信息
     attachComponent ( eComponentType_Trans, false, false );
 }
 
@@ -328,6 +328,12 @@ bool GNode::removeChild ( GNode* child )
 
 void GNode::beginRender()
 {
+    GComponentTrans* trans = getTrans();
+    GMatrix gmat;
+    gmat.mDir = D3DXVECTOR3 ( 0, 0, 2 );
+    gmat.mRight = D3DXVECTOR3 ( 3, 0, 0 );
+    gmat.mUpon = D3DXVECTOR3 ( 0, 2, 0 );
+    trans->updateWorld ( gmat );
     getTrans()->set();
 }
 
@@ -338,7 +344,8 @@ void GNode::endRender()
     for ( ; iBegin != iEnd; ++iBegin )
     {
         GNode* n = *iBegin;
-        n->draw();
+        if ( n->mNodeState[eObjState_Render] )
+            n->draw();
     }
 }
 bool GNode::recreate()
@@ -442,7 +449,7 @@ void GNode::makeXMLNode ( CXRapidxmlNode& node )
 
 bool GNode::render()
 {
-	return mNodeState[eObjState_Render];
+    return mNodeState[eObjState_Render];
 }
 
 GNode* GNode::getNodeByName ( const char* name )
@@ -875,9 +882,9 @@ void GNode::setCanGetInput ( bool can )
 {
     mNodeState.setBit ( eObjState_GetInput, can );
     if ( can )
-         Content::InputEntityMgr.addInputObj ( this );
+        Content::InputEntityMgr.addInputObj ( this );
     else
-         Content::InputEntityMgr.remove ( this->getLocalID() );
+        Content::InputEntityMgr.remove ( this->getLocalID() );
 }
 
 
@@ -898,8 +905,8 @@ bool GNode::isState ( eObjState state ) const
 
 CXIDObjectManager<GNode>& GNode::getObjIDManager()
 {
-	static CXIDObjectManager<GNode> objectIDManager;
-	return objectIDManager;
+    static CXIDObjectManager<GNode> objectIDManager;
+    return objectIDManager;
 }
 
 CXDelegate GNode::mDelegateDeleteObj;

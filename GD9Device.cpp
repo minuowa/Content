@@ -91,7 +91,7 @@ void GD9Device::EndRender()
 
 void GD9Device::SetLight()
 {
-    ZeroMemory ( mLight, sizeof ( mLight ) );
+    dMemoryZero ( mLight, sizeof ( mLight ) );
     for ( int i = 0; i < LIGHT_NUM; i++ )
     {
         mLight[i].Type = D3DLIGHT_DIRECTIONAL;
@@ -268,7 +268,7 @@ void GD9Device::ResetRenderState()
     //mD9Device->SetTextureStageState(0,D3DTSS_TEXCOORDINDEX,D3DTSS_TCI_PASSTHRU);//使用顶点中纹理坐标
 
     D3DMATERIAL9 matr;
-    ZeroMemory ( &matr, sizeof ( D3DMATERIAL9 ) );
+    dMemoryZero ( &matr, sizeof ( D3DMATERIAL9 ) );
     mD9Device->SetMaterial ( &matr );
     //关闭纹理坐标变换
     D3DXMATRIX mat;
@@ -408,7 +408,7 @@ bool GD9Device::ResetDevice ( int w, int h )
     mWidth = w;
     mHeight = h;
     D3DPRESENT_PARAMETERS d3dp;
-    ZeroMemory ( &d3dp, sizeof ( D3DPRESENT_PARAMETERS ) );
+    dMemoryZero ( &d3dp, sizeof ( D3DPRESENT_PARAMETERS ) );
 
     d3dp.AutoDepthStencilFormat = D3DFMT_D24S8;	//深度缓存24位，模板缓存8位
     d3dp.BackBufferCount = 1;						//后台缓冲区一个

@@ -28,9 +28,13 @@ bool GTexture::createFromFile ( const char* name )
         NULL,
         NULL,
         &mD3DTexture );
-    //CXASSERT_RESULT_FALSE (
-    //D3DXCreateTextureFromFileA (  Content::Device.GetDvc(), name, &mD3DTexture )
-    //);
+	if (mD3DTexture)
+	{
+		D3DSURFACE_DESC surfaceDesc;    //高度图纹理表面
+		mD3DTexture->GetLevelDesc ( 0, &surfaceDesc );
+		mHeight = surfaceDesc.Height;
+		mWidth = surfaceDesc.Width;
+	}
     return nullptr != mD3DTexture;
 }
 
@@ -57,6 +61,16 @@ void GTexture::set ( int stage )
      Content::Device.GetDvc()->SetTextureStageState ( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
      Content::Device.GetDvc()->SetTextureStageState ( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
      Content::Device.GetDvc()->SetTextureStageState ( 0, D3DTSS_ALPHAOP, useTexture ? D3DTOP_MODULATE : D3DTOP_SELECTARG2 );
+}
+
+int GTexture::width() const
+{
+	return mWidth;
+}
+
+int GTexture::height() const
+{
+	return mHeight;
 }
 
 

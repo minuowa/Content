@@ -2,7 +2,6 @@
 #include "GGame.h"
 #include "XCharString.h"
 #include <locale.h>
-#include "XEvent.h"
 #include "GGameOption.h"
 #include "GComponentFactory.h"
 #include "GResourceManager.h"
@@ -49,7 +48,7 @@ bool GGame::loop()
     Content::Timer.update();
     if ( mIsActive )
     {
-        Content::InputSystem.Update();
+        Content::InputSystem.update();
         if ( !getInput() )
             return false;
     }
@@ -60,12 +59,12 @@ bool GGame::loop()
 
 bool GGame::getInput()
 {
-    if (  Content::InputSystem.IskeyUp ( DIK_ESCAPE ) )
+    if (  Content::InputSystem.iskeyUp ( DIK_ESCAPE ) )
     {
         finish();
         return false;
     }
-    if (  Content::InputSystem.IskeyUp ( DIK_TAB ) )
+    if (  Content::InputSystem.iskeyUp ( DIK_TAB ) )
     {
         Content::FilmPlayer.play ( "film.lua" );
     }
@@ -175,9 +174,7 @@ bool GGame::init ( HWND mainWnd )
 
     //加载渲染对象大概3000ms
 
-    CoUninitialize();
-
-    gEvent.Create ( "Load" );
+    //gEvent.Create ( "Load" );
 
     //gEvent.SetUsed();
 
@@ -196,7 +193,6 @@ bool GGame::init ( HWND mainWnd )
 
 void GGame::shutDown()
 {
-    //CXSingleton<GGame>::destoryInstance();
 }
 
 
@@ -231,7 +227,7 @@ void GGame::renderEye ( float fPass )
 
     //char strEye[128];
 
-    //ZeroMemory( strEye, sizeof( strEye ) );
+    //dMemoryZero( strEye, sizeof( strEye ) );
 
     ////sprintf(strEye,"眼睛位置--X：%.2f,Y:%.2f,Z:%.2f",mpSceneMgr->mText.mEye.mXPos.mvPos.x,mpSceneMgr->mText.mEye.mXPos.mvPos.y,mpSceneMgr->mText.mEye.mXPos.mvPos.z);
 
@@ -243,7 +239,7 @@ void GGame::renderEye ( float fPass )
 
 
 
-    //ZeroMemory( strEye, sizeof( strEye ) );
+    //dMemoryZero( strEye, sizeof( strEye ) );
 
     //if ( mpSelectAnim != NULL )
     //{
@@ -259,7 +255,7 @@ void GGame::renderEye ( float fPass )
 
     //if ( mpSelectObj != NULL )
     //{
-    //    ZeroMemory( strEye, sizeof( strEye ) );
+    //    dMemoryZero( strEye, sizeof( strEye ) );
     //    sprintf( strEye, "当前对象ID：%d", ( ( CGameStaticObj* )( mpSelectObj ) )->m_nObjID );
     //    mpContent::UIMgr.mText.SetCurrentFontSize( fs12 );
 
@@ -267,7 +263,7 @@ void GGame::renderEye ( float fPass )
     //    rcEye.bottom += 50;
     //    mpContent::UIMgr.mText.DrawTextInRect( strEye, &rcEye, 0xffff0000, otUI, tpLeft );
 
-    //    ZeroMemory( strEye, sizeof( strEye ) );
+    //    dMemoryZero( strEye, sizeof( strEye ) );
     //    sprintf( strEye, "当前模型ID：%d", ( ( CGameStaticObj* )( mpSelectObj ) )->LnMeshID );
     //    mpContent::UIMgr.mText.SetCurrentFontSize( fs12 );
 
@@ -276,7 +272,7 @@ void GGame::renderEye ( float fPass )
     //    mpContent::UIMgr.mText.DrawTextInRect( strEye, &rcEye, 0xffff0000, otUI, tpLeft );
     //}
 
-    //ZeroMemory( strEye, sizeof( strEye ) );
+    //dMemoryZero( strEye, sizeof( strEye ) );
     //sprintf( strEye, "当前渲染对象数目：%d", GMeshBuffer::getSingleton().mRenderObjNum + 1 );
     //mpContent::UIMgr.mText.SetCurrentFontSize( fs12 );
 

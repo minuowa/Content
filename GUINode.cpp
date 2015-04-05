@@ -15,7 +15,7 @@ struct GUIVertex
 GUINode::GUINode ( void )
     : mTextureProp ( nullptr )
 {
-    setState ( eUINodeState_CanHover, true );
+    setState ( eUINodeState_CanHover, false );
     setState ( eUINodeState_IsHover, false );
     mVertexColor.Color = Color_Pure_White;
     mRect.mW = 100;
@@ -140,6 +140,21 @@ const CXRect& GUINode::getRelRect() const
 }
 
 void GUINode::onLostCapture()
+{
+
+}
+
+GTexture* GUINode::getTexture() const
+{
+	return mTextureProp;
+}
+
+const CXRect& GUINode::getOrignalRect() const
+{
+	return mOrignalRect;
+}
+
+void GUINode::onGetCapture()
 {
 
 }

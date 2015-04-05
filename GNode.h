@@ -17,8 +17,10 @@ enum eObjState
 	eUINodeState_AcpectEvent,	///是否可接受事件
 	eUINodeState_CanHover,
 	eUINodeState_CanCapture,
-	eUINodeState_IsHover,
 	eUINodeState_IsCapture,
+	eUINodeState_IsHover,
+	eUINodeState_CanScale,
+	eUINodeState_CanDrag,
 };
 enum eForceType
 {
@@ -65,7 +67,7 @@ public:
 
     void setCanGetInput ( bool can );
     u32 getLocalID() const;
-    GNode* addChild ( GNode* c );
+    virtual GNode* addChild ( GNode* c );
     bool removeChild ( GNode* child );
     void deleteChild ( GNode* node );
     GNode* getParent() const;

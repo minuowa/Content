@@ -9,7 +9,7 @@
 //        return false;
 //    }
 //    MSG msg;
-//    ZeroMemory ( &msg, sizeof ( msg ) );
+//    dMemoryZero ( &msg, sizeof ( msg ) );
 //    bool finish = false;
 //    while ( msg.message != WM_QUIT && !finish )
 //    {

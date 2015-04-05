@@ -10,7 +10,7 @@ struct MeshNodeForLod   //LODMeshµÄ½Úµã
 
 	MeshNodeForLod()
 	{
-		ZeroMemory( pMesh, sizeof( pMesh ) );
+		dMemoryZero( pMesh, sizeof( pMesh ) );
 	}
 
 };

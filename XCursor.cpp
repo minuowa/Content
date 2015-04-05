@@ -7,7 +7,7 @@ CXCursor::CXCursor ( void )
 {
 	mhNowCursor = NULL;
 
-	ZeroMemory ( mhCursor, sizeof ( mhCursor ) );
+	dMemoryZero ( mhCursor, sizeof ( mhCursor ) );
 }
 
 CXCursor::~CXCursor ( void )

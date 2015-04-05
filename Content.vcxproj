@@ -151,6 +151,7 @@
     <ClCompile Include="GFilmRecord.cpp" />
     <ClCompile Include="GFrustum.cpp" />
     <ClCompile Include="GGameOption.cpp" />
+    <ClCompile Include="GGWireRectNode.cpp" />
     <ClCompile Include="GHeightMap.cpp" />
     <ClCompile Include="GInitilizer.cpp" />
     <ClCompile Include="GInputEntityManager.cpp" />
@@ -191,9 +192,7 @@
     <ClCompile Include="XArea.cpp" />
     <ClCompile Include="XCursor.cpp" />
     <ClCompile Include="GEffect.cpp" />
-    <ClCompile Include="XEvent.cpp" />
     <ClCompile Include="GStillEntity.cpp" />
-    <ClCompile Include="XMultiThread.cpp" />
     <ClCompile Include="GNode.cpp" />
     <ClCompile Include="GComponentTrans.cpp" />
     <ClCompile Include="GText.cpp" />
@@ -225,6 +224,7 @@
     <ClInclude Include="GFilmCommon.h" />
     <ClInclude Include="GFrustum.h" />
     <ClInclude Include="GGameOption.h" />
+    <ClInclude Include="GGWireRectNode.h" />
     <ClInclude Include="GHeightMap.h" />
     <ClInclude Include="GInitilizer.h" />
     <ClInclude Include="GInputEntityManager.h" />
@@ -264,9 +264,7 @@
     <ClInclude Include="XArea.h" />
     <ClInclude Include="XCursor.h" />
     <ClInclude Include="GEffect.h" />
-    <ClInclude Include="XEvent.h" />
     <ClInclude Include="GStillEntity.h" />
-    <ClInclude Include="XMultiThread.h" />
     <ClInclude Include="GNode.h" />
     <ClInclude Include="GComponentTrans.h" />
     <ClInclude Include="GText.h" />

@@ -19,6 +19,8 @@ public:
 
 	CXDelegate mDelegateHoverNodeChanged;
 	CXDelegate mDelegateNodeClicked;
+	CXDelegate mDelegateNodeButtonDown;
+	CXDelegate mDelegateNodeButtonUp;
 
 	bool init();
 
@@ -31,7 +33,9 @@ public:
     void processInput();
 	GUINode* getNode(const char* name) const;
 	GUINode* getCapture() const;
+	GUINode* getHover() const;
     inline GUINode* getRootNode();
+	void recreateRootNode();
 protected:
     void resetNode();
 	void updateHoverNode();

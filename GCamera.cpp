@@ -74,10 +74,10 @@ void GCamera::setView()
 
 void GCamera::getInput ( DWORD frameTimeMs )
 {
-    if (  Content::InputSystem.IsPressKey ( DIK_ADD ) )
+    if (  Content::InputSystem.isKeyPressing ( DIK_ADD ) )
         getTrans()->mSpeedMove += 0.03f * frameTimeMs;
 
-    if (  Content::InputSystem.IsPressKey ( DIK_SUBTRACT ) )
+    if (  Content::InputSystem.isKeyPressing ( DIK_SUBTRACT ) )
         getTrans()->mSpeedMove -= 0.03f * frameTimeMs;
 
     POINT pt =  Content::InputSystem.getMousePoint();
@@ -86,9 +86,9 @@ void GCamera::getInput ( DWORD frameTimeMs )
     {
         return;			//鼠标在客户区外面就不执行GetInput
     }
-    D3DXVECTOR3 vMove =  Content::InputSystem.GetMouseMoveEX();
+    D3DXVECTOR3 vMove =  Content::InputSystem.getMouseMoveEX();
 
-    if (  Content::InputSystem.IsPressKey ( DIK_A ) ||  Content::InputSystem.IsPressKey ( DIK_D ) ||  Content::InputSystem.IsPressKey ( DIK_S ) ||  Content::InputSystem.IsPressKey ( DIK_W ) )
+    if (  Content::InputSystem.isKeyPressing ( DIK_A ) ||  Content::InputSystem.isKeyPressing ( DIK_D ) ||  Content::InputSystem.isKeyPressing ( DIK_S ) ||  Content::InputSystem.isKeyPressing ( DIK_W ) )
     {
         mbTraceMan = true;
     }
@@ -112,7 +112,7 @@ void GCamera::getInput ( DWORD frameTimeMs )
 
     getTrans()->MoveStep ( vMove.z / 120 * 5.0f );
 
-    if (  Content::InputSystem.isPressingButton ( eButtonType_RightButton ) )
+    if (  Content::InputSystem.isButtonPressing ( eButtonType_RightButton ) )
     {
         getTrans()->trunWithUpon ( -vMove.x / 800.0f );
 

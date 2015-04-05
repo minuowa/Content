@@ -96,7 +96,7 @@ bool CAreaCube::IsDotInArea ( D3DXVECTOR3 vPos )
 
 CAreaCube::CAreaCube()
 {
-    ZeroMemory ( mPlanes, sizeof ( mPlanes ) );
+    dMemoryZero ( mPlanes, sizeof ( mPlanes ) );
 }
 
 CAreaCube::~CAreaCube()

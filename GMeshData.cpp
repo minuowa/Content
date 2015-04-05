@@ -7,8 +7,8 @@
 
 void GMetrialData::set()
 {
-     Content::Device.GetDvc()->SetTexture ( 0, mTexture->getTexture() );
-     Content::Device.GetDvc()->SetMaterial ( &mMat );
+    Content::Device.GetDvc()->SetTexture ( 0, mTexture->getTexture() );
+    Content::Device.GetDvc()->SetMaterial ( &mMat );
 }
 
 void GMetrialData::setTexture ( const char* fileName )
@@ -40,8 +40,8 @@ D3DMATERIAL9 GMetrialData::mDefaultWhite =
 
 void GGraphVertexBuffer::set()
 {
-     Content::Device.GetDvc()->SetStreamSource ( 0, mD9VertexBuffer, 0, mElementSize );
-     Content::Device.GetDvc()->SetFVF ( mFVF );
+    Content::Device.GetDvc()->SetStreamSource ( 0, mD9VertexBuffer, 0, mElementSize );
+    Content::Device.GetDvc()->SetFVF ( mFVF );
 }
 
 void GGraphVertexBuffer::release()
@@ -62,7 +62,7 @@ bool GGraphVertexBuffer::recreate ( D3DPOOL poolType )
     CXASSERT_RETURN_FALSE ( mElementCount );
     CXASSERT_RETURN_FALSE ( mFVF );
 
-     Content::Device.GetDvc()->CreateVertexBuffer (
+    Content::Device.GetDvc()->CreateVertexBuffer (
         allSize()
         , 0
         , mFVF
@@ -102,7 +102,7 @@ GGraphVertexBuffer::GGraphVertexBuffer()
 
 void GGraphIndexBuffer::set()
 {
-     Content::Device.GetDvc()->SetIndices ( mD9IndexBuffer );
+    Content::Device.GetDvc()->SetIndices ( mD9IndexBuffer );
 }
 
 void GGraphIndexBuffer::release()
@@ -113,7 +113,7 @@ void GGraphIndexBuffer::release()
 bool GGraphIndexBuffer::recreate ( D3DPOOL poolType )
 {
     CXCheck ( mIndexCount );
-     Content::Device.GetDvc()->CreateIndexBuffer (
+    Content::Device.GetDvc()->CreateIndexBuffer (
         mIndexCount * sizeof ( DWORD )
         , 0
         , D3DFMT_INDEX32
@@ -157,7 +157,7 @@ GGraphPrimitive::GGraphPrimitive()
 void GGraphPrimitive::draw()
 {
     CXCheck ( mVertexCount );
-     Content::Device.GetDvc()->DrawIndexedPrimitive ( mType, 0, 0, *mVertexCount, 0, mPrimitiveCount );
+    Content::Device.GetDvc()->DrawIndexedPrimitive ( mType, 0, 0, *mVertexCount, 0, mPrimitiveCount );
 }
 
 GGraphPrimitive::~GGraphPrimitive()
@@ -166,5 +166,5 @@ GGraphPrimitive::~GGraphPrimitive()
 
 void GGraphPrimitive::setVB ( const GGraphVertexBuffer& vb )
 {
-    mVertexCount = (u16*)&vb.mElementCount;
+    mVertexCount = ( u16* ) &vb.mElementCount;
 }

@@ -387,10 +387,16 @@ void GText::onCallBack ( const CXDelegate& delgate, CXEventArgs* )
 
 void GText::clear()
 {
-for ( auto f: mFonts )
+for ( auto & f: mFonts )
         dSafeRelease ( f );
 
     dMemoryZeroArray ( mFonts );
+	if (mFontSprite)
+	{
+		long ref = mFontSprite->AddRef();
+		mFontSprite->Release();
+	}
+
     dSafeRelease ( mFontSprite );
     mCurrentFont = nullptr;
 }

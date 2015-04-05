@@ -329,7 +329,7 @@ void GTerrain::computerNormals()
 
         }
     }
-    dSafeDeleteArray ( Normals );
+    delete []Normals ;
     dSafeDelete ( mOriginalIndexBuffer );
     mVertexBuffer->Unlock();
 }

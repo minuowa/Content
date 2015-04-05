@@ -14,7 +14,6 @@
 #include "GNode.h"
 #include "GCamera.h"
 #include "GSceneMgr.h"
-#include "XMultiThread.h"
 
 class GPlugin;
 extern DWORD WINAPI loadObj(LPVOID pParam);
@@ -52,12 +51,10 @@ private:
 
 	void render( );
 public:
-	CXMultiThread mMTLoadObj;
 
 	GStillEntity *mpSelectObj;
 
 	GAnimEntity *mpSelectAnim;
-
 
 private:
 

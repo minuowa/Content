@@ -224,7 +224,7 @@ void GWater::recreateGraphInfo()
 
 	mesh->GenerateAdjacency ( 1.0f, pAdj );
 
-	dSafeDeleteArray ( pAdj );
+	delete []pAdj ;
 }
 
 void GWater::recreateMetrialInfo()
@@ -234,7 +234,7 @@ void GWater::recreateMetrialInfo()
 	material->setTexture ( mTextureFile );
 
 	D3DMATERIAL9 mtrl;
-	ZeroMemory ( &mtrl, sizeof ( mtrl ) );
+	dMemoryZero ( &mtrl, sizeof ( mtrl ) );
 
 	mtrl.Diffuse.r = 0;
 	mtrl.Diffuse.g = 1;

@@ -212,7 +212,7 @@ bool GStillEntity::checkIntersect ( const D3DXVECTOR4& vPos, /*世界坐标系中的点 
         mMeshForInsect->GetIndexBuffer ( &pI );
 
         D3DINDEXBUFFER_DESC indexDesc;
-        ZeroMemory ( &indexDesc, sizeof ( D3DINDEXBUFFER_DESC ) );
+        dMemoryZero ( &indexDesc, sizeof ( D3DINDEXBUFFER_DESC ) );
 
         if ( pI != NULL )
         {

@@ -1,23 +1,23 @@
 #ifndef GTapeNode_h__
 #define GTapeNode_h__
+#include "GGWireRectNode.h"
 
-#include "grectnode.h"
 class GTapeNode :
-    public GRectNode
+    public GGWireRectNode
 {
 public:
-    enum
+    enum eCornerType
     {
-		Corner_LeftTop,
-		Corner_LeftMiddle,
-		Corner_LeftBottom,
+        Corner_LeftTop,
+        Corner_LeftMiddle,
+        Corner_LeftBottom,
 
-		Corner_MiddleTop,
-		Corner_MiddleBottom,
+        Corner_MiddleTop,
+        Corner_MiddleBottom,
 
-		Corner_RigthTop,
-		Corner_RightMiddle,
-		Corner_RightBottom,
+        Corner_RigthTop,
+        Corner_RightMiddle,
+        Corner_RightBottom,
 
         CornerCount,
     };
@@ -26,14 +26,20 @@ public:
     ~GTapeNode ( void );
     virtual bool recreate();
 
-	virtual bool render();
+    virtual bool render();
 
-	virtual bool doGraph();
+    virtual bool doGraph();
 
-	virtual void setColor( u32 color );
+    virtual void setColor ( u32 color );
 
+    virtual void scale ( float scale, long xref, long yref );
+    virtual void offset ( long x, long y );
+
+    virtual void onCallBack ( const CXDelegate& d, CXEventArgs* e );
+
+    void changeCursor ( eCornerType type );
 protected:
-    GRectNode* mCorner[CornerCount];
+    GGWireRectNode* mCorner[CornerCount];
 };
 
 #endif // GTapeNode_h__

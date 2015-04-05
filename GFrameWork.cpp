@@ -82,7 +82,7 @@ void GFrameWork::active ( bool active )
 {
 	mIsActive = active;
 
-	Content::InputSystem.Active ( active );
+	Content::InputSystem.active ( active );
 }
 
 bool GFrameWork::isActive() const
