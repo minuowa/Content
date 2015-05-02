@@ -48,15 +48,15 @@ bool GWorldCorrd::render()
     if ( !__super::render() )
         return false;
 
-    Content::Device.GetDvc()->SetStreamSource ( 0, mVBCoord, 0, sizeof ( VertexXYZAndColor ) );
-    Content::Device.GetDvc()->SetFVF ( FVF_XYZDIFUSE );
-    Content::Device.GetDvc()->SetIndices ( mIBCoord );
-    Content::Device.GetDvc()->DrawIndexedPrimitive ( D3DPT_LINELIST, 0, 0, 6, 0, 3 );
-    Content::Device.GetDvc()->SetStreamSource ( 0, mVBLines, 0, sizeof ( VertexXYZAndColor ) );
-    Content::Device.GetDvc()->SetFVF ( FVF_XYZDIFUSE );
-    Content::Device.GetDvc()->SetIndices ( mIBLines );
-    Content::Device.GetDvc()->SetTexture ( 0, nullptr );
-    Content::Device.GetDvc()->DrawIndexedPrimitive ( D3DPT_LINELIST, 0, 0, 4 * mLineCount, 0, 2 * mLineCount );
+    Content::Device.getD9Device()->SetStreamSource ( 0, mVBCoord, 0, sizeof ( VertexXYZAndColor ) );
+    Content::Device.getD9Device()->SetFVF ( FVF_XYZDIFUSE );
+    Content::Device.getD9Device()->SetIndices ( mIBCoord );
+    Content::Device.getD9Device()->DrawIndexedPrimitive ( D3DPT_LINELIST, 0, 0, 6, 0, 3 );
+    Content::Device.getD9Device()->SetStreamSource ( 0, mVBLines, 0, sizeof ( VertexXYZAndColor ) );
+    Content::Device.getD9Device()->SetFVF ( FVF_XYZDIFUSE );
+    Content::Device.getD9Device()->SetIndices ( mIBLines );
+    Content::Device.getD9Device()->SetTexture ( 0, nullptr );
+    Content::Device.getD9Device()->DrawIndexedPrimitive ( D3DPT_LINELIST, 0, 0, 4 * mLineCount, 0, 2 * mLineCount );
 
     return true;
 }
@@ -96,7 +96,7 @@ bool GWorldCorrd::recreateAll()
         {0.0f, 0.0f, -100.0f, 0xff00ff00},
     };
     VertexXYZAndColor* pVBCoord;
-    Content::Device.GetDvc()->CreateVertexBuffer ( 6 * sizeof ( VertexXYZAndColor ), 0, FVF_XYZDIFUSE, D3DPOOL_MANAGED/*D3DPOOL_MANAGED*/, &mVBCoord, 0 );
+    Content::Device.getD9Device()->CreateVertexBuffer ( 6 * sizeof ( VertexXYZAndColor ), 0, FVF_XYZDIFUSE, D3DPOOL_MANAGED/*D3DPOOL_MANAGED*/, &mVBCoord, 0 );
     CXASSERT_RETURN_FALSE ( mVBCoord );
     mVBCoord->Lock ( 0, 6 * sizeof ( VertexXYZAndColor ), ( void** ) &pVBCoord, 0 );
     memcpy ( pVBCoord, aCoord, 6 * sizeof ( VertexXYZAndColor ) );
@@ -109,14 +109,14 @@ bool GWorldCorrd::recreateAll()
     };
     DWORD* pVBCoordIndex = NULL;
     //DVC->GetDVC()->CreateIndexBuffer(2*3*sizeof(DWORD),0,D3DFMT_INDEX32,D3DPOOL_MANAGED,&mIBCoord,0);
-    Content::Device.GetDvc()->CreateIndexBuffer ( 6 * sizeof ( DWORD ), 0, D3DFMT_INDEX32, D3DPOOL_MANAGED/*D3DPOOL_MANAGED*/, &mIBCoord, 0 );
+    Content::Device.getD9Device()->CreateIndexBuffer ( 6 * sizeof ( DWORD ), 0, D3DFMT_INDEX32, D3DPOOL_MANAGED/*D3DPOOL_MANAGED*/, &mIBCoord, 0 );
     mIBCoord->Lock ( 0, 6 * sizeof ( DWORD ), ( void** ) &pVBCoordIndex, 0 );
     memcpy ( pVBCoordIndex, aIndex, 6 * sizeof ( DWORD ) );
     mIBCoord->Unlock();
 
     DWORD  dwOffsetOfLines = mLineCount * 2;
     VertexXYZAndColor* pVBLine;
-    Content::Device.GetDvc()->CreateVertexBuffer ( mLineCount * 2 * 2 * sizeof ( VertexXYZAndColor ), 0, FVF_XYZDIFUSE, D3DPOOL_MANAGED, &mVBLines, 0 );
+    Content::Device.getD9Device()->CreateVertexBuffer ( mLineCount * 2 * 2 * sizeof ( VertexXYZAndColor ), 0, FVF_XYZDIFUSE, D3DPOOL_MANAGED, &mVBLines, 0 );
     mVBLines->Lock ( 0, mLineCount * 2 * 2 * sizeof ( VertexXYZAndColor ), ( void** ) &pVBLine, 0 );
 
     static const D3DCOLOR colorX = D3DCOLOR_ARGB ( 255, 0, 100, 0 );
@@ -152,7 +152,7 @@ bool GWorldCorrd::recreateAll()
     DWORD* pIB;
     //DWORD pIB[mLineCount*4];
 
-    Content::Device.GetDvc()->CreateIndexBuffer ( mLineCount * 4 * sizeof ( DWORD ), 0, D3DFMT_INDEX32, D3DPOOL_MANAGED, &mIBLines, 0 );
+    Content::Device.getD9Device()->CreateIndexBuffer ( mLineCount * 4 * sizeof ( DWORD ), 0, D3DFMT_INDEX32, D3DPOOL_MANAGED, &mIBLines, 0 );
     mIBLines->Lock ( 0, mLineCount * 4 * sizeof ( DWORD ), ( void** ) &pIB, 0 );
     for ( int n = 0; n < 2 * mLineCount; n++ )
     {

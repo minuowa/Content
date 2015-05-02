@@ -14,7 +14,7 @@ bool GTexture::createFromFile ( const char* name )
     mFileName = name;
     dSafeRelease ( mD3DTexture );
     D3DXCreateTextureFromFileExA (
-         Content::Device.GetDvc(),
+         Content::Device.getD9Device(),
         name,
         D3DX_FROM_FILE,
         D3DX_FROM_FILE,
@@ -24,7 +24,7 @@ bool GTexture::createFromFile ( const char* name )
         D3DPOOL_MANAGED,
         D3DX_FILTER_TRIANGLE,
         D3DX_FILTER_TRIANGLE,
-        D3DCOLOR_RGBA ( 0, 0, 0, 255 ),
+        0,
         NULL,
         NULL,
         &mD3DTexture );
@@ -52,15 +52,15 @@ void GTexture::set ( int stage )
 {
     bool useTexture = mD3DTexture != nullptr;
 
-     Content::Device.GetDvc()->SetTexture ( stage,  mD3DTexture );
+     Content::Device.getD9Device()->SetTexture ( stage,  mD3DTexture );
 
-     Content::Device.GetDvc()->SetTextureStageState ( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-     Content::Device.GetDvc()->SetTextureStageState ( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
-     Content::Device.GetDvc()->SetTextureStageState ( 0, D3DTSS_COLOROP, useTexture ? D3DTOP_MODULATE : D3DTOP_SELECTARG2 );
+     Content::Device.getD9Device()->SetTextureStageState ( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
+     Content::Device.getD9Device()->SetTextureStageState ( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
+     Content::Device.getD9Device()->SetTextureStageState ( 0, D3DTSS_COLOROP, useTexture ? D3DTOP_MODULATE : D3DTOP_SELECTARG2 );
 
-     Content::Device.GetDvc()->SetTextureStageState ( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
-     Content::Device.GetDvc()->SetTextureStageState ( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
-     Content::Device.GetDvc()->SetTextureStageState ( 0, D3DTSS_ALPHAOP, useTexture ? D3DTOP_MODULATE : D3DTOP_SELECTARG2 );
+     Content::Device.getD9Device()->SetTextureStageState ( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
+     Content::Device.getD9Device()->SetTextureStageState ( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
+     Content::Device.getD9Device()->SetTextureStageState ( 0, D3DTSS_ALPHAOP, useTexture ? D3DTOP_MODULATE : D3DTOP_SELECTARG2 );
 }
 
 int GTexture::width() const

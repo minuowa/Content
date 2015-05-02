@@ -20,11 +20,11 @@ bool CXCursor::Init()
 
 	HCURSOR hCursor = NULL;
 
-	GString sFlieName;
+	uString sFlieName;
 
 	for ( int i = 0; i < CURSORNUM; i++ )
 	{
-		sFlieName.Format ( "res\\cursor\\%03d.cur", i );
+		sFlieName.format( "res\\cursor\\%03d.cur", i );
 
 		hCursor = LoadCursorFromFileA ( sFlieName );
 

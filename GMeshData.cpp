@@ -3,12 +3,13 @@
 #include "GD9Device.h"
 #include "GTexture.h"
 #include "Content.h"
+#include "GRender.h"
 
 
 void GMetrialData::set()
 {
-    Content::Device.GetDvc()->SetTexture ( 0, mTexture->getTexture() );
-    Content::Device.GetDvc()->SetMaterial ( &mMat );
+    Content::Device.getD9Device()->SetTexture ( 0, mTexture->getTexture() );
+    Content::Device.getD9Device()->SetMaterial ( &mMat );
 }
 
 void GMetrialData::setTexture ( const char* fileName )
@@ -40,8 +41,8 @@ D3DMATERIAL9 GMetrialData::mDefaultWhite =
 
 void GGraphVertexBuffer::set()
 {
-    Content::Device.GetDvc()->SetStreamSource ( 0, mD9VertexBuffer, 0, mElementSize );
-    Content::Device.GetDvc()->SetFVF ( mFVF );
+    Content::Device.getD9Device()->SetStreamSource ( 0, mD9VertexBuffer, 0, mElementSize );
+    Content::Device.getD9Device()->SetFVF ( mFVF );
 }
 
 void GGraphVertexBuffer::release()
@@ -62,7 +63,7 @@ bool GGraphVertexBuffer::recreate ( D3DPOOL poolType )
     CXASSERT_RETURN_FALSE ( mElementCount );
     CXASSERT_RETURN_FALSE ( mFVF );
 
-    Content::Device.GetDvc()->CreateVertexBuffer (
+    Content::Device.getD9Device()->CreateVertexBuffer (
         allSize()
         , 0
         , mFVF
@@ -76,12 +77,12 @@ bool GGraphVertexBuffer::recreate ( D3DPOOL poolType )
 
 
 
-bool GGraphVertexBuffer::fill ( void* data )
+bool GGraphVertexBuffer::fill ( void* data, u32 elementCnt/*=0 */ )
 {
     CXCheck ( mD9VertexBuffer );
     void* pdata;
     CXASSERT_RESULT_FALSE ( mD9VertexBuffer->Lock ( 0, allSize(), &pdata, 0 ) );
-    dMemoryCopy ( pdata, data, allSize() );
+    dMemoryCopy ( pdata, data, elementCnt ? elementCnt * mElementSize : allSize() );
     mD9VertexBuffer->Unlock();
     return true;
 }
@@ -102,7 +103,7 @@ GGraphVertexBuffer::GGraphVertexBuffer()
 
 void GGraphIndexBuffer::set()
 {
-    Content::Device.GetDvc()->SetIndices ( mD9IndexBuffer );
+    Content::Device.getD9Device()->SetIndices ( mD9IndexBuffer );
 }
 
 void GGraphIndexBuffer::release()
@@ -113,7 +114,7 @@ void GGraphIndexBuffer::release()
 bool GGraphIndexBuffer::recreate ( D3DPOOL poolType )
 {
     CXCheck ( mIndexCount );
-    Content::Device.GetDvc()->CreateIndexBuffer (
+    Content::Device.getD9Device()->CreateIndexBuffer (
         mIndexCount * sizeof ( DWORD )
         , 0
         , D3DFMT_INDEX32
@@ -150,6 +151,7 @@ bool GGraphIndexBuffer::fill ( void* data )
 GGraphPrimitive::GGraphPrimitive()
     : mVertexCount ( nullptr )
 {
+    mRenderTech = GRenderTech_Count;
     mType = D3DPT_TRIANGLELIST;
     mVertexCount = 0;
 }
@@ -157,7 +159,8 @@ GGraphPrimitive::GGraphPrimitive()
 void GGraphPrimitive::draw()
 {
     CXCheck ( mVertexCount );
-    Content::Device.GetDvc()->DrawIndexedPrimitive ( mType, 0, 0, *mVertexCount, 0, mPrimitiveCount );
+    Content::Render.setTech ( mRenderTech );
+    Content::Device.getD9Device()->DrawIndexedPrimitive ( mType, 0, 0, *mVertexCount, 0, mPrimitiveCount );
 }
 
 GGraphPrimitive::~GGraphPrimitive()

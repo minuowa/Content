@@ -8,8 +8,8 @@ public:
 	float mCellWidth;	    //地图中格子宽度
 	float mMaxHeight;	    //地图的最大高度
 	int	  mCellCount;	    //地图中格子数量
-	GString mFileName;     //纹理文件名字，X文件名字
-	GString mHeightMap;    //高度图文件名字
+	uString mFileName;     //纹理文件名字，X文件名字
+	uString mHeightMap;    //高度图文件名字
 
 public:
 	MeshPara() {};
@@ -102,7 +102,7 @@ private:
     int	  mCellCount;	    //地图中每行格子数量
     /** @brief 震动角速度 **/
     float mQuakeAngleVelocity;
-    GString mTextureFile;    //纹理文件名字，X文件名字
+    uString mTextureFile;    //纹理文件名字，X文件名字
 
     LPDIRECT3DTEXTURE9 *mpFace;
 

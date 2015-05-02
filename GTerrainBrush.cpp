@@ -54,9 +54,9 @@ bool GTerrainBrush::recreate()
     CXFileName filename ( mXMLFile.c_str() );
     xml_get_node ( "Brush" )
     {
-        GString stype;
+        uString stype;
         xml_get_attr ( "Color", stype );
-        GString file;
+        uString file;
         xml_get_attr ( "File", file );
         file.insert ( 0, 1, CXFileName::PathSpliter );
         file.insert ( 0, filename.GetRelativePath() );

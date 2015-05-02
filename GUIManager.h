@@ -39,7 +39,7 @@ public:
 protected:
     void resetNode();
 	void updateHoverNode();
-	void updateClickedNode();
+	void updateCaptureNode();
 
     GUINode* mRootNode;
     GUINode* mHoverNode;

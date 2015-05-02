@@ -18,7 +18,7 @@ public:
 	void clear();
 	inline GTexture* getTexture(eTerrainBrushType type) const;
 private:
-	GString mXMLFile;
+	uString mXMLFile;
 	GTexture* mTexture[eTerrainBrushType_Count];
 };
 inline GTexture* GTerrainBrush::getTexture ( eTerrainBrushType type ) const

@@ -40,10 +40,10 @@ public:
 	void setMesh(ID3DXMesh* val) { mMesh = val; }
 	WORD			mSubSetCount;
 	GRenderDataArr	mRenderData;
-	GString		mFileName;
+	uString		mFileName;
 };
 
-typedef CXMap<GString,GMeshBufferNode*> GMeshBufferNodeMap;
+typedef CXMap<uString,GMeshBufferNode*> GMeshBufferNodeMap;
 class GMeshManager
 {
 public:

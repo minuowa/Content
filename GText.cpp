@@ -183,7 +183,7 @@ int GText::DrawTextInRect ( char* sText, RECT *r, DWORD Color, OBJTYPE ot, TextP
         D3DXMATRIX MatrixView, Rota;
         D3DXMatrixRotationYawPitchRoll ( &Rota, 0, D3DX_PI, 0 );
         World = Rota * World;
-        Content::Device.GetDvc()->GetTransform ( D3DTS_VIEW, &MatrixView );
+        Content::Device.getD9Device()->GetTransform ( D3DTS_VIEW, &MatrixView );
         mFontSprite->SetTransform ( &World );
         mFontSprite->SetWorldViewLH ( NULL, &MatrixView );
         mFontSprite->Begin (
@@ -228,7 +228,7 @@ int GText::DrawTextByPosColOt ( char* sText, D3DVECTOR Pos, DWORD Color, OBJTYPE
         D3DXMATRIX MatrixView, Rota;
         D3DXMatrixRotationYawPitchRoll ( &Rota, 0, D3DX_PI, 0 );
         World = Rota * World;
-        Content::Device.GetDvc()->GetTransform ( D3DTS_VIEW, &MatrixView );
+        Content::Device.getD9Device()->GetTransform ( D3DTS_VIEW, &MatrixView );
         mFontSprite->SetTransform ( &World );
         mFontSprite->SetWorldViewLH ( NULL, &MatrixView );
         mFontSprite->Begin ( D3DXSPRITE_BILLBOARD | D3DXSPRITE_SORT_DEPTH_BACKTOFRONT |	D3DXSPRITE_ALPHABLEND );
@@ -241,7 +241,7 @@ int GText::DrawTextByPosColOt ( char* sText, D3DVECTOR Pos, DWORD Color, OBJTYPE
         World = Rota * World;
 
         mFontSprite->SetTransform ( &World );
-        Content::Device.GetDvc()->GetTransform ( D3DTS_VIEW, &MatrixView );
+        Content::Device.getD9Device()->GetTransform ( D3DTS_VIEW, &MatrixView );
         Pos = -1 * D3DXVECTOR3 ( &MatrixView._41 );
         Look = Pos + D3DXVECTOR3 ( 0, 0, 1 );
         D3DXMatrixLookAtLH ( &MatrixView, &Pos, &Look, &Up );
@@ -278,10 +278,10 @@ void GText::DrawPic ( LPDIRECT3DTEXTURE9 Pic, D3DVECTOR Pos, bool IsCenter, OBJT
 
         if ( bAlphaBlend )
         {
-            Content::Device.GetDvc()->SetRenderState ( D3DRS_ZWRITEENABLE, false );
-            Content::Device.GetDvc()->SetRenderState ( D3DRS_ALPHABLENDENABLE, TRUE );
-            Content::Device.GetDvc()->SetRenderState ( D3DRS_SRCBLEND, D3DBLEND_SRCCOLOR );		//D3DBLEND_SRCALPHA
-            Content::Device.GetDvc()->SetRenderState ( D3DRS_DESTBLEND, D3DBLEND_INVSRCCOLOR );
+            Content::Device.getD9Device()->SetRenderState ( D3DRS_ZWRITEENABLE, false );
+            Content::Device.getD9Device()->SetRenderState ( D3DRS_ALPHABLENDENABLE, TRUE );
+            Content::Device.getD9Device()->SetRenderState ( D3DRS_SRCBLEND, D3DBLEND_SRCCOLOR );		//D3DBLEND_SRCALPHA
+            Content::Device.getD9Device()->SetRenderState ( D3DRS_DESTBLEND, D3DBLEND_INVSRCCOLOR );
         }
 
         mFontSprite->SetTransform ( &World );
@@ -291,7 +291,7 @@ void GText::DrawPic ( LPDIRECT3DTEXTURE9 Pic, D3DVECTOR Pos, bool IsCenter, OBJT
         D3DXMatrixRotationYawPitchRoll ( &Rota, 0, D3DX_PI, 0 );
         World = Rota * World;
         mFontSprite->SetTransform ( &World );
-        Content::Device.GetDvc()->GetTransform ( D3DTS_VIEW, &MatrixView );
+        Content::Device.getD9Device()->GetTransform ( D3DTS_VIEW, &MatrixView );
         ePos = -1 * D3DXVECTOR3 ( &MatrixView._41 );
         eLook = ePos + D3DXVECTOR3 ( 0, 0, 1 );
         D3DXMatrixLookAtLH ( &MatrixView, &ePos, &eLook, &eUp );
@@ -304,7 +304,7 @@ void GText::DrawPic ( LPDIRECT3DTEXTURE9 Pic, D3DVECTOR Pos, bool IsCenter, OBJT
 
         D3DXMatrixRotationYawPitchRoll ( &Rota, 0, D3DX_PI, 0 );
         World = Rota * World;
-        Content::Device.GetDvc()->GetTransform ( D3DTS_VIEW, &MatrixView );
+        Content::Device.getD9Device()->GetTransform ( D3DTS_VIEW, &MatrixView );
         mFontSprite->SetTransform ( &World );
         mFontSprite->SetWorldViewLH ( NULL, &MatrixView );
         mFontSprite->Begin ( D3DXSPRITE_BILLBOARD | D3DXSPRITE_SORT_DEPTH_BACKTOFRONT | D3DXSPRITE_ALPHABLEND );
@@ -330,11 +330,11 @@ void GText::DrawPic ( LPDIRECT3DTEXTURE9 Pic, D3DVECTOR Pos, bool IsCenter, OBJT
     }
 
     mFontSprite->End();
-    Content::Device.GetDvc()->SetRenderState ( D3DRS_ALPHABLENDENABLE, false );
-    Content::Device.GetDvc()->SetRenderState ( D3DRS_ZWRITEENABLE, true );
+    Content::Device.getD9Device()->SetRenderState ( D3DRS_ALPHABLENDENABLE, false );
+    Content::Device.getD9Device()->SetRenderState ( D3DRS_ZWRITEENABLE, true );
 }
 
-void GText::addText ( GString* str )
+void GText::addText ( uString* str )
 {
     mTextArray.push_back ( str );
 }
@@ -413,7 +413,7 @@ bool GText::recreate()
     for ( int i = 0; i < 16; i++ )
     {
         nHeight = -1 * mFontHeight[i] * nLogPixelsY / 72;
-        D3DXCreateFontA (  Content::Device.GetDvc(),
+        D3DXCreateFontA (  Content::Device.getD9Device(),
                            nHeight,
                            0,
                            FW_THIN,
@@ -429,11 +429,11 @@ bool GText::recreate()
     }
 
     mCurrentFont = mFonts[2];//Ä¬ÈÏ10ºÅ×ÖÌå
-    CXASSERT_RESULT_FALSE ( D3DXCreateSprite (  Content::Device.GetDvc(), &mFontSprite ) ) ;
+    CXASSERT_RESULT_FALSE ( D3DXCreateSprite (  Content::Device.getD9Device(), &mFontSprite ) ) ;
     return true;
 }
 
-void GText::removeText ( GString* str )
+void GText::removeText ( uString* str )
 {
     mTextArray.remove ( str );
 }

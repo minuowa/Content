@@ -5,7 +5,7 @@ int gCount = 0;
 GObject::GObject ( void )
 {
     mName.clear();
-    mName.Format ( "GObject%d", gCount );
+    mName.format( "GObject%d", gCount );
 
     gCount++;
 }
@@ -75,7 +75,7 @@ void GObject::onPropertyChange ( void* pre, void* changed )
 {
     if ( pre == &mName )
     {
-        GString changedName;
+        uString changedName;
         dCast ( changedName, changed );
 
         CXAlterNameArgs args;

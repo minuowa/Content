@@ -4,7 +4,7 @@ class GFactory
 {
 public:
 	typedef T* ( *ObjCrator ) ();
-	typedef CXMap<GString, ObjCrator> ObjCreatorMap;
+	typedef CXMap<uString, ObjCrator> ObjCreatorMap;
 
 	//GFactory ( void );
 	virtual   ~GFactory ( void )

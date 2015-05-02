@@ -5,9 +5,9 @@
 
 struct GRectVertex
 {
-	float mX, mY, mZ, mRHW;
-	CXColor mColor;
-	static const DWORD mFVF = D3DFVF_XYZRHW | D3DFVF_DIFFUSE ;
+    float mX, mY, mZ, mRHW;
+    CXColor mColor;
+    static const DWORD mFVF = D3DFVF_XYZRHW | D3DFVF_DIFFUSE ;
 };
 
 class GRectNode :
@@ -15,11 +15,12 @@ class GRectNode :
 {
     DeclareEditorType ( GRectNode )
 public:
+    CXDelegate mDelegateOnRectChanged;
     GRectNode ( void );
     ~GRectNode ( void );
 
     virtual bool recreate();
-	virtual GNode* addChild ( GRectNode* c );
+    virtual GNode* addChild ( GRectNode* c );
     void setRect ( const CXRect& rect );
     void setRect ( long x, long y, long w, long h );
     void setRelRect ( const CXRect& rect );
@@ -34,19 +35,22 @@ public:
     virtual void offset ( long x, long y );
     void correct();
     void clamp ( const CXRect& rc );
-    virtual void scale ( double scale, long xref, long yref );
+    virtual void scale ( double dscale, long xref, long yref );
+    virtual void scale ( double dscale );
     double getScaleX() const;
     double getScaleY() const;
     void setScale ( float x, float y );
-	void setOrignalRect ( const CXRect& rect );
+	void setOrignalRelRect ( const CXRect& relRect );
+    void setRenderTech ( GRenderTech tech );
+    void correctPixel();
 protected:
     virtual bool render();
     virtual bool doGraph();
     virtual void updateAbsoluteRect();
     virtual void updateRelRect();
-	void setOrignalRectWithAbsoluteRect();
+    void setOrignalRectWithRelRect();
 protected:
-	virtual void registerAllProperty();
+    virtual void registerAllProperty();
     virtual void onPropertyChangeEnd ( void* cur );
 
     GGraphVertexBuffer mVB;
@@ -55,7 +59,7 @@ protected:
     CXColor mVertexColor;
     CXRect mRelRect;
     CXRect mRect;
-	CXRect mOrignalRect;
+    CXRect mOrignalRelRect;
     double mScaleX;
     double mScaleY;
 };

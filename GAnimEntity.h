@@ -1,6 +1,6 @@
 #pragma once
 #include "GAmmo.h"
-#include "XCharString.h"
+#include "uString.h"
 #include "GRenderEntity.h"
 #include "GAnimationResource.h"
 class  GAnimController;

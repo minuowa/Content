@@ -1,6 +1,7 @@
 #include "GGameDemoHeader.h"
 #include "GMaskNode.h"
 #include "Content.h"
+#include "GD9Device.h"
 
 
 GMaskNode::GMaskNode ( void )
@@ -20,7 +21,7 @@ void GMaskNode::setMaskTexture ( const char* texture )
 
 bool GMaskNode::render()
 {
-    IDirect3DDevice9* g_pd3dDevice = Content::Device.GetDvc();
+    IDirect3DDevice9* g_pd3dDevice = Content::Device.getD9Device();
     g_pd3dDevice->SetRenderState ( D3DRS_ZENABLE, true );
     g_pd3dDevice->SetRenderState ( D3DRS_ZFUNC, D3DCMP_LESS );
     g_pd3dDevice->SetRenderState ( D3DRS_ZWRITEENABLE, TRUE );

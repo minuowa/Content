@@ -84,7 +84,7 @@ public:
 	CXDelegate mDelegateReloadScene;
 
 	GCamera* mCurCamera;
-	GString mUsingCamera;
+	uString mUsingCamera;
 	CSceneMachine mSceneMachine;
 
 	GNode* mSceneRootNode;

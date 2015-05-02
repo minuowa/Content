@@ -80,7 +80,7 @@ HRESULT GAnimationResource::SetupBoneMatrixPointersOnMesh ( LPD3DXMESHCONTAINER 
 
     for ( DWORD i = 0; i < dwNumBone; i++ )
     {
-        GString sBoneName = pMeshContainerEx->pSkinInfo->GetBoneName ( i );
+        uString sBoneName = pMeshContainerEx->pSkinInfo->GetBoneName ( i );
 
         pFrameEx = ( D3DXFrameEX* ) D3DXFrameFind ( mFrameRoot, sBoneName );
 
@@ -122,8 +122,8 @@ void GAnimationResource::updateBones()
 bool GAnimationResource::createFromFile ( const char* name )
 {
     CXASSERT ( name );
-    GAllocateHierarchy Alloc (  Content::Device.GetDvc(), name );
-    HRESULT hr  = D3DXLoadMeshHierarchyFromXA ( name, D3DXMESH_MANAGED,  Content::Device.GetDvc(), &Alloc, NULL,
+    GAllocateHierarchy Alloc (  Content::Device.getD9Device(), name );
+    HRESULT hr  = D3DXLoadMeshHierarchyFromXA ( name, D3DXMESH_MANAGED,  Content::Device.getD9Device(), &Alloc, NULL,
                   &mFrameRoot, &mAnimationController );
     CXASSERT_RESULT_FALSE ( hr );
     updateBones();

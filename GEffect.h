@@ -20,7 +20,7 @@ public:
 		delete this;
 	}
 public:
-	GString	mFileName;
+	uString	mFileName;
 public:
 	ID3DXEffect *mD3DEffect;
 };
@@ -41,5 +41,5 @@ public:
 	bool recreate();
 private:
 	ID3DXEffectPool* mEffectPool;
-	CXMap<GString,GEffect*> mPointerMap;
+	CXMap<uString,GEffect*> mPointerMap;
 };

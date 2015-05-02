@@ -21,7 +21,7 @@ void GComponentMesh::onPropertyChange ( void* pre, void* changed )
 {
 	if ( pre == &mMeshFile )
 	{
-		GString changedName;
+		uString changedName;
 		dCast ( changedName, changed );
 		if ( changedName != mMeshFile && mOwner )
 		{

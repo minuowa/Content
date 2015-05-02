@@ -105,7 +105,7 @@ void GTerrainNode::reset()
 
 void GTerrainNode::addIndexToTerrain ( GTerrain* owner, bool displayRepairArea, bool displayRepairOnly, bool lodMode )
 {
-    CXBuffer* dynamicBuffer = owner->getDynamicIndexBuffer();
+    uBuffer* dynamicBuffer = owner->getDynamicIndexBuffer();
     if ( !lodMode )
     {
         if ( mLevel == 1 )

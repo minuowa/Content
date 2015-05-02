@@ -5,7 +5,7 @@ template<typename T>
 class GResourceManager
 {
 public:
-    typedef CXMap<GString, T*> ResourceMap;
+    typedef CXMap<uString, T*> ResourceMap;
 public:
     virtual ~GResourceManager ( void );
 public:

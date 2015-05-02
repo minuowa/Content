@@ -34,5 +34,5 @@ private:
 
     DWORD mFPS;
 
-	GString mFPSString;
+	uString mFPSString;
 };

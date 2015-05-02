@@ -194,9 +194,9 @@ bool GSceneManager::loadScene ( const char* xmlFile )
     xml_load ( xmlFile );
     xml_get_node ( "Object" )
     {
-        GString stype;
+        uString stype;
         xml_get_attr ( "Type", stype );
-        GString sparent;
+        uString sparent;
         xml_get_attr ( "Parent", sparent );
         GNode* n = createObjByTypeName ( stype.c_str() );
         objList.push_back ( n );
@@ -208,7 +208,7 @@ bool GSceneManager::loadScene ( const char* xmlFile )
             xml_get_attr ( "Type", stype );
             xml_get_node ( "Property" )
             {
-                GString propName, propVar;
+                uString propName, propVar;
                 xml_get_attr ( "Name", propName );
                 xml_get_attr ( "Value", propVar );
                 n->setProperty ( stype.c_str(), propName.c_str(), propVar.c_str() );

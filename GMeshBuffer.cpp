@@ -93,7 +93,7 @@ GMeshBufferNode* GMeshManager::CreateFormFile ( const char* fileName )
 
 	hr = D3DXLoadMeshFromXA ( fileName,
 		D3DXMESH_MANAGED | D3DXMESH_32BIT,
-		 Content::Device.GetDvc(), &pAdj, &pMat, NULL, &LnAttrNum, &rootMesh );
+		 Content::Device.getD9Device(), &pAdj, &pMat, NULL, &LnAttrNum, &rootMesh );
 
 	CXASSERT_RESULT_FALSE ( hr );
 
@@ -110,7 +110,7 @@ GMeshBufferNode* GMeshManager::CreateFormFile ( const char* fileName )
 
 		metrialData->setMetiral ( pMatList[i].MatD3D );
 		CXFileName path ( fileName );
-		GString textureName = path.GetRelativePath();
+		uString textureName = path.GetRelativePath();
 
 		if ( pMatList[i].pTextureFilename != NULL )
 		{

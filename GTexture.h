@@ -15,7 +15,7 @@ public:
 	int width() const;
 	int height() const;
 public:
-	GString	mFileName;
+	uString	mFileName;
 protected:
 	u32 mWidth;
 	u32 mHeight;

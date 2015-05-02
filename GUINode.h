@@ -22,8 +22,10 @@ public:
     void setTexture ( const char* fileName );
 
     GUINode* getNode ( long x, long y, eObjState state ) ;
-    void onLostCapture();
-	void onGetCapture();
+    virtual void onLostCapture();
+	virtual void onCapture();
+	virtual void onHover();
+	virtual void onLostHover();
 	GTexture* getTexture() const;
 protected:
 

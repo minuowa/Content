@@ -30,6 +30,6 @@ private:
 
 	HRESULT GenerateSkinnedMesh( D3DXMeshContainerEX *pMeshContainerEx );
 
-	GString mMediaFileName;
+	uString mMediaFileName;
 
 };

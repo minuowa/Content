@@ -59,26 +59,25 @@ public:
 
 	bool beginRenderUI();
 
-    inline IDirect3DDevice9 *GetDvc() const;
-    inline int TestDevice();
+    inline IDirect3DDevice9 *getD9Device() const;
+    inline int testDevice();
     void OnDeviceLost();
     void OnResize ( int w, int h );
-
 	void renderFirstGraph(bool useTexture);
 protected:
-    bool ResetDevice ( int w, int h );
+    bool resetDevice ( int w, int h );
     DWORD mBackColor;
 public:
     CXDelegate mOnLostDevice;
     CXDelegate mOnResetDevice;
 };
 
-inline int GD9Device::TestDevice()
+inline int GD9Device::testDevice()
 {
     return mD9Device->TestCooperativeLevel();
 }
 
-inline IDirect3DDevice9 * GD9Device::GetDvc() const
+inline IDirect3DDevice9 * GD9Device::getD9Device() const
 {
     return mD9Device;
 }

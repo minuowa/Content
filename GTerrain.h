@@ -58,7 +58,7 @@ public:
     bool isDisplayRepairAreaOnly() const;
     u32 getLineCount() const;
     u32 getCellCount() const;
-    inline CXBuffer* getDynamicIndexBuffer() const;
+    inline uBuffer* getDynamicIndexBuffer() const;
     inline GLevel_NodesMap& getNodesMap();
     inline float getLODFactor() const;
     virtual bool recreate();
@@ -105,18 +105,18 @@ protected:
     GBitmap* mAlphaSplatMap ;
     bool mUsingHeightMap  ;
 
-    GString mFileAlphaSplat ;
-    GString mFileEffect ;
-    GString mFileBrushConfig ;
-    GString mFileHeightMap;
+    uString mFileAlphaSplat ;
+    uString mFileEffect ;
+    uString mFileBrushConfig ;
+    uString mFileHeightMap;
 
-    GString mTerrainCountString;
+    uString mTerrainCountString;
     GTerrainBrush* mTerrainBrush;
-    CXMap<GString, GString> BrushSets;
+    CXMap<uString, uString> BrushSets;
 
     GEffect* mTerrainEffect ;
-    CXMap<GString, HANDLE> Paras ;
-    CXMap<GString, GTexture*> Texts;
+    CXMap<uString, HANDLE> Paras ;
+    CXMap<uString, GTexture*> Texts;
 
     float DisFactor;
     double Power;
@@ -126,9 +126,9 @@ protected:
     float FogEnd;
     float FogDensity;
     //用来存储所有顶点的索引，目前为计算法线使用
-    CXBuffer* mOriginalIndexBuffer;
+    uBuffer* mOriginalIndexBuffer;
 
-    CXBuffer* mDynamicIndexBuffer;
+    uBuffer* mDynamicIndexBuffer;
 
     IDirect3DVertexBuffer9* mVertexBuffer;
     IDirect3DIndexBuffer9* mIndexBuffer;
@@ -142,7 +142,7 @@ protected:
     AlterFaceIndexListMap mAlterFaceIndexListMap ;
 };
 
-inline CXBuffer* GTerrain::getDynamicIndexBuffer() const
+inline uBuffer* GTerrain::getDynamicIndexBuffer() const
 {
     return mDynamicIndexBuffer;
 }

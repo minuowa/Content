@@ -1,5 +1,6 @@
 #pragma once
 #include "GTexture.h"
+#include "GRender.h"
 class GGraphIndexBuffer
 {
 public:
@@ -10,7 +11,7 @@ public:
     bool fill ( void* data );
     bool isValid();
 public:
-    DWORD	mIndexCount;
+    DWORD mIndexCount;
 protected:
     IDirect3DIndexBuffer9* mD9IndexBuffer;
 };
@@ -22,36 +23,13 @@ public:
     void release();
     DWORD allSize();
     bool recreate ( D3DPOOL poolType );
-    bool fill ( void* data );
+	bool fill ( void* data,u32 elementCnt=0 );
     bool isValid();
-    DWORD					mFVF;
-
-    WORD					mElementCount;
-    WORD					mElementSize;
+    DWORD mFVF;
+    WORD mElementCount;
+    WORD mElementSize;
 protected:
     IDirect3DVertexBuffer9*	mD9VertexBuffer;
-    //public:
-    //	inline DWORD GetRenderVertexCount() const
-//	{
-//		return mRenderVertexCount;
-//	}
-//	inline void	SetRenderVertexCount(WORD cnt)
-//	{
-//		mRenderVertexCount = cnt;
-//	}
-//	WORD DataSize() const
-//	{
-//		return mDataSize;
-//	}
-//	void DataSize(WORD val) { mDataSize = val; }
-//	inline 	DWORD FVF() const
-//	{
-//		return mFVF;
-//	}
-//	void FVF(DWORD val)
-//	{
-//		mFVF = val;
-//	}
 };
 class GGraphPrimitive
 {
@@ -64,6 +42,7 @@ public:
     D3DPRIMITIVETYPE mType;
     u16* mVertexCount;
     u32 mPrimitiveCount;
+	GRenderTech mRenderTech;
 };
 class GMetrialData
 {

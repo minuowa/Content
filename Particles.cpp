@@ -32,7 +32,7 @@ bool CRectMesh::recreate()
 
 	//创建顶点缓存并初始化顶点数据
 
-	hr =  Content::Device.GetDvc()->CreateVertexBuffer( LnNumParticles * sizeof( VertexSnow ), 0, D3DFVF_SNOW, D3DPOOL_DEFAULT, &mpVB, NULL );
+	hr =  Content::Device.getD9Device()->CreateVertexBuffer( LnNumParticles * sizeof( VertexSnow ), 0, D3DFVF_SNOW, D3DPOOL_DEFAULT, &mpVB, NULL );
 
 	if ( FAILED( hr ) )
 	{
@@ -65,7 +65,7 @@ bool CRectMesh::recreate()
 
 	//加载雪花纹理
 
-	hr = D3DXCreateTextureFromFileA(  Content::Device.GetDvc(), "..\\Data\\res\\Particles\\snow\\snow.tga", &mpFace );
+	hr = D3DXCreateTextureFromFileA(  Content::Device.getD9Device(), "..\\Data\\res\\Particles\\snow\\snow.tga", &mpFace );
 
 	dDebugMsgBox( hr, "..\\Data\\res\\Particles\\snow\\snow.tga找不到！" );
 
@@ -122,10 +122,10 @@ bool CRectMesh::render()
 
 	if ( mpFace != NULL )
 	{
-		 Content::Device.GetDvc()->SetTexture( 0, mpFace );
+		 Content::Device.getD9Device()->SetTexture( 0, mpFace );
 	}
 
-	 Content::Device.GetDvc()->SetFVF( D3DFVF_SNOW );
+	 Content::Device.getD9Device()->SetFVF( D3DFVF_SNOW );
 
 
 	D3DXMATRIX matTranslation = NORMALMATRIX;
@@ -151,11 +151,11 @@ bool CRectMesh::render()
 
 		matWorld = matRx * matRy * matTranslation * matTmp;
 		CXASSERT(0);
-		 Content::Device.GetDvc()->SetTransform( D3DTS_WORLD, &matWorld );
+		 Content::Device.getD9Device()->SetTransform( D3DTS_WORLD, &matWorld );
 
-		 Content::Device.GetDvc()->SetStreamSource( 0, mpVB, 0, sizeof( VertexSnow ) );
+		 Content::Device.getD9Device()->SetStreamSource( 0, mpVB, 0, sizeof( VertexSnow ) );
 
-		 Content::Device.GetDvc()->DrawPrimitive( D3DPT_TRIANGLESTRIP, 0, 2 );
+		 Content::Device.getD9Device()->DrawPrimitive( D3DPT_TRIANGLESTRIP, 0, 2 );
 
 	}
 

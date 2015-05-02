@@ -43,7 +43,7 @@ void GCamera::setProj()
 
     D3DXMatrixPerspectiveFovLH ( &mProj, mFieldOfView, mAspect, mNear, mFar );
 
-    Content::Device.GetDvc()->SetTransform ( D3DTS_PROJECTION, &mProj );
+    Content::Device.getD9Device()->SetTransform ( D3DTS_PROJECTION, &mProj );
     if ( mFrustum == nullptr )
     {
         mFrustum = new GFrustum();
@@ -69,7 +69,7 @@ void GCamera::setView()
 
     D3DXMatrixLookAtLH ( &mView, &getTrans()->getWorldTranslate(), &vLookAtPos, &getTrans()->getWorldUpon() );
 
-    Content::Device.GetDvc()->SetTransform ( D3DTS_VIEW, &mView );
+    Content::Device.getD9Device()->SetTransform ( D3DTS_VIEW, &mView );
 }
 
 void GCamera::getInput ( DWORD frameTimeMs )

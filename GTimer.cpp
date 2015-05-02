@@ -9,12 +9,16 @@ GTimer::GTimer ( void )
     , mLastTime ( 0 )
     , mFPSFrameCount ( 0 )
 {
-    Content::Text.addText ( &mFPSString );
+#ifdef _DEBUG
+	Content::Text.addText ( &mFPSString );
+#endif
 }
 
 GTimer::~GTimer ( void )
 {
-    Content::Text.removeText ( &mFPSString );
+#ifdef _DEBUG
+	Content::Text.removeText ( &mFPSString );
+#endif
 }
 
 
@@ -33,7 +37,7 @@ void GTimer::update()
     if ( FPSCount == mFPSFrameCount )
     {
         mFPS = ( DWORD ) ( 1000.0f * FPSCount / mFPSAccuTime );
-        mFPSString.Format ( "FPS:%d", mFPS );
+        mFPSString.format( "FPS:%d", mFPS );
 
         mFPSFrameCount = 0;
         mFPSAccuTime = 0;
@@ -50,6 +54,11 @@ float GTimer::getFrameTimeSec()
 DWORD GTimer::getAccuTime()
 {
     return mAccuTime;
+}
+
+DWORD GTimer::getFPS() const
+{
+	return mFPS;
 }
 
 

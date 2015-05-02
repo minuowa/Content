@@ -1,5 +1,5 @@
 #pragma once
-#include "XCharString.h"
+#include "uString.h"
 #include "XMap.h"
 #include "XMultimap.h"
 #include "XProp.h"
@@ -15,7 +15,7 @@
  
 struct  EPropertyVar
 {
-    GString mCategoryName;
+    uString mCategoryName;
     void* mPtr;
     CXProp* mProp;
     bool mRefOther;
@@ -24,12 +24,12 @@ struct  EPropertyVar
     EPropertyVar();
     ~EPropertyVar();
 };
-typedef CXMap<GString, EPropertyVar*> PropertyMap;
-typedef CXMap<GString, PropertyMap*> CategoryPropertyMap;
+typedef CXMap<uString, EPropertyVar*> PropertyMap;
+typedef CXMap<uString, PropertyMap*> CategoryPropertyMap;
 struct CXAlterNameArgs:public CXEventArgs 
 {
-	GString mCurName;
-	GString mChangedName;
+	uString mCurName;
+	uString mChangedName;
 };
 class GObject: public CXCallBack
 {
@@ -44,7 +44,7 @@ public:
     template<typename T>
     void registerProperty ( const char* categoryName, const char* propName, const T& var );
     template<>
-    void registerProperty ( const char* categoryName, const char* propName, const GString& var );
+    void registerProperty ( const char* categoryName, const char* propName, const uString& var );
     template<typename T>
     void registerEnumProperty ( const char* categoryName, const char* propName, const T& var );
     void registerAll();
@@ -58,7 +58,7 @@ public:
 protected:
     virtual void registerAllProperty();
     CategoryPropertyMap mOption;
-    GString	mName;
+    uString	mName;
 public:
 
     static CXDelegate mDelegateAlterName;
@@ -122,7 +122,7 @@ void GObject::registerProperty ( const char* categoryName, const char* propName,
 }
 
 template<>
-void GObject::registerProperty ( const char* categoryName, const char* propName, const GString& var )
+void GObject::registerProperty ( const char* categoryName, const char* propName, const uString& var )
 {
     PropertyMap* propMap = 0;
     if ( !mOption.Get ( categoryName, propMap ) )
@@ -137,7 +137,7 @@ void GObject::registerProperty ( const char* categoryName, const char* propName,
         evar = new EPropertyVar;
         evar->mCategoryName = categoryName;
         //evar->mProp = new CXPropEntity<String> ( new  String(var.c_str() ),false);
-        evar->mProp = new CXPropEntity<GString> ( ( GString* ) &var, false );
+        evar->mProp = new CXPropEntity<uString> ( ( uString* ) &var, false );
         evar->mPtr = ( void* ) &var;
         propMap->Insert ( propName, evar );
     }

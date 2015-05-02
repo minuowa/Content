@@ -37,14 +37,14 @@ struct D3DXMeshContainerEX: public D3DXMESHCONTAINER		//扩展的D3D网格容器
 };
 struct GBoneLinker			//悬挂物品用的骨骼信息
 {
-	GString	mName;
+	uString	mName;
 	D3DXMATRIX* mTransform;
 	GBoneLinker()
 		: mTransform ( 0 )
 	{
 	}
 };
-typedef CXMap<GString, GBoneLinker*> GBoneLinkerMap;
+typedef CXMap<uString, GBoneLinker*> GBoneLinkerMap;
 class GAnimationResource
 {
 public:

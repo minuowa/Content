@@ -18,7 +18,7 @@ protected:
 	float	mRanageZ;
 	float	mMinHeight;
 	float	mMaxHeight;
-	GString mFileName;
+	uString mFileName;
 };
 
 #endif // GHeightMap_h__

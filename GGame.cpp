@@ -1,6 +1,6 @@
 #include "GGameDemoHeader.h"
 #include "GGame.h"
-#include "XCharString.h"
+#include "uString.h"
 #include <locale.h>
 #include "GGameOption.h"
 #include "GComponentFactory.h"
@@ -100,7 +100,7 @@ void GGame::render( )
     eGameScene gs =  Content::Scene.mSceneMachine.GetNowScene();
 
     Content::Scene.setView();
-    switch (  Content::Device.TestDevice() )
+    switch (  Content::Device.testDevice() )
     {
     case D3D_OK:
     case D3DERR_DEVICELOST:

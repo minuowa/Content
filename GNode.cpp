@@ -5,6 +5,7 @@
 #include "GTimer.h"
 #include "GGame.h"
 #include "Content.h"
+#include "GRender.h"
 
 void GNode::getInput ( DWORD frameTimeMs )
 {
@@ -134,7 +135,6 @@ GNode::GNode()
     , mLocalID ( 0 )
 {
     mNodeState.setAll ( false );
-
     mLocalID = getObjIDManager().addObj ( this );
 
     mParent = nullptr;
@@ -167,6 +167,7 @@ GNode::GNode()
 
 GNode::~GNode()
 {
+	mDelegateOnDestory.trigger();
     getObjIDManager().removeObj ( mLocalID );
     dSafeDeleteVector ( mChildren );
 }

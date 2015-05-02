@@ -4,6 +4,23 @@
 #include "GComponentMesh.h"
 #include "GComponentBox.h"
 #include "GUINode.h"
+#include "GInitilizer.h"
+#include "GText.h"
+#include "GTimer.h"
+#include "GD9Device.h"
+#include "GGameOption.h"
+#include "GComponentFactory.h"
+#include "GNode.h"
+#include "GD8Input.h"
+#include "GTexture.h"
+#include "GEffect.h"
+#include "GMeshBuffer.h"
+#include "GAnimationResource.h"
+#include "GInputEntityManager.h"
+#include "GFilmPlayer.h"
+#include "GSceneMgr.h"
+#include "GUIManager.h"
+#include "GGame.h"
 
 GInitilizer Content::Initilizer;
 
@@ -73,5 +90,7 @@ void Content::initComponentFactory()
 	__RegisterComponentCreator ( GComponentMesh );
 	__RegisterComponentCreator ( GComponentBox );
 }
+
+GRender Content::Render;
 
 

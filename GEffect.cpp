@@ -21,7 +21,7 @@ bool GEffect::createFromFile ( const char* name )
     //创建顶点声明对象
 
     hr = D3DXCreateEffectFromFileA (
-             Content::Device.GetDvc(),
+             Content::Device.getD9Device(),
              name,
              NULL,
              NULL,

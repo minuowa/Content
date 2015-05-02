@@ -16,11 +16,12 @@ enum eObjState
 
 	eUINodeState_AcpectEvent,	///是否可接受事件
 	eUINodeState_CanHover,
+	eUINodeState_IsHover,
 	eUINodeState_CanCapture,
 	eUINodeState_IsCapture,
-	eUINodeState_IsHover,
 	eUINodeState_CanScale,
 	eUINodeState_CanDrag,
+	eUINodeState_CorrectPixel,
 };
 enum eForceType
 {
@@ -30,18 +31,18 @@ enum eForceType
 /** 删除场景节点 **/
 struct GNodeDeleteArgs:public CXEventArgs 
 {
-	GString mDeleteNode;
+	uString mDeleteNode;
 };
 /** 添加场景节点 **/
 struct GNodeAddArgs:public CXEventArgs
 {
-	GString mAddNode;
-	GString mAddNodeParent;
+	uString mAddNode;
+	uString mAddNodeParent;
 };
 /** 场景节点组件发生了变化 **/
 struct GNodeComponentChangeArgs:public CXEventArgs 
 {
-	GString mChangedNode;
+	uString mChangedNode;
 };
 //有坐标属性的物体
 class GNode: public GObject
@@ -103,6 +104,7 @@ public:
     static CXDelegate mDelegateDeleteObj;
     static CXDelegate mDelegateComponentChange;
 
+	CXDelegate mDelegateOnDestory;
     CXDynaArray<GNode*> mChildren;
 
     GComponentOwner	mComponentOwner;
@@ -137,7 +139,6 @@ public:
     bool m_bBeSelected;					//被选中了
 
     bool m_bUseMatrialColor;
-
     D3DXVECTOR3 m_vBlockPoint;
 
     bool m_bBlock;

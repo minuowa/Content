@@ -33,7 +33,7 @@ bool GWater::recreate()
 
 	recreateMetrialInfo();
 
-	dSetMeshNormal ( mMeshBufferNode->getMesh(),  Content::Device.GetDvc() );
+	dSetMeshNormal ( mMeshBufferNode->getMesh(),  Content::Device.getD9Device() );
 
 	recreateInsectMesh();
 
@@ -97,8 +97,8 @@ void GWater::update()
 	DWORD dwTime = timeGetTime();
 	//sprintf(sFileName,"res\\water\\BlueShort\\A21C_%03d.jpg",);
 
-	GString sFileName;
-	sFileName.Format ( "..\\Data\\res\\water\\BlueShort\\A21C_%03d.jpg", dwTime / 100 % SEAPICNUM );
+	uString sFileName;
+	sFileName.format( "..\\Data\\res\\water\\BlueShort\\A21C_%03d.jpg", dwTime / 100 % SEAPICNUM );
 
 	GMetrialData* metrial = mMeshBufferNode->getMaterial ( 0 );
 	CXASSERT ( metrial );
@@ -169,7 +169,7 @@ void GWater::recreateGraphInfo()
 	hr = D3DXCreateMeshFVF (
 		mCellCount * mCellCount * 2,
 		( mCellCount + 1 ) * ( mCellCount + 1 ),
-		D3DXMESH_32BIT | D3DXMESH_MANAGED, FVFSea,  Content::Device.GetDvc(),
+		D3DXMESH_32BIT | D3DXMESH_MANAGED, FVFSea,  Content::Device.getD9Device(),
 		&mesh
 		);
 

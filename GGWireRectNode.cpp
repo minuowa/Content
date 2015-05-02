@@ -6,6 +6,7 @@ GGWireRectNode::GGWireRectNode ( void )
 {
     mGraph.mType = D3DPT_LINELIST;
     mGraph.mPrimitiveCount = 4;
+    setRenderTech ( GRenderTech_PrimiteWithPictureAlpha );
 }
 
 
@@ -42,10 +43,10 @@ bool GGWireRectNode::recreate()
 
 bool GGWireRectNode::doGraph()
 {
-	return GRectNode::doGraph();
+    return GRectNode::doGraph();
 }
 
 bool GGWireRectNode::render()
 {
-	return GRectNode::render();
+    return GRectNode::render();
 }

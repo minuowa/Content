@@ -321,8 +321,7 @@ bool GD8Input::isCtrlOk ( int ctrlkeys )
         eButtonState_Up,
         eButtonState_Count,
     };
-    eButtonState buttonState = eButtonState_Count;
-    bool downkey = false;
+    eInputAction buttonState = eInputAction_None ;
     for ( int key = eCtrlKey_LCtrl, offset = 0; key < eCtrlKey_Count; key = 1 << ( ++offset ) )
     {
         switch ( key )
@@ -338,21 +337,33 @@ bool GD8Input::isCtrlOk ( int ctrlkeys )
             {
                 if ( !isKeyPressing ( CTRLKEYMAP[offset] ) )
                     return false;
-                else
-                {
-                    downkey = true;
-                }
             }
         }
         break;
         case eCtrlKey_ButtonDown:
+        {
+            if (  ctrlkeys & key )
+            {
+                CXASSERT ( buttonState == eInputAction_None );
+                buttonState = eInputAction_Down;
+            }
+        }
+        break;
         case eCtrlKey_ButtonPressing:
+        {
+            if (  ctrlkeys & key )
+            {
+                CXASSERT ( buttonState == eInputAction_None );
+                buttonState = eInputAction_Pressing;
+            }
+        }
+        break;
         case eCtrlKey_ButtonUp:
         {
             if (  ctrlkeys & key )
             {
-                CXASSERT ( buttonState == eButtonState_Count );
-                buttonState = ( eButtonState ) ( offset - 6 );
+                CXASSERT ( buttonState == eInputAction_None );
+                buttonState = eInputAction_Up;
             }
         }
         break;
@@ -360,30 +371,12 @@ bool GD8Input::isCtrlOk ( int ctrlkeys )
         case eCtrlKey_RButton:
         case eCtrlKey_MButton:
         {
-            if ( buttonState == eButtonState_Count )
+            if ( buttonState == eInputAction_None )
                 break;
             if (  ctrlkeys & key )
             {
-                if ( buttonState == eButtonState_Down )
-                {
-                    if ( !isButtonDown ( eButtonType ( offset - 9 ) ) )
-                    {
-                        int n = 0;
-                        ++n;
-                        return false;
-                    }
-
-                }
-                else if ( buttonState == eButtonState_Pressing )
-                {
-                    if ( !isButtonPressing (  eButtonType ( offset - 9 ) ) )
-                        return false;
-                }
-                else if ( buttonState == eButtonState_Up )
-                {
-                    if ( !isButtonUp (  eButtonType ( offset - 9 ) ) )
-                        return false;
-                }
+                if ( mMouseAction[eButtonType ( offset - 9 )] != buttonState )
+                    return false;
             }
         }
         break;

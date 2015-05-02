@@ -107,7 +107,7 @@ void GTerrain::updateEx()
         mRootNode->addIndexToTerrain ( this, mDisplayRepairArea, mDisplayRepairAreaOnly, mLODMode );
         copyToIndexBuffer();
     }
-    mTerrainCountString.Format ( "Terrain_Triangle:%d", mDynamicIndexBuffer->size() / 3 );
+    mTerrainCountString.format( "Terrain_Triangle:%d", mDynamicIndexBuffer->size() / 3 );
 }
 
 bool GTerrain::loadBrushs()
@@ -146,7 +146,7 @@ bool GTerrain::render()
 
 void GTerrain::createVertexBuffer()
 {
-     Content::Device.GetDvc()->CreateVertexBuffer (
+     Content::Device.getD9Device()->CreateVertexBuffer (
         ( mLineCount ) * ( mLineCount ) * sizeof ( EXVertex )
         , 0, EXVertex::Format
         , D3DPOOL_MANAGED/*D3DPOOL_MANAGED*/
@@ -223,7 +223,7 @@ void GTerrain::computerNormals()
     //计算每个面的法线
     if ( mOriginalIndexBuffer == nullptr )
     {
-        mOriginalIndexBuffer = new CXBuffer();
+        mOriginalIndexBuffer = new uBuffer();
         mOriginalIndexBuffer->setElementByteCount ( sizeof ( int ) );
         mOriginalIndexBuffer->reallocateByElementCount ( getCellCount() * getCellCount() * 2 * 3 );
         int Stride = getLineCount();
@@ -752,11 +752,11 @@ bool GTerrain::createNodes()
     mLineCount = ( int ) pow ( 2, mRootLevel ) + 1;
     mCellCount = mLineCount - 1;
 
-    mDynamicIndexBuffer = new CXBuffer;
+    mDynamicIndexBuffer = new uBuffer;
     mDynamicIndexBuffer->setElementByteCount ( sizeof ( u32 ) );
     mDynamicIndexBuffer->reallocateByElementCount ( mCellCount * mCellCount * 2 * 3 * 2 );
 
-     Content::Device.GetDvc()->CreateIndexBuffer ( mCellCount * mCellCount * 2 * 3 * 2 * sizeof ( DWORD ), 0, D3DFMT_INDEX32, D3DPOOL_MANAGED, &mIndexBuffer, 0 );
+     Content::Device.getD9Device()->CreateIndexBuffer ( mCellCount * mCellCount * 2 * 3 * 2 * sizeof ( DWORD ), 0, D3DFMT_INDEX32, D3DPOOL_MANAGED, &mIndexBuffer, 0 );
     mRootNode = new GTerrainNode();
     mRootNode->build ( this, mRootLevel );
 
@@ -771,19 +771,19 @@ bool GTerrain::createNodes()
 bool GTerrain::createVertexDeclaretion()
 {
     dSafeRelease ( mVertexDeclartion );
-     Content::Device.GetDvc()->CreateVertexDeclaration ( gTerrainVertexDeclartion, &mVertexDeclartion );
+     Content::Device.getD9Device()->CreateVertexDeclaration ( gTerrainVertexDeclartion, &mVertexDeclartion );
     return mVertexDeclartion != nullptr;
 }
 
 void GTerrain::renderNodes()
 {
-     Content::Device.GetDvc()->SetStreamSource ( 0, mVertexBuffer, 0, sizeof ( EXVertex ) );
-     Content::Device.GetDvc()->SetVertexDeclaration ( mVertexDeclartion );
+     Content::Device.getD9Device()->SetStreamSource ( 0, mVertexBuffer, 0, sizeof ( EXVertex ) );
+     Content::Device.getD9Device()->SetVertexDeclaration ( mVertexDeclartion );
     // Content::Device.GetDvc()->SetFVF ( EXVertex::Format );
     // Content::Device.GetDvc()->SetTexture ( 0, mTexture->getTexture() );
-     Content::Device.GetDvc()->SetIndices ( mIndexBuffer );
-     Content::Device.GetDvc()->SetMaterial ( &GMetrialData::mDefaultWhite );
-     Content::Device.GetDvc()->DrawIndexedPrimitive ( D3DPT_TRIANGLELIST, 0, 0, mLineCount * mLineCount, 0, mDynamicIndexBuffer->size() / 3 );
+     Content::Device.getD9Device()->SetIndices ( mIndexBuffer );
+     Content::Device.getD9Device()->SetMaterial ( &GMetrialData::mDefaultWhite );
+     Content::Device.getD9Device()->DrawIndexedPrimitive ( D3DPT_TRIANGLELIST, 0, 0, mLineCount * mLineCount, 0, mDynamicIndexBuffer->size() / 3 );
 
 }
 

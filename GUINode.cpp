@@ -68,6 +68,7 @@ bool GUINode::render()
         return false;
     if ( mTextureProp )
         mTextureProp->set ( 0 );
+    setRenderTech ( mTextureProp != nullptr ? mGraph.mRenderTech : GRenderTech_Primite );
     return __super::render();
 }
 
@@ -146,15 +147,25 @@ void GUINode::onLostCapture()
 
 GTexture* GUINode::getTexture() const
 {
-	return mTextureProp;
+    return mTextureProp;
 }
 
 const CXRect& GUINode::getOrignalRect() const
 {
-	return mOrignalRect;
+    return mOrignalRelRect;
 }
 
-void GUINode::onGetCapture()
+void GUINode::onCapture()
+{
+
+}
+
+void GUINode::onHover()
+{
+
+}
+
+void GUINode::onLostHover()
 {
 
 }

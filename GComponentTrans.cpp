@@ -374,7 +374,7 @@ void GComponentTrans::setRotation ( D3DXMATRIX& mat )
 
 void GComponentTrans::set()
 {
-     Content::Device.GetDvc()->SetTransform ( D3DTS_WORLD, ( const D3DXMATRIX* ) &mMatWorld );
+     Content::Device.getD9Device()->SetTransform ( D3DTS_WORLD, ( const D3DXMATRIX* ) &mMatWorld );
 }
 
 

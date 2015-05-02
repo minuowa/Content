@@ -11,9 +11,9 @@ public:
 	virtual void registerAllProperty();
 	virtual void onPropertyChange(void* pre,void* changed) override;
 protected:
-	GString mMeshFile;
+	uString mMeshFile;
 public:
-	inline const GString& meshFile() const 
+	inline const uString& meshFile() const 
 	{
 		return mMeshFile; 
 	}

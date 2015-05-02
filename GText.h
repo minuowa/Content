@@ -29,8 +29,8 @@ public:
     bool init();
     void clear();
     bool recreate();
-    void addText ( GString* str );
-    void removeText ( GString* str );
+    void addText ( uString* str );
+    void removeText ( uString* str );
     void drawText();
     void setCurrentFontSize ( eFontSize fs );
 	ID3DXSprite* getSprite() const;
@@ -56,7 +56,7 @@ public:
     //2D3D都可使用
 
 protected:
-    CXDynaArray<GString*> mTextArray;
+    CXDynaArray<uString*> mTextArray;
 private:
     ID3DXFont *mFonts[16];
     ID3DXFont *mCurrentFont;

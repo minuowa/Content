@@ -38,13 +38,13 @@ void GGameOption::updateRenderState()
     switch ( FillMode )
     {
     case FillPoint:
-        Content::Device.GetDvc()->SetRenderState ( D3DRS_FILLMODE, D3DFILL_POINT );
+        Content::Device.getD9Device()->SetRenderState ( D3DRS_FILLMODE, D3DFILL_POINT );
         break;
     case FillSolid:
-        Content::Device.GetDvc()->SetRenderState ( D3DRS_FILLMODE, D3DFILL_SOLID );
+        Content::Device.getD9Device()->SetRenderState ( D3DRS_FILLMODE, D3DFILL_SOLID );
         break;
     case FillWire:
-        Content::Device.GetDvc()->SetRenderState ( D3DRS_FILLMODE, D3DFILL_WIREFRAME );
+        Content::Device.getD9Device()->SetRenderState ( D3DRS_FILLMODE, D3DFILL_WIREFRAME );
         break;
     default:
         break;

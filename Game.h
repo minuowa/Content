@@ -18,4 +18,6 @@
 #include "Content.h"
 #include "GTapeNode.h"
 #include "GPlugin.h"
+#include "GTimer.h"
+#include "GRectCursor.h"
 #endif // Game_h__

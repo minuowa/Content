@@ -4,13 +4,13 @@ class GFilmRecord;
 class GFilmFrame;
 struct GFilmAddFrameEvent:public CXEventArgs
 {
-	GString mFrameName;
-	GString mPrevName;
-	GString mNextName;
+	uString mFrameName;
+	uString mPrevName;
+	uString mNextName;
 };
 struct GFilmDeleteFrameEvent:public CXEventArgs
 {
-	GString mFrameName;
+	uString mFrameName;
 };
 class GFilmPlayer
 {
@@ -48,7 +48,7 @@ protected:
 	void updateList();
 protected:
     eFilmMode mFilmMode;
-    CXMap<GString, GFilmFrame*> mNameMap;
+    CXMap<uString, GFilmFrame*> mNameMap;
     GFilmFrame* mCurFrame;
     bool mEnd;
 };

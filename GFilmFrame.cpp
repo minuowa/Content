@@ -11,7 +11,7 @@ GFilmFrame::GFilmFrame ( void )
     do
     {
         int id = mIDGenerator.alloc();
-        mName.Format ( "FilmFrame%d", id );
+        mName.format( "FilmFrame%d", id );
     }
     while ( nullptr !=  Content::FilmPlayer.getFrame ( mName.c_str() ) );
 

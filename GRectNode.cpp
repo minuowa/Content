@@ -2,13 +2,12 @@
 #include "GRectNode.h"
 #include "GD9Device.h"
 #include "GText.h"
-
-
+#include "Content.h"
 
 GRectNode::GRectNode ( void )
 {
-	setState ( eObjState_Render, true );
-	setState ( eUINodeState_CanHover, false );
+    setState ( eObjState_Render, true );
+    setState ( eUINodeState_CanHover, false );
     setState ( eUINodeState_IsHover, false );
     setState ( eUINodeState_CanScale, false );
 
@@ -18,6 +17,7 @@ GRectNode::GRectNode ( void )
 
     mGraph.setVB ( mVB );
 
+    mGraph.mRenderTech = GRenderTech_Primite;
     mGraph.mType = D3DPT_TRIANGLELIST;
     mGraph.mPrimitiveCount = 2;
 
@@ -75,10 +75,11 @@ void GRectNode::setRect ( long x, long y, long w, long h )
 
 void GRectNode::setRect ( const CXRect& rect )
 {
-	mRect = rect;
-	updateRelRect();
+    mRect = rect;
+    updateRelRect();
+    correctPixel();
     if ( mNodeState[eUINodeState_CanScale] )
-        setOrignalRectWithAbsoluteRect();
+        setOrignalRectWithRelRect();
 }
 
 bool GRectNode::doGraph()
@@ -139,9 +140,9 @@ void GRectNode::setXY ( long x, long y )
 void GRectNode::offset ( long x, long y )
 {
     mRect.offset ( x, y );
-    if ( mNodeState[eUINodeState_CanScale] )
-        mOrignalRect.offset ( x, y );
     updateRelRect();
+    correctPixel();
+    setOrignalRectWithRelRect();
 for ( auto & c: mChildren )
     {
         auto child = ( GRectNode* ) c;
@@ -152,6 +153,7 @@ for ( auto & c: mChildren )
 void GRectNode::setRelRect ( const CXRect& rect )
 {
     mRelRect = rect;
+    correctPixel();
     updateAbsoluteRect();
 }
 
@@ -169,10 +171,11 @@ void GRectNode::updateAbsoluteRect()
     {
         mRect = mRelRect;
     }
+    mDelegateOnRectChanged.trigger();
     doGraph();
 
-    if ( mNodeState[eUINodeState_CanScale] )
-        setOrignalRectWithAbsoluteRect();
+    //if ( mNodeState[eUINodeState_CanScale] )
+    //    setOrignalRectWithAbsoluteRect();
 
 for ( auto child: mChildren )
     {
@@ -205,6 +208,8 @@ void GRectNode::setRB ( long r, long b )
     mRect.mW = r - mRect.mX;
     mRect.mH = b - mRect.mY;
     updateRelRect();
+    correctPixel();
+    setOrignalRectWithRelRect();
 }
 
 void GRectNode::updateRelRect()
@@ -217,10 +222,11 @@ void GRectNode::updateRelRect()
         mRelRect.mW = mRect.mW;
         mRelRect.mH = mRect.mH;
     }
-    //else
-    //{
-    //    mRect = mRelRect;
-    //}
+    else
+    {
+        mRelRect = mRect;
+    }
+    mDelegateOnRectChanged.trigger();
     doGraph();
 }
 
@@ -228,7 +234,7 @@ void GRectNode::correct()
 {
     mRect.correct();
     mRelRect.correct();
-    doGraph();
+    correctPixel();
 }
 
 void GRectNode::clamp ( const CXRect& rc )
@@ -237,20 +243,43 @@ void GRectNode::clamp ( const CXRect& rc )
     setRect ( mRect );
 }
 
-void GRectNode::scale ( double scale, long xref, long yref )
+void GRectNode::scale ( double dscale, long xref, long yref )
 {
     CXASSERT ( mNodeState.get ( eUINodeState_CanScale ) );
-    mRect.scale ( scale/mScaleX, xref, yref );
+    mRect.scale ( dscale / mScaleX, xref, yref );
     updateRelRect();
+    correctPixel();
 
-	mScaleX = scale;
-	mScaleY = scale;
+    mScaleX = dscale;
+    mScaleY = dscale;
 
 for ( auto & child: mChildren )
     {
         auto c = ( GRectNode* ) child;
         if ( c->mNodeState[eUINodeState_CanScale] )
-            c->scale ( scale, xref, yref );
+            c->scale ( dscale );
+    }
+}
+
+void GRectNode::scale ( double dscale )
+{
+    mScaleX = dscale;
+    mScaleY = dscale;
+    long x = mOrignalRelRect.mX * dscale;
+    long y = mOrignalRelRect.mY * dscale;
+    long w = mOrignalRelRect.mW * dscale;
+    long h = mOrignalRelRect.mH * dscale;
+    mRelRect.mX = x;
+    mRelRect.mY = y;
+    mRelRect.mW = w;
+    mRelRect.mH = h;
+    correctPixel();
+    updateAbsoluteRect();
+for ( auto & child: mChildren )
+    {
+        auto c = ( GRectNode* ) child;
+        if ( c->mNodeState[eUINodeState_CanScale] )
+            c->scale ( dscale );
     }
 }
 
@@ -259,9 +288,23 @@ double GRectNode::getScaleX() const
     return mScaleX;
 }
 
-void GRectNode::setOrignalRect ( const CXRect& rect )
+void GRectNode::setOrignalRelRect ( const CXRect& relRect )
 {
-    mOrignalRect = rect;
+    int r = relRect.right();
+    int b = relRect.bottom();
+    int x = dRound ( relRect.mX, int ( mScaleX ) ) ;
+    int y = dRound ( relRect.mY, int ( mScaleX ) ) ;
+    int w = dRound ( ( r - x ), int ( mScaleX ) ) / int ( mScaleX );
+    int h = dRound ( ( b - y ), int ( mScaleX ) ) / int ( mScaleX );
+
+    mOrignalRelRect.mW = w;
+    mOrignalRelRect.mH = h;
+
+    x = dRound ( relRect.mX, int ( mScaleX ) ) / int ( mScaleX );
+    y = dRound ( relRect.mY, int ( mScaleX ) ) / int ( mScaleX );
+
+    mOrignalRelRect.mX = x;
+    mOrignalRelRect.mY = y;
 }
 
 double GRectNode::getScaleY() const
@@ -269,13 +312,13 @@ double GRectNode::getScaleY() const
     return mScaleY;
 }
 
-void GRectNode::setOrignalRectWithAbsoluteRect()
+void GRectNode::setOrignalRectWithRelRect()
 {
-    setOrignalRect ( mRect );
+    setOrignalRelRect ( mRelRect );
 for ( auto & child: mChildren )
     {
         auto c = ( GRectNode* ) child;
-        c->setOrignalRectWithAbsoluteRect();
+        c->setOrignalRectWithRelRect();
     }
 }
 
@@ -283,13 +326,38 @@ GNode* GRectNode::addChild ( GRectNode* c )
 {
     __super::addChild ( ( GNode* ) c );
     if ( c )
+    {
         c->updateRelRect();
+        c->correctPixel();
+    }
     return c;
 }
 
 void GRectNode::updateRect()
 {
 
+}
+
+void GRectNode::setRenderTech ( GRenderTech tech )
+{
+    mGraph.mRenderTech = tech;
+}
+
+void GRectNode::correctPixel()
+{
+    if ( !mNodeState[eUINodeState_CorrectPixel] )
+        return;
+    int r = mRelRect.right();
+    int b = mRelRect.bottom();
+    int x = dRound ( mRelRect.mX, int ( mScaleX ) );
+    int y = dRound ( mRelRect.mY, int ( mScaleX ) );
+    int w = dRound ( ( r - x ), int ( mScaleX ) );
+    int h = dRound ( ( b - y ), int ( mScaleX ) );
+    mRelRect.mX = x;
+    mRelRect.mY = y;
+    mRelRect.mW = w;
+    mRelRect.mH = h;
+    updateAbsoluteRect();
 }
 
 

@@ -77,7 +77,7 @@ void GAnimEntity::DrawMeshContainer ( D3DXMESHCONTAINER *pMeshContainerBase, D3D
 
     D3DCAPS9 d3dCap;
     dMemoryZero ( &d3dCap, sizeof ( d3dCap ) );
-     Content::Device.GetDvc()->GetDeviceCaps ( &d3dCap );
+     Content::Device.getD9Device()->GetDeviceCaps ( &d3dCap );
 
     if ( pMeshContainerEx->pBoneCombinationBufffer != NULL )
     {
@@ -88,7 +88,7 @@ void GAnimEntity::DrawMeshContainer ( D3DXMESHCONTAINER *pMeshContainerBase, D3D
      Content::Device.openAllLight ( true );
 
     DWORD dwAmbient = 0;
-     Content::Device.GetDvc()->GetRenderState ( D3DRS_AMBIENT, &dwAmbient );
+     Content::Device.getD9Device()->GetRenderState ( D3DRS_AMBIENT, &dwAmbient );
 
     POINT pt =  Content::InputSystem.getMousePoint();
 
@@ -111,7 +111,7 @@ void GAnimEntity::DrawMeshContainer ( D3DXMESHCONTAINER *pMeshContainerBase, D3D
     {
         if ( d3dCap.MaxVertexBlendMatrices >= pMeshContainerEx->NumInfl )
         {
-             Content::Device.GetDvc()->SetRenderState ( D3DRS_INDEXEDVERTEXBLENDENABLE, FALSE );
+             Content::Device.getD9Device()->SetRenderState ( D3DRS_INDEXEDVERTEXBLENDENABLE, FALSE );
 
             for ( DWORD i = 0; i < pMeshContainerEx->NumInfl; ++i )
             {
@@ -126,37 +126,37 @@ void GAnimEntity::DrawMeshContainer ( D3DXMESHCONTAINER *pMeshContainerBase, D3D
                         pMeshContainerEx->ppBoneMatrixPtrs[iMatrixIndex]
                     );
 
-                     Content::Device.GetDvc()->SetTransform ( D3DTS_WORLDMATRIX ( i ), &matTmp );
+                     Content::Device.getD9Device()->SetTransform ( D3DTS_WORLDMATRIX ( i ), &matTmp );
                 }
             }
 
-             Content::Device.GetDvc()->SetRenderState ( D3DRS_VERTEXBLEND, pMeshContainerEx->NumInfl - 1 );
+             Content::Device.getD9Device()->SetRenderState ( D3DRS_VERTEXBLEND, pMeshContainerEx->NumInfl - 1 );
 
-             Content::Device.GetDvc()->SetMaterial ( &pMeshContainerEx->pMaterials[pBoneComb[iAttr].AttribId].MatD3D );
+             Content::Device.getD9Device()->SetMaterial ( &pMeshContainerEx->pMaterials[pBoneComb[iAttr].AttribId].MatD3D );
 
             if ( mNodeState[eObjState_Picked] )
             {
                 gCursor.SetNowCursor ( curGrasp );
-                 Content::Device.GetDvc()->SetTexture ( 0, NULL );
+                 Content::Device.getD9Device()->SetTexture ( 0, NULL );
             }
             else
             {
                 gCursor.SetNowCursor ( curNormal );
-                 Content::Device.GetDvc()->SetTexture ( 0, pMeshContainerEx->ppTexture[pBoneComb[iAttr].AttribId] );
+                 Content::Device.getD9Device()->SetTexture ( 0, pMeshContainerEx->ppTexture[pBoneComb[iAttr].AttribId] );
             }
 
 
             DWORD dwLight = 0;
 
-             Content::Device.GetDvc()->GetRenderState ( D3DRS_LIGHTING, &dwLight );
+             Content::Device.getD9Device()->GetRenderState ( D3DRS_LIGHTING, &dwLight );
 
             pMeshContainerEx->MeshData.pMesh->DrawSubset ( iAttr );
 
         }
 
-         Content::Device.GetDvc()->SetRenderState ( D3DRS_INDEXEDVERTEXBLENDENABLE, FALSE );
+         Content::Device.getD9Device()->SetRenderState ( D3DRS_INDEXEDVERTEXBLENDENABLE, FALSE );
 
-         Content::Device.GetDvc()->SetRenderState ( D3DRS_VERTEXBLEND, FALSE );
+         Content::Device.getD9Device()->SetRenderState ( D3DRS_VERTEXBLEND, FALSE );
     }
 
      Content::Device.openAllLight ( false );
@@ -310,9 +310,9 @@ bool GAnimEntity::Pick ( ID3DXMesh *pMesh, POINT pt )
     D3DXMATRIX matProj, matView, matWorld;
     D3DXMATRIX matTmp;
 
-     Content::Device.GetDvc()->GetTransform ( D3DTS_PROJECTION, &matProj );
-     Content::Device.GetDvc()->GetTransform ( D3DTS_VIEW, &matView );
-     Content::Device.GetDvc()->GetTransform ( D3DTS_WORLD, &matWorld );
+     Content::Device.getD9Device()->GetTransform ( D3DTS_PROJECTION, &matProj );
+     Content::Device.getD9Device()->GetTransform ( D3DTS_VIEW, &matView );
+     Content::Device.getD9Device()->GetTransform ( D3DTS_WORLD, &matWorld );
 
     D3DXVECTOR4 vOrigin ( ZEROFLOAT, ZEROFLOAT, ZEROFLOAT, 1.0f );
     D3DXVECTOR4 vDir;

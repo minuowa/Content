@@ -1,5 +1,5 @@
 #pragma once
-#include "XCharString.h"
+#include "uString.h"
 #include "GAnimationResource.h"
 class FiGraph
 {
@@ -20,8 +20,8 @@ public:
 public:
 	void Generate(D3DXMATRIX* v1,D3DXMATRIX*v2);
 
-	GString mLinkerName1;
-	GString mLinkerName2;
+	uString mLinkerName1;
+	uString mLinkerName2;
 
 	GBoneLinker* mLinker1;
 	GBoneLinker* mLinker2;

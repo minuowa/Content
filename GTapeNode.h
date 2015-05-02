@@ -6,6 +6,13 @@ class GTapeNode :
     public GGWireRectNode
 {
 public:
+    /*
+     *0--3--5
+     *|  |	|
+     *1-- --6
+     *|	 |	|
+     *2--4--7
+     */
     enum eCornerType
     {
         Corner_LeftTop,
@@ -36,8 +43,12 @@ public:
     virtual void offset ( long x, long y );
 
     virtual void onCallBack ( const CXDelegate& d, CXEventArgs* e );
-
+    void drag ( long x, long y );
     void changeCursor ( eCornerType type );
+    long getRealX() /*const*/;
+    long getRealY() /*const*/;
+    long getRealW() /*const*/;
+    long getRealH() /*const*/;
 protected:
     GGWireRectNode* mCorner[CornerCount];
 };

@@ -24,7 +24,7 @@ bool GD9Device::init ( HWND hWnd )
     mHeight = rcClient.bottom - rcClient.top;
     mWidth = rcClient.right - rcClient.left;
 
-    return ResetDevice ( mWidth, mHeight );
+    return resetDevice ( mWidth, mHeight );
 }
 
 bool GD9Device::BeginRender()
@@ -233,10 +233,10 @@ void GD9Device::ResetRenderState()
     mD9Device->SetRenderState ( D3DRS_ZWRITEENABLE, true );
 
     //激活多重采样，全景反锯齿
-    mD9Device->SetRenderState ( D3DRS_MULTISAMPLEANTIALIAS, true );
+    //mD9Device->SetRenderState ( D3DRS_MULTISAMPLEANTIALIAS, true );
 
     //设置哥罗德着色模式
-    mD9Device->SetRenderState ( D3DRS_SHADEMODE, D3DSHADE_GOURAUD );
+    //mD9Device->SetRenderState ( D3DRS_SHADEMODE, D3DSHADE_GOURAUD );
 
 
     //缩小、放大过滤模式下采用线性纹理过滤采样
@@ -354,13 +354,13 @@ void GD9Device::OnResize ( int w, int h )
         if ( w > 0 && h > 0 )
         {
             mOnLostDevice.trigger();
-            ResetDevice ( w, h );
+            resetDevice ( w, h );
             mOnResetDevice.trigger();
         }
     }
 }
 
-bool GD9Device::ResetDevice ( int w, int h )
+bool GD9Device::resetDevice ( int w, int h )
 {
     if ( mHwnd == 0 )
     {
@@ -468,7 +468,8 @@ bool GD9Device::beginRenderUI()
     mD9Device->SetRenderState ( D3DRS_CULLMODE, D3DCULL_NONE );
     mD9Device->SetRenderState ( D3DRS_FILLMODE, D3DFILL_SOLID );
     mD9Device->SetRenderState ( D3DRS_SCISSORTESTENABLE, TRUE );
-    mD9Device->SetRenderState ( D3DRS_ZWRITEENABLE, FALSE );
+	mD9Device->SetRenderState ( D3DRS_ZWRITEENABLE, FALSE );
+	mD9Device->SetRenderState ( D3DRS_SHADEMODE, D3DSHADE_FLAT );
 
     // setup texture addressing settings
     mD9Device->SetSamplerState ( 0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP );
@@ -487,8 +488,8 @@ bool GD9Device::beginRenderUI()
     mD9Device->SetTextureStageState ( 0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG2 );
 
     // setup filtering
-    mD9Device->SetSamplerState ( 0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR );
-    mD9Device->SetSamplerState ( 0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR );
+    mD9Device->SetSamplerState ( 0, D3DSAMP_MINFILTER, D3DTEXF_NONE );
+    mD9Device->SetSamplerState ( 0, D3DSAMP_MAGFILTER, D3DTEXF_NONE );
 
     // disable texture stages we do not need.
     mD9Device->SetTextureStageState ( 1, D3DTSS_COLOROP, D3DTOP_DISABLE );
@@ -501,10 +502,6 @@ bool GD9Device::beginRenderUI()
 
 void GD9Device::renderFirstGraph ( bool useTexture )
 {
-    //Content::Device.SetRenderState ( D3DRS_FILLMODE, D3DFILL_WIREFRAME );
-    //Content::Device.SetSamplerState ( 0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP );
-    //Content::Device.SetSamplerState ( 0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP );
-
     mD9Device->SetRenderState ( D3DRS_ALPHABLENDENABLE, FALSE );
 
     mD9Device->SetTextureStageState ( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );

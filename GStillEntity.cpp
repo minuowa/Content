@@ -161,7 +161,7 @@ ID3DXMesh * GStillEntity::recreateInsectMesh()
     {
         mMeshBufferNode->getMesh()->CloneMeshFVF (
             mMeshBufferNode->getMesh()->GetOptions(),
-            D3DFVF_XYZ,  Content::Device.GetDvc(), &mMeshForInsect
+            D3DFVF_XYZ,  Content::Device.getD9Device(), &mMeshForInsect
         );
     }
 
@@ -219,7 +219,7 @@ bool GStillEntity::checkIntersect ( const D3DXVECTOR4& vPos, /*世界坐标系中的点 
             pI->GetDesc ( &indexDesc );
         }
 
-        if ( indexDesc.Format == D3DFMT_INDEX16 )
+        if ( indexDesc.Format== D3DFMT_INDEX16 )
         {
             WORD *pIndexData16;
 
@@ -288,8 +288,8 @@ bool GStillEntity::pick ( const POINT& pt )
 
     D3DXMATRIX	matView, matProj;
 
-    Content::Device.GetDvc()->GetTransform ( D3DTS_VIEW, &matView );
-    Content::Device.GetDvc()->GetTransform ( D3DTS_PROJECTION, &matProj );
+    Content::Device.getD9Device()->GetTransform ( D3DTS_VIEW, &matView );
+    Content::Device.getD9Device()->GetTransform ( D3DTS_PROJECTION, &matProj );
 
     ////射线的起点为眼睛（在视图空间中为坐标原点（0,0,0））
     D3DXVECTOR4 vOrigin ( 0, 0, 0, 1 );

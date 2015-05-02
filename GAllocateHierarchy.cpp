@@ -198,13 +198,13 @@ STDMETHODIMP GAllocateHierarchy::CreateMeshContainer
         memcpy ( pMeshContainerTmp->pMaterials, pMaterials, sizeof ( D3DXMATERIAL ) *NumMaterials );
 
         CXFileName filename ( mMediaFileName );
-        GString path = filename.GetRelativePath();
+        uString path = filename.GetRelativePath();
 
         for ( DWORD i = 0; i < NumMaterials; i++ )
         {
             if ( pMeshContainerTmp->pMaterials[i].pTextureFilename != NULL )
             {
-                GString fileName = path + CXFileName::PathSpliter + pMeshContainerTmp->pMaterials[i].pTextureFilename;
+                uString fileName = path + CXFileName::PathSpliter + pMeshContainerTmp->pMaterials[i].pTextureFilename;
                 GTexture* gtext =  Content::TextureMgr.getResource ( fileName.c_str() );
                 if ( gtext )
                     pMeshContainerTmp->ppTexture[i] = gtext->getTexture();
@@ -307,7 +307,7 @@ HRESULT GAllocateHierarchy::GenerateSkinnedMesh ( D3DXMeshContainerEX *pMeshCont
     D3DCAPS9 d3dCap;
     dMemoryZero ( &d3dCap, sizeof ( d3dCap ) );
 
-    Content::Device.GetDvc()->GetDeviceCaps ( &d3dCap );
+    Content::Device.getD9Device()->GetDeviceCaps ( &d3dCap );
 
     if ( pMeshContainerEx->pSkinInfo == NULL )
     {
@@ -365,7 +365,7 @@ HRESULT GAllocateHierarchy::GenerateSkinnedMesh ( D3DXMeshContainerEX *pMeshCont
              (
                  pMeshContainerEx->MeshData.pMesh->GetOptions() | D3DXMESH_SOFTWAREPROCESSING,
                  pMeshContainerEx->MeshData.pMesh->GetFVF(),
-                 Content::Device.GetDvc(), &pMeshTmp
+                 Content::Device.getD9Device(), &pMeshTmp
              );
 
         if ( FAILED ( hr ) )

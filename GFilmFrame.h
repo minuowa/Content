@@ -19,9 +19,9 @@ public:
 	void setPrev(const char* prev);
 	void setName(const char* name);
 protected:
-	GString mName;
-	GString mNextFrame;
-	GString mPrevFrame;
+	uString mName;
+	uString mNextFrame;
+	uString mPrevFrame;
 	CXMillSecond mLifeTime;
 	u32 mElapsedTime;
 	static CXIDGenerator mIDGenerator;
